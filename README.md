@@ -2,7 +2,7 @@
 <!-- Template Credit: Othneil Drew (https://github.com/othneildrew),
                       https://github.com/othneildrew/Best-README-Template/tree/master -->
 <!-- PROJECT SHIELDS -->
-<div style="text-align: center;">
+<div align="center">
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
@@ -15,14 +15,14 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<div style="text-align:center;">
+<div align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
     <img src="images/icon.png" alt="Logo" width="128" height="128">
   </a>
 
   <h3 align="center">ondrive-java-sdk</h3>
 
-  <p style="text-align:center;">
+  <p align="center">
     A Java SDK to access OneDrive drives and files.
     <br />
     <a href="https://www.amilesend.com/onedrive-java-sdk"><strong>Maven Project Info</strong></a>
@@ -85,7 +85,7 @@ documented APIs are implemented.
 4. [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
 5. [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)
 
-<div style="text-align:right;">(<a href="#readme-top">back to top</a>)</div>
+<div align="right">(<a href="#readme-top">back to top</a>)</div>
 
 <a name="usage"></a>
 # Usage
@@ -231,7 +231,7 @@ DriveFileDownloadExecution downloadExec = myDriveFile.downloadAsync(Paths.get(".
 long downloadedBytes = downloadExec.get();
 ```
 
-<div style="text-align:right;">(<a href="#readme-top">back to top</a>)</div>
+<div align="right">(<a href="#readme-top">back to top</a>)</div>
 
 <!-- ROADMAP -->
 ## Roadmap
@@ -244,7 +244,7 @@ long downloadedBytes = downloadExec.get();
 
 See the [open issues](https://github.com/andy-miles/onedrive-java-sdk/issues) for a full list of proposed features (and known issues).
 
-<div style="text-align:right;">(<a href="#readme-top">back to top</a>)</div>
+<div align="right">(<a href="#readme-top">back to top</a>)</div>
 
 
 <!-- CONTRIBUTING -->
@@ -259,14 +259,14 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-<div style="text-align:right;">(<a href="#readme-top">back to top</a>)</div>
+<div align="right">(<a href="#readme-top">back to top</a>)</div>
 
 <!-- LICENSE -->
 ## License
 
 Distributed under the GPLv3 License. See `LICENSE.txt` for more information.
 
-<div style="text-align:right;">(<a href="#readme-top">back to top</a>)</div>
+<div align="right">(<a href="#readme-top">back to top</a>)</div>
 
 
 <!-- CONTACT -->
@@ -276,7 +276,7 @@ Andy Miles - andy.miles@amilesend.com
 
 Project Link: [https://github.com/andy-miles/onedrive-java-sdk](https://github.com/andy-miles/onedrive-java-sdk)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<div align="right">(<a href="#readme-top">back to top</a>)</div>
 
 
 
