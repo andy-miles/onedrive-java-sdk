@@ -1,0 +1,58 @@
+{
+  "value": [
+    {
+      "id": "ThumbnailId",
+      "large": {
+        "height": 100,
+        "sourceItemId": "SourceItemIdValue",
+        "url": "LargeThumbnailUrlValue",
+        "width": 100
+      },
+      "medium": {
+        "height": 100,
+        "sourceItemId": "SourceItemIdValue",
+        "url": "MediumThumbnailUrlValue",
+        "width": 100
+      },
+      "small": {
+        "height": 100,
+        "sourceItemId": "SourceItemIdValue",
+        "url": "SmallThumbnailUrlValue",
+        "width": 100
+      },
+      "source": {
+        "height": 100,
+        "sourceItemId": "SourceItemIdValue",
+        "url": "SourceThumbnailUrlValue",
+        "width": 100
+      }
+    },
+    {
+      "id": "ThumbnailId",
+      "large": {
+        "height": 100,
+        "sourceItemId": "SourceItemIdValue",
+        "url": "LargeThumbnailUrlValue",
+        "width": 100
+      },
+      "medium": {
+        "height": 100,
+        "sourceItemId": "SourceItemIdValue",
+        "url": "MediumThumbnailUrlValue",
+        "width": 100
+      },
+      "small": {
+        "height": 100,
+        "sourceItemId": "SourceItemIdValue",
+        "url": "SmallThumbnailUrlValue",
+        "width": 100
+      },
+      "source": {
+        "height": 100,
+        "sourceItemId": "SourceItemIdValue",
+        "url": "SourceThumbnailUrlValue",
+        "width": 100
+      }
+    }
+  ]
+}

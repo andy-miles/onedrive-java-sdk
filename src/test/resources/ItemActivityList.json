@@ -1,0 +1,350 @@
+{
+  "value" : [
+    {
+      "id": "ItemActivityIdValue1",
+      "action": {
+        "comment": {
+          "isReply": false,
+          "parentAuthor": {
+            "user": {
+              "displayName": "IdentityName",
+              "id": "IdentityId",
+              "thumbnails": {
+                "id": "ThumbnailId",
+                "large": {
+                  "height": 100,
+                  "sourceItemId": "SourceItemIdValue",
+                  "url": "LargeThumbnailUrlValue",
+                  "width": 100
+                },
+                "medium": {
+                  "height": 100,
+                  "sourceItemId": "SourceItemIdValue",
+                  "url": "MediumThumbnailUrlValue",
+                  "width": 100
+                },
+                "small": {
+                  "height": 100,
+                  "sourceItemId": "SourceItemIdValue",
+                  "url": "SmallThumbnailUrlValue",
+                  "width": 100
+                },
+                "source": {
+                  "height": 100,
+                  "sourceItemId": "SourceItemIdValue",
+                  "url": "SourceThumbnailUrlValue",
+                  "width": 100
+                }
+              }
+            }
+          },
+          "participants": [
+            {
+              "user": {
+                "displayName": "IdentityName",
+                "id": "IdentityId",
+                "thumbnails": {
+                  "id": "ThumbnailId",
+                  "large": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "LargeThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "medium": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "MediumThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "small": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SmallThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "source": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SourceThumbnailUrlValue",
+                    "width": 100
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "create": {},
+        "delete": {
+          "name": "DeleteActionName",
+          "objectType": "File"
+        },
+        "edit": {},
+        "mention": {
+          "mentionees": [
+            {
+              "user": {
+                "displayName": "IdentityName",
+                "id": "IdentityId",
+                "thumbnails": {
+                  "id": "ThumbnailId",
+                  "large": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "LargeThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "medium": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "MediumThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "small": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SmallThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "source": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SourceThumbnailUrlValue",
+                    "width": 100
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "move": {
+          "from": "FromValue",
+          "to": "ToValue"
+        },
+        "rename": {
+          "oldName": "OldNameValue",
+          "newName": "NewNameValue"
+        },
+        "restore": {},
+        "share": {
+          "recipients": [
+            {
+              "user": {
+                "displayName": "IdentityName",
+                "id": "IdentityId",
+                "thumbnails": {
+                  "id": "ThumbnailId",
+                  "large": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "LargeThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "medium": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "MediumThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "small": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SmallThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "source": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SourceThumbnailUrlValue",
+                    "width": 100
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "version": {
+          "newVersion": "NewVersion"
+        }
+      },
+      "actor": {},
+      "times": {
+        "observedDateTime": "ObservedTimeStampValue",
+        "recordedDateTime": "RecordedTimeStampValue"
+      }
+    },
+    {
+      "id": "ItemActivityIdValue2",
+      "action": {
+        "comment": {
+          "isReply": false,
+          "parentAuthor": {
+            "user": {
+              "displayName": "IdentityName",
+              "id": "IdentityId",
+              "thumbnails": {
+                "id": "ThumbnailId",
+                "large": {
+                  "height": 100,
+                  "sourceItemId": "SourceItemIdValue",
+                  "url": "LargeThumbnailUrlValue",
+                  "width": 100
+                },
+                "medium": {
+                  "height": 100,
+                  "sourceItemId": "SourceItemIdValue",
+                  "url": "MediumThumbnailUrlValue",
+                  "width": 100
+                },
+                "small": {
+                  "height": 100,
+                  "sourceItemId": "SourceItemIdValue",
+                  "url": "SmallThumbnailUrlValue",
+                  "width": 100
+                },
+                "source": {
+                  "height": 100,
+                  "sourceItemId": "SourceItemIdValue",
+                  "url": "SourceThumbnailUrlValue",
+                  "width": 100
+                }
+              }
+            }
+          },
+          "participants": [
+            {
+              "user": {
+                "displayName": "IdentityName",
+                "id": "IdentityId",
+                "thumbnails": {
+                  "id": "ThumbnailId",
+                  "large": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "LargeThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "medium": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "MediumThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "small": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SmallThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "source": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SourceThumbnailUrlValue",
+                    "width": 100
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "create": {},
+        "delete": {
+          "name": "DeleteActionName",
+          "objectType": "File"
+        },
+        "edit": {},
+        "mention": {
+          "mentionees": [
+            {
+              "user": {
+                "displayName": "IdentityName",
+                "id": "IdentityId",
+                "thumbnails": {
+                  "id": "ThumbnailId",
+                  "large": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "LargeThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "medium": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "MediumThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "small": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SmallThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "source": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SourceThumbnailUrlValue",
+                    "width": 100
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "move": {
+          "from": "FromValue",
+          "to": "ToValue"
+        },
+        "rename": {
+          "oldName": "OldNameValue",
+          "newName": "NewNameValue"
+        },
+        "restore": {},
+        "share": {
+          "recipients": [
+            {
+              "user": {
+                "displayName": "IdentityName",
+                "id": "IdentityId",
+                "thumbnails": {
+                  "id": "ThumbnailId",
+                  "large": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "LargeThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "medium": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "MediumThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "small": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SmallThumbnailUrlValue",
+                    "width": 100
+                  },
+                  "source": {
+                    "height": 100,
+                    "sourceItemId": "SourceItemIdValue",
+                    "url": "SourceThumbnailUrlValue",
+                    "width": 100
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "version": {
+          "newVersion": "NewVersion"
+        }
+      },
+      "actor": {},
+      "times": {
+        "observedDateTime": "ObservedTimeStampValue",
+        "recordedDateTime": "RecordedTimeStampValue"
+      }
+    }
+  ]
+}

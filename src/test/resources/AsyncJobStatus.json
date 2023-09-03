@@ -1,0 +1,7 @@
+{
+  "operation": "ItemCopy",
+  "percentageComplete": 100.0,
+  "resourceId": "identifier",
+  "status": "completed",
+  "statusDescription": "Description"
+}

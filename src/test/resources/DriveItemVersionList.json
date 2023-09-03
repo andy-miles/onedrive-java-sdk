@@ -1,0 +1,88 @@
+{
+  "value" : [
+    {
+      "id": "VersionIdValue1",
+      "lastModifiedBy": {
+        "user": {
+          "displayName": "IdentityName",
+          "id": "IdentityId",
+          "thumbnails": {
+            "id": "ThumbnailId",
+            "large": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "LargeThumbnailUrlValue",
+              "width": 100
+            },
+            "medium": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "MediumThumbnailUrlValue",
+              "width": 100
+            },
+            "small": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SmallThumbnailUrlValue",
+              "width": 100
+            },
+            "source": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SourceThumbnailUrlValue",
+              "width": 100
+            }
+          }
+        }
+      },
+      "lastModifiedDateTime": "LastModifiedTimeStampValue",
+      "publication": {
+        "level": "published",
+        "versionId": "VersionIdValue1"
+      },
+      "size": 4096
+    },
+    {
+      "id": "VersionIdValue2",
+      "lastModifiedBy": {
+        "user": {
+          "displayName": "IdentityName",
+          "id": "IdentityId",
+          "thumbnails": {
+            "id": "ThumbnailId",
+            "large": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "LargeThumbnailUrlValue",
+              "width": 100
+            },
+            "medium": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "MediumThumbnailUrlValue",
+              "width": 100
+            },
+            "small": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SmallThumbnailUrlValue",
+              "width": 100
+            },
+            "source": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SourceThumbnailUrlValue",
+              "width": 100
+            }
+          }
+        }
+      },
+      "lastModifiedDateTime": "LastModifiedTimeStampValue",
+      "publication": {
+        "level": "published",
+        "versionId": "VersionIdValue2"
+      },
+      "size": 4096
+    }
+  ]
+}

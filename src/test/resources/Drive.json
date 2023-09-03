@@ -1,0 +1,115 @@
+{
+  "driveType": "personal",
+  "owner": {
+    "user": {
+      "displayName": "IdentityName",
+      "id": "IdentityId",
+      "thumbnails": {
+        "id": "ThumbnailId",
+        "large": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "LargeThumbnailUrlValue",
+          "width": 100
+        },
+        "medium": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "MediumThumbnailUrlValue",
+          "width": 100
+        },
+        "small": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SmallThumbnailUrlValue",
+          "width": 100
+        },
+        "source": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SourceThumbnailUrlValue",
+          "width": 100
+        }
+      }
+    }
+  },
+  "quota": {
+    "total": 10000,
+    "used": 1000,
+    "remaining": 8000,
+    "deleted": 1000,
+    "state": "normal",
+    "fileCount": 0
+  },
+  "id": "DriveIdValue1",
+  "createdBy": {
+    "user": {
+      "displayName": "IdentityName",
+      "id": "IdentityId",
+      "thumbnails": {
+        "id": "ThumbnailId",
+        "large": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "LargeThumbnailUrlValue",
+          "width": 100
+        },
+        "medium": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "MediumThumbnailUrlValue",
+          "width": 100
+        },
+        "small": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SmallThumbnailUrlValue",
+          "width": 100
+        },
+        "source": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SourceThumbnailUrlValue",
+          "width": 100
+        }
+      }
+    }
+  },
+  "createdDateTime": "CreatedTimeStampValue",
+  "description": "TestDriveDescription",
+  "lastModifiedBy": {
+    "user": {
+      "displayName": "IdentityName",
+      "id": "IdentityId",
+      "thumbnails": {
+        "id": "ThumbnailId",
+        "large": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "LargeThumbnailUrlValue",
+          "width": 100
+        },
+        "medium": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "MediumThumbnailUrlValue",
+          "width": 100
+        },
+        "small": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SmallThumbnailUrlValue",
+          "width": 100
+        },
+        "source": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SourceThumbnailUrlValue",
+          "width": 100
+        }
+      }
+    }
+  },
+  "lastModifiedDateTime": "LastModifiedTimeStampValue",
+  "name": "TestDrive1"
+}

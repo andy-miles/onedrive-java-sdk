@@ -1,0 +1,441 @@
+{
+  "audio": {
+    "album": "AlbumValue",
+    "albumArtist": "AlbumArtistValue",
+    "artist": "ArtistValue",
+    "bitrate": 128,
+    "composers": "ComposersValue",
+    "copyright": "CopyrightValue",
+    "disc": 1,
+    "discCount": 2,
+    "duration": 120,
+    "genre": "GenreValue",
+    "hasDrm": true,
+    "isVariableBitrate": true,
+    "title": "TitleValue",
+    "track": 3,
+    "trackCount": 12,
+    "year": 2000
+  },
+  "cTag": "cTagValue",
+  "deleted": {
+    "state": "StateValue"
+  },
+  "file": {
+    "hashes": {
+      "sha1Hash": "sha1Value",
+      "crc32Hash": "crcHashValue",
+      "quickXorHash": "quickXorHashValue"
+    },
+    "mimeType": "application/zip",
+    "processingMetadata": false
+  },
+  "fileSystemInfo": {
+    "createdDateTime": "CreatedTimeStampValue",
+    "lastAccessedDateTime": "LastAccessedTimeStampValue"
+  },
+  "folder": {
+    "childCount": 3,
+    "folderView": {
+      "sortBy": "name",
+      "sortOrder": "ascending",
+      "viewType": "details"
+    }
+  },
+  "image": {
+    "height": 200,
+    "width": 300
+  },
+  "location": {
+    "altitude": 500.0,
+    "latitude": 100.0,
+    "longitude": 200.0
+  },
+  "malware": {},
+  "package": {
+    "type": "PackageTypeValue"
+  },
+  "photo": {
+    "takenDateTime": "TakenTimestampValue",
+    "cameraMake": "CameraMakeValue",
+    "cameraModel": "CameraModelValue",
+    "fNumber": 4.0,
+    "exposureDenominator": 300.0,
+    "exposureNumerator": 150.0,
+    "focalLength": 3.0,
+    "iso": 500
+  },
+  "publication": {
+    "level": "published",
+    "versionId": "1"
+  },
+  "remoteItem": {
+    "createdBy": {
+      "user": {
+        "displayName": "IdentityName",
+        "id": "IdentityId",
+        "thumbnails": {
+          "id": "ThumbnailId",
+          "large": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "LargeThumbnailUrlValue",
+            "width": 100
+          },
+          "medium": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "MediumThumbnailUrlValue",
+            "width": 100
+          },
+          "small": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "SmallThumbnailUrlValue",
+            "width": 100
+          },
+          "source": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "SourceThumbnailUrlValue",
+            "width": 100
+          }
+        }
+      }
+    },
+    "createdDateTime": "CreatedTimestampValue",
+    "file": {
+      "hashes": {
+        "sha1Hash": "sha1Value",
+        "crc32Hash": "crcHashValue",
+        "quickXorHash": "quickXorHashValue"
+      },
+      "mimeType": "application/zip",
+      "processingMetadata": false
+    },
+    "fileSystemInfo": {
+      "createdDateTime": "CreatedTimeStampValue",
+      "lastAccessedDateTime": "LastAccessedTimeStampValue"
+    },
+    "folder": {
+      "childCount": 3,
+      "folderView": {
+        "sortBy": "name",
+        "sortOrder": "ascending",
+        "viewType": "details"
+      }
+    },
+    "id": "RemoteIdValue",
+    "lastModifiedBy": {
+      "user": {
+        "displayName": "IdentityName",
+        "id": "IdentityId",
+        "thumbnails": {
+          "id": "ThumbnailId",
+          "large": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "LargeThumbnailUrlValue",
+            "width": 100
+          },
+          "medium": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "MediumThumbnailUrlValue",
+            "width": 100
+          },
+          "small": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "SmallThumbnailUrlValue",
+            "width": 100
+          },
+          "source": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "SourceThumbnailUrlValue",
+            "width": 100
+          }
+        }
+      }
+    },
+    "lastModifiedDateTime": "LastModifiedTimestampValue",
+    "package": {
+      "type": "PackageTypeValue"
+    },
+    "parentReference": {
+      "driveId": "DriveIdValue",
+      "driveType": "personal",
+      "id": "ParentIdValue",
+      "name": "ParentFolderName",
+      "path": "ParentFolderPath"
+    },
+    "shared": {
+      "owner": {
+        "user": {
+          "displayName": "IdentityName",
+          "id": "IdentityId",
+          "thumbnails": {
+            "id": "ThumbnailId",
+            "large": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "LargeThumbnailUrlValue",
+              "width": 100
+            },
+            "medium": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "MediumThumbnailUrlValue",
+              "width": 100
+            },
+            "small": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SmallThumbnailUrlValue",
+              "width": 100
+            },
+            "source": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SourceThumbnailUrlValue",
+              "width": 100
+            }
+          }
+        }
+      },
+      "scope": "users",
+      "sharedBy": {
+        "user": {
+          "displayName": "IdentityName",
+          "id": "IdentityId",
+          "thumbnails": {
+            "id": "ThumbnailId",
+            "large": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "LargeThumbnailUrlValue",
+              "width": 100
+            },
+            "medium": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "MediumThumbnailUrlValue",
+              "width": 100
+            },
+            "small": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SmallThumbnailUrlValue",
+              "width": 100
+            },
+            "source": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SourceThumbnailUrlValue",
+              "width": 100
+            }
+          }
+        }
+      },
+      "sharedDateTime": "SharedTimestampValue"
+    },
+    "sharepointIds": {
+      "listId": "ListIdValue",
+      "listItemId": "ListItemIdValue",
+      "listItemUniqueId": "ListItemUniqueIdValue",
+      "siteId": "SiteIdValue",
+      "siteUrl": "SiteUrlValue",
+      "tenantId": "TenantIdValue",
+      "webId": "WebIdValue"
+    },
+    "size": 2048,
+    "specialFolder": {
+      "name": "SpecialFolderName"
+    },
+    "webDavUrl": "WebDavUrlValue",
+    "webUrl": "WebUrlValue"
+  },
+  "root": {},
+  "searchResult": {
+    "onClickTelemetryUrl": "TelemetryUrlValue"
+  },
+  "shared": {
+    "owner": {
+      "user": {
+        "displayName": "IdentityName",
+        "id": "IdentityId",
+        "thumbnails": {
+          "id": "ThumbnailId",
+          "large": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "LargeThumbnailUrlValue",
+            "width": 100
+          },
+          "medium": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "MediumThumbnailUrlValue",
+            "width": 100
+          },
+          "small": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "SmallThumbnailUrlValue",
+            "width": 100
+          },
+          "source": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "SourceThumbnailUrlValue",
+            "width": 100
+          }
+        }
+      }
+    },
+    "scope": "users",
+    "sharedBy": {
+      "user": {
+        "displayName": "IdentityName",
+        "id": "IdentityId",
+        "thumbnails": {
+          "id": "ThumbnailId",
+          "large": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "LargeThumbnailUrlValue",
+            "width": 100
+          },
+          "medium": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "MediumThumbnailUrlValue",
+            "width": 100
+          },
+          "small": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "SmallThumbnailUrlValue",
+            "width": 100
+          },
+          "source": {
+            "height": 100,
+            "sourceItemId": "SourceItemIdValue",
+            "url": "SourceThumbnailUrlValue",
+            "width": 100
+          }
+        }
+      }
+    },
+    "sharedDateTime": "SharedTimestampValue"
+  },
+  "sharepointIds": {
+    "listId": "ListIdValue",
+    "listItemId": "ListItemIdValue",
+    "listItemUniqueId": "ListItemUniqueIdValue",
+    "siteId": "SiteIdValue",
+    "siteUrl": "SiteUrlValue",
+    "tenantId": "TenantIdValue",
+    "webId": "WebIdValue"
+  },
+  "size": 1024,
+  "specialFolder": {
+    "name": "SpecialFolderName"
+  },
+  "video": {
+    "audioBitsPerSample": 16,
+    "audioChannels": 2,
+    "audioFormat": "AAC",
+    "audioSamplesPerSecond": 44100,
+    "bitrate": 39101896,
+    "duration": 8053,
+    "fourCC": "H264",
+    "frameRate": 23.9877,
+    "height": 1280,
+    "width": 720
+  },
+  "@microsoft.graph.conflictBehavior": "ConflictBehaviorValue",
+  "@microsoft.graph.downloadUrl": "DownloadUrlValue",
+  "@microsoft.graph.sourceUrl": "SourceUrlValue",
+  "id": "DriveItemId",
+  "createdBy": {
+    "user": {
+      "displayName": "IdentityName",
+      "id": "IdentityId",
+      "thumbnails": {
+        "id": "ThumbnailId",
+        "large": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "LargeThumbnailUrlValue",
+          "width": 100
+        },
+        "medium": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "MediumThumbnailUrlValue",
+          "width": 100
+        },
+        "small": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SmallThumbnailUrlValue",
+          "width": 100
+        },
+        "source": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SourceThumbnailUrlValue",
+          "width": 100
+        }
+      }
+    }
+  },
+  "createdDateTime": "CreatedTimestampValue",
+  "description": "DriveItemName description",
+  "eTag": "eTagValue",
+  "lastModifiedBy": {
+    "user": {
+      "displayName": "IdentityName",
+      "id": "IdentityId",
+      "thumbnails": {
+        "id": "ThumbnailId",
+        "large": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "LargeThumbnailUrlValue",
+          "width": 100
+        },
+        "medium": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "MediumThumbnailUrlValue",
+          "width": 100
+        },
+        "small": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SmallThumbnailUrlValue",
+          "width": 100
+        },
+        "source": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SourceThumbnailUrlValue",
+          "width": 100
+        }
+      }
+    }
+  },
+  "lastModifiedDateTime": "LastModifiedTimestampValue",
+  "name": "DriveItemName",
+  "parentReference": {
+    "driveId": "DriveIdValue",
+    "driveType": "personal",
+    "id": "ParentIdValue",
+    "name": "ParentFolderName",
+    "path": "ParentFolderPath"
+  },
+  "webUrl": "WebUrlValue"
+}
