@@ -25,7 +25,7 @@
 
     <groupId>com.amilesend</groupId>
     <artifactId>onedrive-java-sdk</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
 
     <name>onedrive-java-sdk</name>
     <description>A Java SDK to access OneDrive drives and files.</description>
@@ -55,11 +55,20 @@
         <developerConnection>scm:git:https://github.com/andy-miles/onedrive-java-sdk.git</developerConnection>
         <url>https://github.com/andy-miles/onedrive-java-sdk</url>
     </scm>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub andy-miles Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/andy-miles/onedrive-java-sdk</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <github.global.server>github</github.global.server>
+        <maven.resolver.transport>wagon</maven.resolver.transport>
     </properties>
 
     <dependencies>
@@ -178,22 +187,6 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.12</version>
-                <configuration>
-                    <message>Creating site for ${project.version}</message>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>site</phase>
                     </execution>
                 </executions>
             </plugin>

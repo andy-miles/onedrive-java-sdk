@@ -8,7 +8,6 @@
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-[![License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 </div>
@@ -27,7 +26,7 @@
     <br />
     <a href="https://www.amilesend.com/onedrive-java-sdk"><strong>Maven Project Info</strong></a>
     -
-    <a href="https://www.amilesend.com/onedrive/java-sdk/apidocs/index.html"><strong>Javadoc</strong></a>
+    <a href="https://www.amilesend.com/onedrive-java-sdk/apidocs/index.html"><strong>Javadoc</strong></a>
     <br />
     <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
     -
@@ -264,7 +263,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the GPLv3 License. See `LICENSE.txt` for more information.
+Distributed under the GPLv3 License. See `LICENSE` for more information.
 
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
 
