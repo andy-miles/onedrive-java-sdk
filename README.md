@@ -172,7 +172,7 @@ try {
 ### Obtaining a <code>OneDrive</code> with a custom OAuth flow
 Once you obtain the <code>authCode</code>, you can initialize a new <code>OneDrive</code> directly via:
 ```java
-OneDrive onedrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
+OneDrive oneDrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
       .clientId(clientId) // Your application's client identifier
       .clientSecret(clientSecret) // Your application's client secret
       .redirectUrl(redirectUrl) // Your custom redirect URL that was used to obtain the authCode
@@ -184,12 +184,12 @@ the user <code>AuthInfo</code> is required for subsequent initialization(s) to p
 authorization each time an instance is created until the user explicitly revokes the grant or when it expires.  Example of subsequent initialization with <code>AuthInfo</code>
 ```java
 AuthInfo authInfo = getAuthInfo(); // Obtain the persisted AuthInfo from your application
-OneDrive onedrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
+OneDrive oneDrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
         .clientId(clientId) // Your application's client identifier
         .clientSecret(clientSecret) // Your application's client secret
         .redirectUrl(redirectUrl) // Your custom redirect URL that was used to obtain the authCode
         .build(authInfo));
-authInfo = OneDrive.getAuthInfo(); // Gets the updated tokens after refresh
+authInfo = oneDrive.getAuthInfo(); // Gets the updated tokens after refresh
 ```
 
 ### Obtaining list of contents of a user's default drive
@@ -255,7 +255,7 @@ public class MyProgressCallback implements TransferProgressCallback {
    public void onUpdate(long currentBytes, long totalBytes) { ... }
 
    @Override
-   public void onFailure(final Throwable cause) { ... }
+   public void onFailure(Throwable cause) { ... }
 
    @Override
    public void onComplete(long bytesTransferred) { ... }
