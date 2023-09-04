@@ -15,7 +15,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/andy-miles/onedrive-java-sdk">
     <img src="images/icon.png" alt="Logo" width="128" height="128">
   </a>
 
@@ -28,9 +28,9 @@
     -
     <a href="https://www.amilesend.com/onedrive-java-sdk/apidocs/index.html"><strong>Javadoc</strong></a>
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/andy-miles/onedrive-java-sdk/issues">Report Bug</a>
     -
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/andy-miles/onedrive-java-sdk/issues">Request Feature</a>
   </p>
 </div>
 
@@ -73,7 +73,7 @@ documented APIs are implemented.
 <a name="feature-highlights"></a>
 ## Feature Highlights
 1. OAuth user authentication out-of-the-box for use by client-side desktop applications
-   1. Or you can roll your own OAuth solution to obtain theauth code and persist tokens for server-to-server use-cases
+   1. Or you can roll your own OAuth solution to obtain the auth code and persist tokens for server-to-server use-cases
 2. Automatic credential token refresh support
 3. Synchronous and asynchronous file transfer operations with a customizable transfer progress callback interface for extensibility
 
@@ -277,6 +277,7 @@ DriveFileDownloadExecution downloadExec = myFile.downloadAsync(Paths.get("./"), 
 - [ ] Add functional test coverage (use of a MockWebServer)
 - [ ] Add integration test coverage
 - [ ] Group and Site based access for non-personal accounts
+- [ ] Add an interface to access and persist tokens for the OneDriveFactoryStateManager (e.g., tokens stored via a database or service)
 - [ ] Obtaining [embeddable file previews](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview)
 - [ ] [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
 - [ ] [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)
