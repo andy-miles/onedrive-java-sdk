@@ -50,6 +50,7 @@
       <a href="#usage">Usage</a>
       <ul>
         <li><a href="#getting-started">Getting Started</a></li>
+        <li><a href="#main-objects">Primary Classes</a></li>
         <li><a href="#recipes">Recipes</a></li>
       </ul>
     </li>
@@ -65,14 +66,14 @@
 <!-- ABOUT THE PROJECT -->
 # About The Project
 
-A configurable and extensible SDK for Java programmatic access to a user's MS OneDrive account via the [Microsoft
+A configurable and extensible SDK for Java programmatic access to a user's OneDrive account via the [Microsoft
 Graph API](https://learn.microsoft.com/en-us/onedrive/developer). This SDK is still in active development, but most 
 documented APIs are implemented.
 
 <a name="feature-highlights"></a>
 ## Feature Highlights
 1. OAuth user authentication out-of-the-box for use by client-side desktop applications
-   1. Or you can roll your own OAuth solution to obtain the user's auth code and persist tokens for server-to-server use-cases
+   1. Or you can roll your own OAuth solution to obtain theauth code and persist tokens for server-to-server use-cases
 2. Automatic credential token refresh support
 3. Synchronous and asynchronous file transfer operations with a customizable transfer progress callback interface for extensibility
 
@@ -92,12 +93,12 @@ documented APIs are implemented.
 ## Getting Started
 
 Per the [App Registration](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/app-registration) documentation, your application 
-needs to registered via the [Azure Apps Registration Page](https://aka.ms/AppRegistrations/).
+needs to be registered via the [Azure Apps Registration Page](https://aka.ms/AppRegistrations/).
 
-Key configuration to note:
+Key configuration  to note:
 1. The following <strong>delegated</strong> API permissions are recommended: <code>Files.ReadWrite.All</code> <code>User.Read</code> <code>offline_access</code>
 2. If using the default OAuth receiver to handle the redirect for auth code grants, then set the redirect URL to <code>http://localhost:8890/Callback </code>
-3. Generate your own client secret and record your application's client ID and client secret value.
+3. Generate your own client secret, and record your application's client ID and client secret value.
    1. You can save this as a JAR bundled resource within your project named <code>/ms-onedrive-credentials.json</code> and should be formatted as:
 
       ```json
@@ -106,11 +107,24 @@ Key configuration to note:
         "clientSecret" : "xxxxxxxxxxxxxxxxxxxxxxxxxxx"
       }
       ```
+
+<div align="right">(<a href="#readme-top">back to top</a>)</div>
+
+<a name="main-objects"></a>
+## Primary Classes
+The primary classes used to interact with a OneDrive account is modeled as a tree structure and is as follows:
+1. [OneDrive](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/OneDrive.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/OneDrive.html)) to obtain user accessible drives
+2. [Drive](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/Drive.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/resource/Drive.html)) to access folders
+3. [DriveFolder](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/DriveFolder.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/resource/DriveFolder.html)) to manage folders, access subfolders, and upload new files
+4. [DriveFile](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/DriveFile.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/resource/DriveFile.html)) to manage, upload (as a new version), and download a file
+
+<div align="right">(<a href="#readme-top">back to top</a>)</div>
+
 <a name="recipes"></a>
 ## Recipes
 ### Obtaining an authenticated <code>OneDrive</code> object
 ```java
-// Used to initiate OAuth flow, persist refreshed tokens to disk, or restore from persisted refresh tokens.
+// Used to initiate the OAuth flow, persist refreshed tokens, or use persisted refresh tokens.
 OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
         .stateFile(Paths.get("./OneDriveUserState.json")) // Path to save/read user auth tokens
         .build();
@@ -123,13 +137,13 @@ try {
 }
 ```
 For more information, please refer to [javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/OneDriveFactoryStateManager.html) 
-or [source](https://github.com/andy-miles/onedrive-java-sdk/tree/master/src/main/java/com/amilesend/onedrive/OneDriveFactoryStateManager.java).
+or [source](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/OneDriveFactoryStateManager.java).
 
 ### Customizing the HTTP client configuration
 
 If your use-case requires configuring the underlying <code>OkHttpClient</code> instance (e.g., configuring your own 
 SSL cert verification, proxy, and/or connection timeouts), you can configure the client with the provided
-[OkHttpClientBuilder](https://github.com/andy-miles/onedrive-java-sdk/tree/master/src/main/java/com/amilesend/onedrive/connection/http/OkHttpClientBuilder.java),
+[OkHttpClientBuilder](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/connection/http/OkHttpClientBuilder.java),
 or alternatively with [OkHttp's builder](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-ok-http-client/).
 
 ```java
@@ -156,7 +170,7 @@ try {
 ```
 
 ### Obtaining a <code>OneDrive</code> with a custom OAuth flow
-Once you obtain the <code>authCode</code>, you can initialize a new <code>OneDrive</code> manually via:
+Once you obtain the <code>authCode</code>, you can initialize a new <code>OneDrive</code> directly via:
 ```java
 OneDrive onedrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
       .clientId(clientId) // Your application's client identifier
@@ -166,8 +180,8 @@ OneDrive onedrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
 ```
 
 While token refresh is automated during the runtime lifecycle of the <code>OneDrive</code> object, persisting
-the user <code>AuthInfo</code> is required for subsequent initialization(s) to prevent the user from having to grant
-authorization each time until the user explicitly removes the access grant or when it expires.  Example of subsequent initialization with <code>AuthInfo</code>
+the user <code>AuthInfo</code> is required for subsequent initialization(s) to prevent the user from granting
+authorization each time an instance is created until the user explicitly revokes the grant or when it expires.  Example of subsequent initialization with <code>AuthInfo</code>
 ```java
 AuthInfo authInfo = getAuthInfo(); // Obtain the persisted AuthInfo from your application
 OneDrive onedrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
@@ -175,7 +189,7 @@ OneDrive onedrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
         .clientSecret(clientSecret) // Your application's client secret
         .redirectUrl(redirectUrl) // Your custom redirect URL that was used to obtain the authCode
         .build(authInfo));
-authInfo = OneDrive.getAuthInfo(); // Gets he updated tokens after refresh
+authInfo = OneDrive.getAuthInfo(); // Gets the updated tokens after refresh
 ```
 
 ### Obtaining list of contents of a user's default drive
@@ -230,6 +244,32 @@ DriveFileDownloadExecution downloadExec = myDriveFile.downloadAsync(Paths.get(".
 long downloadedBytes = downloadExec.get();
 ```
 
+### Monitoring transfer progress
+The [TransferProgressCallback](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/connection/file/TransferProgressCallback.html) interface provides the ability to implement custom logic on update, completion, or failure scenarios (e.g., GUI updates) during file transfers.
+The default implementation is [LogProgressCallback](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/connection/file/LogProgressCallback.java)
+that logs transfer updates to the configured log via SLF4J.  It also serves as an example
+on how to implement your own TransferProgressCallback implementation.
+```java
+public class MyProgressCallback implements TransferProgressCallback {
+   @Override
+   public void onUpdate(long currentBytes, long totalBytes) { ... }
+
+   @Override
+   public void onFailure(final Throwable cause) { ... }
+
+   @Override
+   public void onComplete(long bytesTransferred) { ... }
+}
+
+// Upload
+DriveFile myDrivefile = myFolder.upload(new File("./MyFile.zip"), new MyProgressCallback());
+DriveFileUploadExecution uploadedExec = myFolder.uploadAsync(new File("./MyFile.zip"), new MyProgressCallback());
+
+// Download
+myFile.download(Path.of("./"), new MyProgressCallback());
+DriveFileDownloadExecution downloadExec = myFile.downloadAsync(Paths.get("./"), new MyProgressCallback());
+```
+
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
 
 <!-- ROADMAP -->
@@ -241,7 +281,7 @@ long downloadedBytes = downloadExec.get();
 - [ ] [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
 - [ ] [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)
 
-See the [open issues](https://github.com/andy-miles/onedrive-java-sdk/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/andy-miles/onedrive-java-sdk/issues) for a full list of proposed features and known issues.
 
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
 
@@ -249,7 +289,7 @@ See the [open issues](https://github.com/andy-miles/onedrive-java-sdk/issues) fo
 <!-- CONTRIBUTING -->
 ## Contributing
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also open an issue with the tag "enhancement".
 Don't forget to give the project a star! Thanks again!
 
 1. Fork the Project
@@ -263,7 +303,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the GPLv3 License. See `LICENSE` for more information.
+Distributed under the GPLv3 license. See [LICENSE](https://github.com/andy-miles/onedrive-java-sdk/blob/main/LICENSE) for more information.
 
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
 
