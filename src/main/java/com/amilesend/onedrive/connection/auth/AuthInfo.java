@@ -28,9 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -52,14 +49,20 @@ public class AuthInfo {
     private static final String STANDARD_SPACE = " ";
     private static final String URL_ENCODED_SPACE = "%20";
 
+    /** The auth token type. Default is {@code bearer}. */
     @Builder.Default
     private final String tokenType = "bearer";
+    /** The list of scopes, or permissions to access the Graph API. */
     @Builder.Default
     private final List<String> scopes = Collections.emptyList();
+    /** Time in milliseconds when the auth token expires. */
     private final long expiresIn;
+    /** Time in milliseconds when the auth token expires. */
     private final long extExpiresIn;
+    /** The current authorization token used to make API requests. */
     @NonNull
     private final String accessToken;
+    /** The current refresh token used to refresh access tokens. */
     @NonNull
     private final String refreshToken;
 
@@ -142,11 +145,17 @@ public class AuthInfo {
     @Getter
     @Setter
     private static class AuthInfoInternal {
+        /** The type of token. */
         private String tokenType;
+        /** The scopes associated with the authentication. */
         private String scope;
+        /** The expiration time in milliseconds. */
         private long expiresIn;
+        /** The expiration time in milliseconds. */
         private long extExpiresIn;
+        /** The current access token. */
         private String accessToken;
+        /** the current refresh token. */
         private String refreshToken;
     }
 }

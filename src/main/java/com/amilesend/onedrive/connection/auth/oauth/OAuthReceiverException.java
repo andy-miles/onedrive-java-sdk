@@ -19,10 +19,21 @@ package com.amilesend.onedrive.connection.auth.oauth;
 
 /** Defines the exception thrown from {@link OAuthReceiver}. */
 public class OAuthReceiverException extends Exception {
+    /**
+     * Creates a new {@code OAuthReceiverException}.
+     *
+     * @param msg the exception message
+     */
     public OAuthReceiverException(final String msg) {
         super(msg);
     }
 
+    /**
+     * Creates a new {@code OAuthReceiverException}.
+     *
+     * @param msg the exception message
+     * @param cause the cause of the exception
+     */
     public OAuthReceiverException(final String msg, final Throwable cause) {
         super(msg, cause);
     }

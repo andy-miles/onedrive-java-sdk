@@ -54,8 +54,10 @@ public class ThumbnailSetListParser implements GsonParser<List<ThumbnailSet>> {
         return gson.fromJson(reader, ThumbnailSetListResponseBody.class).getValue();
     }
 
+    /** Used to deserialize a response body that contains a list of thumbnail sets. */
     @Data
     public static class ThumbnailSetListResponseBody {
+        /** The list of thumbnail sets returned for a response body. */
         private List<ThumbnailSet> value;
     }
 }

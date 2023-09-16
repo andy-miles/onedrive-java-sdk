@@ -20,12 +20,18 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Describes if a given drive item is a file resource type.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/file">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class File {
+    /** The hashes of the binary file content. */
     private Hashes hashes;
+    /** The MIME type for the file content. */
     private String mimeType;
+    /** Indicates if the item is being processed to extract metadata. */
     private boolean processingMetadata;
 }

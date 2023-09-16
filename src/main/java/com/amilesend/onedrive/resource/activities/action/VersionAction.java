@@ -20,10 +20,14 @@ package com.amilesend.onedrive.resource.activities.action;
 import lombok.Data;
 
 /**
+ * Indicates that an activity created a new item version.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/versionaction">
  * API Documentation.</a>
+ * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
 @Data
 public class VersionAction {
+    /** The name of the new version. */
     private String newVersion;
 }

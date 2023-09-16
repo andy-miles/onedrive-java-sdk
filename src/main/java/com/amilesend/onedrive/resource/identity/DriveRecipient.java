@@ -20,12 +20,18 @@ package com.amilesend.onedrive.resource.identity;
 import lombok.Data;
 
 /**
+ * Describes a person, group, or other recipient that a item was shared to using a share action.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/driverecipient">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.activities.action.ShareAction
  */
 @Data
 public class DriveRecipient {
+    /** The recipient's email address. */
     private String email;
+    /** The alias of the recipient (where email address is unavailable. */
     private String alias;
+    /** The identifier for the recipient. */
     private String objectId;
 }

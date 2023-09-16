@@ -131,8 +131,10 @@ public class ItemActivityListParser implements GsonParser<List<ItemActivity>> {
         return gson.fromJson(reader, ItemActivityResponseBody.class).getValue();
     }
 
+    /** Used to deserialize a response body that contains a list of item activities. */
     @Data
     public static class ItemActivityResponseBody {
+        /** The list of item activities returned for a response body. */
         private List<ItemActivity> value;
     }
 }

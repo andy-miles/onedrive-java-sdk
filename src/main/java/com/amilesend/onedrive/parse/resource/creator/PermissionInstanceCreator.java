@@ -18,7 +18,6 @@
 package com.amilesend.onedrive.parse.resource.creator;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.resource.item.DriveItemVersion;
 import com.amilesend.onedrive.resource.item.type.Permission;
 import com.google.gson.InstanceCreator;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +25,15 @@ import lombok.RequiredArgsConstructor;
 import java.lang.reflect.Type;
 
 /**
- * A custom {@link com.google.gson.InstanceCreator} implementation that injects the
- * {@link com.amilesend.onedrive.connection.OneDriveConnection} to the resource type so that
- * method operations can be performed on the {@link Permission} resource.
+ * A custom {@link InstanceCreator} implementation that injects the {@link OneDriveConnection} to the
+ * resource type so that method operations can be performed on the {@link Permission} resource.
  */
 @RequiredArgsConstructor
 public class PermissionInstanceCreator implements InstanceCreator<Permission> {
+    /** The current client connection instance. */
     private final OneDriveConnection connection;
 
+    /** Creates a new {@code DriveItemVersionInstanceCreator} with the current client connection instance. */
     @Override
     public Permission createInstance(final Type type) {
         return new Permission(connection);

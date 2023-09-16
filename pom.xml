@@ -75,7 +75,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>[1.18,)</version>
+            <version>1.18.28</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -168,12 +168,38 @@
                 <version>2.16.0</version>
             </plugin>
             <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.18.20.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                        <version>1.18.28</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>delombok</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <addOutputDirectory>false</addOutputDirectory>
+                    <sourceDirectory>src/main/java</sourceDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.5.0</version>
                 <configuration>
                     <additionalJOption>-Xdoclint:-missing,-reference</additionalJOption>
                     <show>public</show>
+                    <sourcepath>target/generated-sources/delombok</sourcepath>
+<!--                    <outputDirectory>target/site/apidocs</outputDirectory>-->
                 </configuration>
                 <executions>
                     <execution>
@@ -183,12 +209,68 @@
                         <phase>site</phase>
                     </execution>
                     <execution>
-                        <id>attach-javadoc</id>
+                        <id>generate-javadoc</id>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>javadoc</goal>
                         </goals>
+                        <!-- Required to run the hacky annotation fix before bundling as a jar -->
+                        <phase>prepare-package</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <id>fix-javadoc-nonnull-site</id>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <phase>site</phase>
+                    </execution>
+                    <execution>
+                        <id>fix-javadoc-nonnull</id>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <!-- Required to run the hacky annotation fix before bundling as a jar -->
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
+                <!-- Hack to fix the duplicate lombok @NonNull annotations in the method parameters for the javadoc -->
+                <configuration>
+                    <basedir>${project.build.directory}</basedir>
+                    <includes>
+                        <include>**/com/amilesend/onedrive/**/*.html</include>
+                    </includes>
+                    <replacements>
+                        <!-- Remove duplicate @NonNull annotations for the first method parameter -->
+                        <replacement>
+                            <token>\(@NonNull\r\n</token>
+                            <value>(</value>
+                        </replacement>
+                        <!-- Related to above, fix the extra space -->
+                        <replacement>
+                            <token>\( @NonNull</token>
+                            <value>(@NonNull</value>
+                        </replacement>
+                        <!-- Related to above, fix the extra space for some first method parameters -->
+                        <replacement>
+                            <token>\( \&lt;</token>
+                            <value>(&lt;</value>
+                        </replacement>
+                        <!-- Remove duplicate @NonNull annotations for additional method parameters -->
+                        <replacement>
+                            <token>^ @NonNull\r\n</token>
+                            <value></value>
+                        </replacement>
+                    </replacements>
+                    <regexFlags>
+                        <regexFlag>MULTILINE</regexFlag>
+                    </regexFlags>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.mycila</groupId>
@@ -263,6 +345,27 @@
                                 </rule>
                             </rules>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Manually build the javadoc jar to include the format fixes -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>javadoc-jar</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/docs-assemble.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

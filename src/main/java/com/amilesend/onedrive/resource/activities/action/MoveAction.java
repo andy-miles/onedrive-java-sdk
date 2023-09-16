@@ -20,11 +20,16 @@ package com.amilesend.onedrive.resource.activities.action;
 import lombok.Data;
 
 /**
+ * Indicates that the activity moved an item.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/moveaction">
  * API Documentation.</a>
+ * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
 @Data
 public class MoveAction {
+    /** The name of the location the item was moved from. */
     private String from;
+    /** The name of the location the item was moved to. */
     private String to;
 }

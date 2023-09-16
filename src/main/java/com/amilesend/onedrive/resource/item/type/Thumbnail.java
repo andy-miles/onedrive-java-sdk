@@ -19,12 +19,20 @@ package com.amilesend.onedrive.resource.item.type;
 
 import lombok.Data;
 
-/** <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail">API Documentation.</a> */
+/**
+ * Describes a thumbnail for item with a bitmap representation.
+ * <p>
+ * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail">API Documentation.</a>
+ */
 @Data
 public class Thumbnail {
+    /** The image hight in pixels. */
     private int height;
+    /** The associated item identifier. */
     private String sourceItemId;
+    /** The URL used to fetch the thumbnail content. */
     private String url;
+    /** The image width in pixels. */
     private int width;
     // Content is ignored as it's stream based. TODO: Implement if there are use-cases to use it by consumers.
 }

@@ -46,7 +46,6 @@ import static java.net.HttpURLConnection.HTTP_OK;
  * HttpServer handler that takes the verifier token passed over from the OAuth provider and
  * stashes it where {@link OAuthReceiver#waitForCode} will find it.
  */
-@Getter
 public class OAuthReceiverCallback implements HttpHandler {
     private static final String LANDING_HTML = new StringBuilder("<html>")
             .append("<head><title>OAuth 2.0 Authentication Token Received</title></head>")
@@ -62,13 +61,24 @@ public class OAuthReceiverCallback implements HttpHandler {
     /** To block until receiving an authorization response or stop() is called. */
     private final Semaphore waitUnlessSignaled = new Semaphore(0 /* initially zero permit */);
 
-    @VisibleForTesting
+    /** The authorization code. */
+    @VisibleForTesting // The Setter
     @Setter(value = AccessLevel.PACKAGE)
+    @Getter
     private volatile String code;
-    @VisibleForTesting
+    /** The error code. */
+    @VisibleForTesting // The Setter
     @Setter(value = AccessLevel.PACKAGE)
+    @Getter
     private volatile String error;
 
+    /**
+     * Builds a new {@code OAuthReceiverCallback}
+     *
+     * @param callbackPath the path to listen for the redirect
+     * @param successLandingPageUrl optional URL for a custom successful landing page
+     * @param failureLandingPageUrl optional URL for a custom failure landing page
+     */
     @Builder
     public OAuthReceiverCallback(@NonNull final String callbackPath,
                                  final String successLandingPageUrl,
@@ -78,6 +88,12 @@ public class OAuthReceiverCallback implements HttpHandler {
         this.failureLandingPageUrl = failureLandingPageUrl;
     }
 
+    /**
+     * Handles the given request and sets the corresponding redirect status.
+     *
+     * @param httpExchange the exchange containing the request from the client
+     * @throws IOException if unable to retrieve request information from the exchange
+     */
     @Override
     public void handle(final HttpExchange httpExchange) throws IOException {
         if (!callbackPath.equals(httpExchange.getRequestURI().getPath())) {
@@ -85,7 +101,7 @@ public class OAuthReceiverCallback implements HttpHandler {
         }
 
         try {
-            final Map<String, String> params = this.queryToMap(httpExchange.getRequestURI().getQuery());
+            final Map<String, String> params = queryToMap(httpExchange.getRequestURI().getQuery());
             error = params.get("error");
             code = params.get("code");
 
@@ -122,6 +138,7 @@ public class OAuthReceiverCallback implements HttpHandler {
         return code;
     }
 
+    /** Releases the lock. */
     public void releaseLock() {
         waitUnlessSignaled.release();
     }
@@ -144,21 +161,17 @@ public class OAuthReceiverCallback implements HttpHandler {
                     }
 
                     return Pair.of(pair[0], pair[1]);
-
-
                 })
                 .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     private static void writeLandingHtml(final HttpExchange exchange, final Headers headers) throws IOException {
-        try (final OutputStream os = exchange.getResponseBody()) {
+        try (final OutputStream os = exchange.getResponseBody();
+             final OutputStreamWriter doc = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
             exchange.sendResponseHeaders(HTTP_OK, 0);
             headers.add("ContentType", "text/html");
-
-            try(final OutputStreamWriter doc = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
-                doc.write(LANDING_HTML);
-                doc.flush();
-            }
+            doc.write(LANDING_HTML);
+            doc.flush();
         }
     }
 }

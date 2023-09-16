@@ -67,13 +67,24 @@ public class OneDriveConnection {
     private static final String GZIP_ENCODING = "gzip";
 
     private final OkHttpClient httpClient;
+    /** The authorization manager used to manage auth tokens. */
     @Getter
     private final AuthManager authManager;
+    /** The configured GSON instance used for marshalling request and responses to/from JSON. */
     @Getter
     private final Gson gson;
+    /** The base URL for the Graph API. */
     @Getter
     private final String baseUrl;
 
+    /**
+     * Creates a new {@code OneDriveConnection} object.
+     *
+     * @param httpClient the configured HTTP client
+     * @param authManager the authorization manager used to manage auth and refresh tokens
+     * @param gsonFactory the factory used to vend configured GSON instances for request/reply serialization
+     * @param baseUrl the base URL to use for Graph API invocations
+     */
     OneDriveConnection(@NonNull final OkHttpClient httpClient,
                        @NonNull final AuthManager authManager,
                        @NonNull final GsonFactory gsonFactory,
@@ -85,7 +96,7 @@ public class OneDriveConnection {
     }
 
     /**
-     * If expired, refreshes the current authentication token.
+     * Refreshes the current authentication token if expired.
      *
      * @return the full authentication token
      */

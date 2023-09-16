@@ -20,12 +20,18 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Describes drive (client-side) properties of the local version of a drive item.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/filesysteminfo">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class FileSystemInfo {
+    /** The date and time the file was created on the client (in UTC). */
     private String createdDateTime;
+    /** The date and time the file was last accessed on the client (in UTC). */
     private String lastAccessedDateTime;
+    /** The date and time the file was last modified on the client (in UTC). */
     private String lastModifiedDateTime;
 }

@@ -31,9 +31,12 @@ import java.util.List;
  */
 @Data
 public class DriveItemPage {
+    /** The list of drive items for the current page. */
     private List<DriveItem> value = Collections.emptyList();
+    /** The URL for the next page. */
     @SerializedName("@odata.nextLink")
     private String nextLink;
+    /** The URL for the delta link. */
     @SerializedName("@odata.deltaLink")
     private String deltaLink;
 }

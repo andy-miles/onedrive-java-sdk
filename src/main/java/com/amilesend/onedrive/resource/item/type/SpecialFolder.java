@@ -22,13 +22,28 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
+ * Describes if the item is a special managed folder.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/specialfolder">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class SpecialFolder {
+    /**
+     * The special folder name. Valid values include:
+     * <ul>
+     *     <li>App Root (ID: {@literal approot})</li>
+     *     <li>Camera Roll (ID: {@literal cameraroll})</li>
+     *     <li>Desktop (ID: {@literal desktop}</li>
+     *     <li>Documents (ID: {@literal documents}</li>
+     *     <li>Music (ID: {@literal music}</li>
+     *     <li>Photos (ID: {@literal photos}</li>
+     * </ul>
+     */
     private String name;
 
+    /** Describes the special folder types. */
     @RequiredArgsConstructor
     @Getter
     public enum Type {

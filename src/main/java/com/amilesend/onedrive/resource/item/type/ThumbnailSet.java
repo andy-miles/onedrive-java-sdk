@@ -20,14 +20,23 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * A collection of thumbnails associated with a drive item or identity set.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnailset">
  * API Documentation.</a>
+ * @see com.amilesend.onedrive.resource.item.DriveItem
+ * @see com.amilesend.onedrive.resource.identity.Identity
  */
 @Data
 public class ThumbnailSet {
+    /** The item identifier. */
     private String id;
+    /** A 1920x1920 scaled thumbnail. */
     private Thumbnail large;
+    /** A 176x176 scaled thumbnail. */
     private Thumbnail medium;
+    /** A 48x48 scopped thumbnail. */
     private Thumbnail small;
+    /** Source used to generate the other thumbnail sizes. */
     private Thumbnail source;
 }

@@ -20,10 +20,17 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Indicates that the item is in response to a search query.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/searchresult">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class SearchResult {
+    /**
+     * The callback URL to record telemetry information. Note: Should be used as a GET if the user interacts with
+     * the item.
+     */
     private String onClickTelemetryUrl;
 }

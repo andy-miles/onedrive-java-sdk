@@ -32,11 +32,24 @@ import java.util.StringJoiner;
  * @see OAuthReceiver
  */
 public class OneDriveOAuthReceiver extends OAuthReceiver {
+    /** The registered application client identifier. */
     @Getter
     private final String clientId;
+    /** The list of scopes (permissions) for accessing the Graph API. */
     @Getter
     private final List<String> scopes;
 
+    /**
+     * Builes a new {@code OneDriveOAuthReceiver}.
+     *
+     * @param host host of the receiver (Default: {@code localhost})
+     * @param port optional port of the receiver to listen on
+     * @param callbackPath the path to listen for the redirect (Default: {@code /Callback})
+     * @param clientId the registered application client identifier
+     * @param scopes the list of scopes (permissions) for accessing the Graph API
+     * @param successLandingPageUrl optional URL for a custom successful landing page
+     * @param failureLandingPageUrl optional URL for a custom failure landing page
+     */
     @Builder
     private OneDriveOAuthReceiver(
             final String host,

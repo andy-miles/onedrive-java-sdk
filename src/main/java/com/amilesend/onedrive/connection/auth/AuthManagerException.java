@@ -21,10 +21,21 @@ import com.amilesend.onedrive.connection.OneDriveConnectionException;
 
 /** Defines the exception thrown from {@link AuthManager}. */
 public class AuthManagerException extends OneDriveConnectionException {
+    /**
+     * Creates a new {@code AuthManagerException}.
+     *
+     * @param msg the exception message
+     */
     public AuthManagerException(final String msg) {
         super(msg);
     }
 
+    /**
+     * Creates a new {@code OAuthReceiverException}.
+     *
+     * @param msg the exception message
+     * @param cause the cause of the exception
+     */
     public AuthManagerException(final String msg, final Throwable cause) {
         super(msg, cause);
     }

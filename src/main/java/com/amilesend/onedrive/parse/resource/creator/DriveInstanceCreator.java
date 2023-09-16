@@ -25,14 +25,15 @@ import lombok.RequiredArgsConstructor;
 import java.lang.reflect.Type;
 
 /**
- * A custom {@link com.google.gson.InstanceCreator} implementation that injects the
- * {@link com.amilesend.onedrive.connection.OneDriveConnection} to the resource type so that
- * method operations can be performed on the {@link Drive} resource.
+ * A custom {@link InstanceCreator} implementation that injects the {@link OneDriveConnection} to the
+ * resource type so that method operations can be performed on the {@link Drive} resource.
  */
 @RequiredArgsConstructor
 public class DriveInstanceCreator implements InstanceCreator<Drive> {
+    /** The current client connection instance. */
     private final OneDriveConnection connection;
 
+    /** Creates a new {@code DriveInstanceCreator} with the current client connection instance. */
     @Override
     public Drive createInstance(final Type type) {
         return new Drive(connection);

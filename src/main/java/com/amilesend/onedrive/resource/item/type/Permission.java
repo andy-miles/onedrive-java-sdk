@@ -28,20 +28,40 @@ import java.util.List;
 import static com.amilesend.onedrive.resource.item.DriveItem.DRIVE_ITEM_BASE_URL_PATH;
 
 /**
+ * Describes sharing permissions granted for a drive item.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/permission">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class Permission {
+    /** The permission identifier. */
     private String id;
+    /** Describes the users and applications for this permission. */
     private IdentitySet grantedTo;
+    /** Details of users to whom permission was granted for links. */
     private List<IdentitySet> grantedToIdentities;
+    /** Sharing invitation for this permission. */
     private SharingInvitation invitation;
+    /** Reference to the parent permission (if applicable). */
     private ItemReference inheritedFrom;
+    /** Link type permission details. */
     private SharingLink link;
+    /**
+     * The type of permission. Valid values include:
+     * <ul>
+     *     <li>{@literal read}</li>
+     *     <li>{@literal write}</li>
+     *     <li>{@literal owner} - For SharePoint and Business</li>
+     *     <li>{@literal member} - For SharePoint and Business</li>
+     * </ul>
+     */
     private List<String> roles;
+    /** The token that can be used to access the shared item. */
     private String shareId;
 
+    /** The associated drive item identifier that this permission applies to. */
     @GsonExclude
     private String driveItemId;
 

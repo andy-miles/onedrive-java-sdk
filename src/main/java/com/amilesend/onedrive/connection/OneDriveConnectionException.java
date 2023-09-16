@@ -20,9 +20,21 @@ package com.amilesend.onedrive.connection;
 
 /** Defines the exception thrown from {@link OneDriveConnection}. */
 public class OneDriveConnectionException extends RuntimeException {
+    /**
+     * Creates a new {@code OneDriveConnectionException}.
+     *
+     * @param msg the exception message
+     */
     public OneDriveConnectionException(final String msg) {
         super(msg);
     }
+
+    /**
+     * Creates a new {@code OneDriveConnectionException}.
+     *
+     * @param msg the exception message
+     * @param cause the cause of the exception
+     */
     public OneDriveConnectionException(final String msg, final Throwable cause) {
         super(msg, cause);
     }

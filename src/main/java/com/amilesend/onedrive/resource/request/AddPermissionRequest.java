@@ -23,14 +23,26 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * Represents a request to share the item to one or more recipients.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_invite">
  * API Documentation</a>.
  */
 @Data
 public class AddPermissionRequest {
+    /** The list of recipients. */
     private List<DriveRecipient> recipients;
+    /** A message to include in the invite. */
     private String message;
+    /** Indicates if accessing the shared item requires sign-in. */
     private boolean requireSignIn;
+    /** Indicates if an invitation should be sent to the recipient, or just grant the permission. */
     private boolean sendInvitation;
+    /** The allowed roles granted to the recipients. Valid values include:
+     * <ul>
+     *     <li>{@literal read}</li>
+     *     <li>{@literal write}</li>
+     * </ul>
+     */
     private List<String> roles;
 }

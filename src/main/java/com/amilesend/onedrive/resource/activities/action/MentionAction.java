@@ -23,10 +23,14 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * Indicates that an activity mentioned people.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/mentionaction">
  * API Documentation.</a>
+ * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
 @Data
 public class MentionAction {
+    /** The list of mentioned users. */
     private List<IdentitySet> mentionees;
 }

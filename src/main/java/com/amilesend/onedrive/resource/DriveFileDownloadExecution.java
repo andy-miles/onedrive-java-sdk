@@ -17,10 +17,14 @@
  */
 package com.amilesend.onedrive.resource;
 
+import com.amilesend.onedrive.resource.item.DriveItem;
 import lombok.RequiredArgsConstructor;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Wraps a {@link CompletableFuture} specific to a {@link DriveItem} type for async download operations.
+ */
 @RequiredArgsConstructor
 public class DriveFileDownloadExecution {
     private final CompletableFuture<Long> delegate;

@@ -22,7 +22,6 @@ import com.amilesend.onedrive.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.resource.item.DriveItem;
 import com.amilesend.onedrive.resource.item.type.Folder;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
-import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** A wrapper around a {@link DriveItem} that represents a folder. */
-@EqualsAndHashCode
 public class DriveFolder extends DriveItemType {
 
     /**

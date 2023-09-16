@@ -20,13 +20,24 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Describes the published status of a drive item or version.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/publicationfacet">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
+ * @see com.amilesend.onedrive.resource.item.DriveItemVersion
  */
 @Data
 public class PublicationFacet {
     /* Valid values: published | checkout */
+    /**
+     * The publication state. Value values include:
+     * <ul>
+     *     <li>{@literal published}</li>
+     *     <li>{@literal checkout}</li>
+     * </ul>
+     */
     private String level;
+    /** The version identifier. */
     private String versionId;
-
 }

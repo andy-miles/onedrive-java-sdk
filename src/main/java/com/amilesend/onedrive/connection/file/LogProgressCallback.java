@@ -90,10 +90,17 @@ public class LogProgressCallback implements TransferProgressCallback {
                 .log("{} complete with {} bytes transferred", transferType.getLogPrefix(), bytesTransferred);
     }
 
+    /** Describes that transfer type used for logging progress. */
     @RequiredArgsConstructor
     public enum TransferType {
-        UPLOAD("Upload"), DOWNLOAD("Download"), UNDEFINED("Transfer");
+        /** Indicates that the transfer is for a file upload. */
+        UPLOAD("Upload"),
+        /** Indicates that the transfer is for a file download.  */
+        DOWNLOAD("Download"),
+        /** Used when the type is not defined and defaults to a generic "Transfer".*/
+        UNDEFINED("Transfer");
 
+        /** The type formatted for log records. */
         @Getter
         private final String logPrefix;
     }

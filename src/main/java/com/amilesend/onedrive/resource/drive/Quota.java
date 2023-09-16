@@ -20,15 +20,29 @@ package com.amilesend.onedrive.resource.drive;
 import lombok.Data;
 
 /**
+ * Describes details about storage space for a drive.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/quota"> API Documentation.</a>
  */
 @Data
 public class Quota {
+    /** Total storage space in bytes. */
     private long total;
+    /** Used storage space in bytes. */
     private long used;
+    /** Remaining storage space in bytes. */
     private long remaining;
+    /** Storage space used by deleted items (recycle bin) in bytes. */
     private long deleted;
-    /* Valid values: normal | nearing | critical | exceeded */
+    /** The storage space state.  Valid values include:
+     * <ul>
+     *     <li>{@literal normal}</li>
+     *     <li>{@literal nearing}</li>
+     *     <li>{@literal critical}</li>
+     *     <li>{@literal exceeded}</li>
+     * </ul>
+     */
     private String state;
+    /** The total number of files (not applicable to personal OneDrive accounts). */
     private long fileCount;
 }

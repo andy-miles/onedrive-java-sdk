@@ -23,10 +23,14 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * Indicates that an activity shared an item.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/shareaction">
  * API Documentation.</a>
+ * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
 @Data
 public class ShareAction {
+    /** The list of shared users tha the item was shared with. */
     private List<IdentitySet> recipients;
 }

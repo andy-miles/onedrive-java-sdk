@@ -23,12 +23,18 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * Provides comment activity information for an item.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/commentaction">
  * API Documentation.</a>
+ * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
 @Data
 public class CommentAction {
+    /** Indicates if the activity was a reply to an existing thread. */
     private boolean isReply;
+    /** The user whom started the thread. */
     private IdentitySet parentAuthor;
+    /** The list of users whom participated in the thread. */
     private List<IdentitySet> participants;
 }

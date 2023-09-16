@@ -33,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Defines the base class that wraps a {@link com.amilesend.onedrive.resource.item.DriveItem} for direct access by
@@ -260,5 +261,24 @@ public abstract class DriveItemType {
      */
     public void delete() {
         delegate.delete();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        final DriveItemType that = (DriveItemType) obj;
+        return Objects.equals(getDelegate(), that.getDelegate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDelegate());
     }
 }

@@ -47,14 +47,26 @@ public class OAuthReceiver implements AutoCloseable {
     @VisibleForTesting
     @Getter(value = AccessLevel.PACKAGE)
     private final OAuthReceiverCallback callback;
+    /** The host of the receiver. */
     @Getter
     private final String host;
+    /** The path to listen for the redirect. */
     @Getter
     private final String callbackPath;
+    /** The port of the receiver to listen on. */
     @Getter
     private final int port;
     private HttpServer server;
 
+    /**
+     * Builds a new {@code OAuthReceiver}.
+     *
+     * @param host host of the receiver (Default: {@literal localhost})
+     * @param port optional port of the receiver to listen on
+     * @param callbackPath the path to listen for the redirect (Default: {@literal /Callback})
+     * @param successLandingPageUrl optional URL for a custom successful landing page
+     * @param failureLandingPageUrl optional URL for a custom failure landing page
+     */
     @Builder(builderMethodName = "defaultOAuthReceiverBuilder")
     protected OAuthReceiver(
             final String host,

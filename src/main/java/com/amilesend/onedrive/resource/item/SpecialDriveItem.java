@@ -29,23 +29,27 @@ import org.apache.commons.lang3.Validate;
 import java.util.List;
 import java.util.Objects;
 
-import static com.amilesend.onedrive.resource.drive.Drive.DRIVE_BASE_URL_PATH;
+import static com.amilesend.onedrive.resource.drive.Drive.USER_DRIVE_BASE_URL_PATH;
 
 /**
- * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/drive_get_specialfolder">
+ * Represent a special drive folder.
+ * <p>
+ * a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/drive_get_specialfolder">
  * API Documentation</a>.
  * <p> Note: Documentation mentions to reference special folder by name, but seems to be by id instead (e.g., "approot"
  * instead of "App+Root" in the path).</p>
+ * @see DriveItem
  */
 @ToString(callSuper = true)
 public class SpecialDriveItem extends DriveItem {
+    /** The special folder type. */
     @GsonExclude
     @Getter
     @Setter
     private SpecialFolder.Type specialFolderType;
 
     /**
-     * Creates a new {@code Drive}
+     * Creates a new {@code Drive}.
      *
      * @param connection the connection
      */
@@ -61,7 +65,7 @@ public class SpecialDriveItem extends DriveItem {
         return connection.execute(
                 connection.newSignedForApiRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
-                                .append(DRIVE_BASE_URL_PATH)
+                                .append(USER_DRIVE_BASE_URL_PATH)
                                 .append("special/")
                                 .append(specialFolderType.getId())
                                 .append("/children")

@@ -20,11 +20,16 @@ package com.amilesend.onedrive.resource.activities.action;
 import lombok.Data;
 
 /**
+ * Indicates that an activity renamed an item.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/renameaction">
  * API Documentation.</a>
+ * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
 @Data
 public class RenameAction {
+    /** The old name of the item. */
     private String oldName;
+    /** The new name of the item. */
     private String newName;
 }

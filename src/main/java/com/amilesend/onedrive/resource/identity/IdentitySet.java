@@ -20,13 +20,20 @@ package com.amilesend.onedrive.resource.identity;
 import lombok.Data;
 
 /**
+ * A set of identities associated with events for an item.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/identityset">
  * API Documentation.</a>
+ * @see Identity
  */
 @Data
 public class IdentitySet {
+    /** The application associated with the action. */
     private Identity application;
+    /** The drive associated with the action. */
     private Identity device;
+    /** The group associated with the action. */
     private Identity group;
+    /** The user associated with the action. */
     private Identity user;
 }

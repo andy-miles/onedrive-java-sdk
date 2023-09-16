@@ -33,6 +33,7 @@ import java.io.InputStreamReader;
  */
 @RequiredArgsConstructor
 public class SpecialDriveItemParser implements GsonParser<SpecialDriveItem> {
+    /** The special folder type associated with the special drive item to parse. */
     private final SpecialFolder.Type specialFolderType;
 
     @Override

@@ -20,15 +20,45 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Describes the recommended view of a folder.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/folderview">
  * API Documentation</a>.
+ * @see Folder
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class FolderView {
-    /* Valid value: default | name | type | size | takenOrCreatedDateTime | lastModifiedDateTime | sequence */
+    /**
+     * How the contents should be sorted. Valid values include:
+     * <ul>
+     *     <li>{@literal default}</li>
+     *     <li>{@literal name}</li>
+     *     <li>{@literal type}</li>
+     *     <li>{@literal size}</li>
+     *     <li>{@literal takenOrCreatedDateTime}</li>
+     *     <li>{@literal lastModifiedDateTime}</li>
+     *     <li>{@literal sequence}</li>
+     * </ul>
+     */
     private String sortBy;
     /* Valid values: ascending | descending */
+    /**
+     * Describes the associated sort order. If undefined, {@literal ascending} is assumed. Value values include:
+     * <ul>
+     *     <li>{@literal ascending}</li>
+     *     <li>{@literal descending}</li>
+     * </ul>
+     */
     private String sortOrder;
-    /* Valid values: default | icons | details | thumbnails */
+    /**
+     * Describes the type of view that should be used for the folder. Valid values include:
+     * <ul>
+     *     <li>{@literal default }</li>
+     *     <li>{@literal icons}</li>
+     *     <li>{@literal details}</li>
+     *     <li>{@literal thumbnails}</li>
+     * </ul>
+     */
     private String viewType;
 }

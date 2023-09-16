@@ -20,12 +20,16 @@ package com.amilesend.onedrive.resource.activities.action;
 import lombok.Data;
 
 /**
+ * Indicates that the activity deleted an item.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/deleteaction">
  * API Documentation.</a>
+ * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
 @Data
 public class DeleteAction {
+    /** The name of the deleted item. */
     private String name;
-    /* Valid values: File | Folder */
+    /** The type of item that was deleted. Valid values: {@code File} or {@code Folder}. */
     private String objectType;
 }

@@ -42,6 +42,12 @@ public class AsyncJob {
     private final String monitorUrl;
     private final OneDriveConnection connection;
 
+    /**
+     * Creates a new {@code AsyncJob}.
+     *
+     * @param monitorUrl the URL used to monitor the asynchronous job status
+     * @param connection the API connection used to query the job status
+     */
     public AsyncJob(final String monitorUrl, @NonNull OneDriveConnection connection) {
         Validate.notBlank(monitorUrl, "monitorUrl must not be blank");
 

@@ -20,11 +20,16 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Describes the image attributes for a drive item file.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/image">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class Image {
+    /** The image height in pixels. */
     private int height;
+    /** The image width in pixels. */
     private int width;
 }

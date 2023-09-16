@@ -70,8 +70,10 @@ public class DriveListParser implements GsonParser<List<Drive>> {
         return gson.fromJson(reader, DriveListResponseBody.class).getValue();
     }
 
+    /** Used to deserialize a response body that contains a list of drives. */
     @Data
     public static class DriveListResponseBody {
+        /** The list of drives returned for a response body. */
         private List<Drive> value;
     }
 }

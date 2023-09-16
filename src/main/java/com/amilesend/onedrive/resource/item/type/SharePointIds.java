@@ -20,16 +20,27 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * SharePoint resource identifiers for SharePoint and Business account items. This is not used for personal accounts.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/sharepointids">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.drive.Drive
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class SharePointIds {
+    /** Item list identifier. */
     private String listId;
+    /** Item identifier for an element contained within the list (as an integer). */
     private String listItemId;
+    /** The unique identifier for an element contained within the list. */
     private String listItemUniqueId;
+    /** The site collection identifier. */
     private String siteId;
+    /** The SharePointURL for the site that contains the item. */
     private String siteUrl;
+    /** The tenant identiifer. */
     private String tenantId;
+    /** The item's site identifier for SharePoint web. */
     private String webId;
 }

@@ -64,16 +64,39 @@ public class OkHttpClientBuilder {
     private Duration readTimeout = Duration.ofMillis(10000L);
     private Duration writeTimeout = Duration.ofMillis(10000L);
 
+    /**
+     * Sets the SSL/TLS trust manager to use with the HTTP client.
+     *
+     * @param trustManager the trust manager
+     * @return the builder instance
+     * @see X509TrustManager
+     */
     public OkHttpClientBuilder trustManager(final X509TrustManager trustManager) {
         this.trustManager = trustManager;
         return this;
     }
 
+    /**
+     * Sets the hostname verifier to use with the HTTP client.
+     *
+     * @param hostnameVerifier the trust manager
+     * @return the builder instance
+     * @see HostnameVerifier
+     */
     public OkHttpClientBuilder hostnameVerifier(final HostnameVerifier hostnameVerifier) {
         this.hostnameVerifier = hostnameVerifier;
         return this;
     }
 
+    /**
+     * Sets the proxy and associated username plus password to use with the HTTP client. Note: if {@code username} and
+     * {@code password} is undefined, then no credential-based authentication will be configured.
+     *
+     * @param proxy the proxy settings
+     * @param username the username
+     * @param password the password
+     * @return the builder instance
+     */
     public OkHttpClientBuilder proxy(final Proxy proxy, final String username, final String password) {
         this.proxy = proxy;
         this.proxyUsername = username;
@@ -81,37 +104,81 @@ public class OkHttpClientBuilder {
         return this;
     }
 
+    /**
+     * Sets the proxy and associated authenticator to use with the HTTP client.
+     *
+     * @param proxy the proxy settings
+     * @param proxyAuthenticator the proxy authenticator
+     * @return the builder instance
+     */
     public OkHttpClientBuilder proxy(final Proxy proxy, final Authenticator proxyAuthenticator) {
         this.proxy = proxy;
         this.proxyAuthenticator = proxyAuthenticator;
         return this;
     }
 
+    /**
+     * Sets the connection timeout for the HTTP client.
+     *
+     * @param connectTimeout the connection timeout
+     * @return the builder instance
+     */
     public OkHttpClientBuilder connectTimeout(final Duration connectTimeout) {
         this.connectTimeout = connectTimeout;
         return this;
     }
 
+    /**
+     * Sets the read timeout for the HTTP client.
+     *
+     * @param readTimeout the read timeout
+     * @return the builder instance
+     */
     public OkHttpClientBuilder readTimeout(final Duration readTimeout) {
         this.readTimeout = readTimeout;
         return this;
     }
 
+    /**
+     * Sets the write timeout for the HTTP client.
+     *
+     * @param writeTimeout the write timeout.
+     * @return the builder instance
+     */
     public OkHttpClientBuilder writeTimeout(final Duration writeTimeout) {
         this.writeTimeout = writeTimeout;
         return this;
     }
 
+    /**
+     * Sets the flag to allow for automatic URL redirects when responses return 300-based HTTP responses.
+     *
+     * @param isRedirectsAllowed If {@code true}, then the client will automatically invoke the redirected URL;
+     *                           else, {@code false}
+     * @return the builder instance
+     */
     public OkHttpClientBuilder isRedirectsAllowed(final boolean isRedirectsAllowed) {
         this.isRedirectsAllowed = isRedirectsAllowed;
         return this;
     }
 
+    /**
+     * Sets the flag to allow for non-SSL/TLS based requests used for testing. Note: Should not be set for normal
+     * use with real calls to the Graph API.
+     *
+     * @param isForTest If {@code true}, then the client will allow HTTP-based invocations; else, {@code false}.
+     * @return the builder instance
+     */
     public OkHttpClientBuilder isForTest(final boolean isForTest) {
         this.isForTest = isForTest;
         return this;
     }
 
+    /**
+     * Builds a new {@code OkHttpClient} instance.
+     *
+     * @return the configured HTTP client
+     */
     public OkHttpClient build() {
         return configureProxy(
                 configureSsl(new OkHttpClient.Builder()

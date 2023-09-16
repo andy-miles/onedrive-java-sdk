@@ -98,6 +98,18 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
     @VisibleForTesting
     private OneDrive onedrive;
 
+    /**
+     * Builds a new {@code OneDriveFactoryStateManager}.
+     *
+     * @param httpClient the http client
+     * @param receiverPort the port for the OAUTH redirect receiver to listen on
+     * @param redirectUrl the redirect URL
+     * @param callbackPath the redirect path
+     * @param scopes the list of scopes (permissions) for accessing the Graph API
+     * @param stateGson the JSON serializer configured for persisting auth state
+     * @param credentialConfig the application client credential configuration
+     * @param stateFile the optional persisted auth state
+     */
     @Builder
     private OneDriveFactoryStateManager(final OkHttpClient httpClient,
                                         final Integer receiverPort,

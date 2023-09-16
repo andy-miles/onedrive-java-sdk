@@ -80,7 +80,9 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class DriveItemVersionListParser implements GsonParser<List<DriveItemVersion>> {
+    /** The drive item identifier associated with the version to parse. */
     private final String driveItemId;
+    /** The drive item name associated with the version to parse. */
     private final String name;
 
     @Override
@@ -99,8 +101,10 @@ public class DriveItemVersionListParser implements GsonParser<List<DriveItemVers
                 .collect(Collectors.toList());
     }
 
+    /** Used to deserialize a response body that contains a list of drive item versions. */
     @Data
     public static class DriveItemVersionListResponseBody {
+        /** The list of drive item versions returned for a response body. */
         private List<DriveItemVersion> value;
     }
 }

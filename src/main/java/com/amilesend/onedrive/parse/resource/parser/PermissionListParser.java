@@ -79,6 +79,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class PermissionListParser implements GsonParser<List<Permission>> {
+    /** The drive item identifier associated with the list of permissions to parse. */
     private final String driveItemId;
 
     public List<Permission> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
@@ -95,8 +96,10 @@ public class PermissionListParser implements GsonParser<List<Permission>> {
                 .collect(Collectors.toList());
     }
 
+    /** Used to deserialize a response body that contains a list of permissions. */
     @Data
     public static class PermissionsListResponseBody {
+        /** The list of permissions returned for a response body. */
         private List<Permission> value;
     }
 }

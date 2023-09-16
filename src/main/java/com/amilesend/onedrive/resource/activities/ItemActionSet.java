@@ -24,30 +24,44 @@ import com.amilesend.onedrive.resource.activities.action.MoveAction;
 import com.amilesend.onedrive.resource.activities.action.RenameAction;
 import com.amilesend.onedrive.resource.activities.action.ShareAction;
 import com.amilesend.onedrive.resource.activities.action.VersionAction;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Objects;
 
 import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals;
 
 /**
+ * Describes actions that compose an activity on an item.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/itemactionset">
  * API Documentation.</a>
+ * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
-@Data
+@Getter
+@Setter
+@ToString
 public class ItemActionSet {
+    /** The comment that was added to the item. */
     private CommentAction comment;
-    /** CreateAction is either an empty object or null. */
+    /** An item was created. {@code create} is either an empty object or {@code null}. */
     private Object create;
+    /** An item was deleted. */
     private DeleteAction delete;
-    /** EditAction is either an empty object or null. */
+    /** An item was edited.  {@code edit} is either an empty object or {@code null}. */
     private Object edit;
+    /** A user was mentioned in the item. */
     private MentionAction mention;
+    /** The item was moved. */
     private MoveAction move;
+    /** The item was renamed. */
     private RenameAction rename;
-    /** RestoreAction is either an empty object or null. */
+    /** The item was restored. {@code restore} is either an empty object or {@code null}. */
     private Object restore;
+    /** The item was shared. */
     private ShareAction share;
+    /** The item was versioned. */
     private VersionAction version;
 
     @Override

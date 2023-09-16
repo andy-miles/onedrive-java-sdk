@@ -21,14 +21,27 @@ import com.amilesend.onedrive.resource.identity.IdentitySet;
 import lombok.Data;
 
 /**
+ * Indicates that a drive item has been shared with others.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/shared">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class Shared {
+    /** The owner of the drive item. */
     private IdentitySet owner;
-    /* Valid values: anonymous | organization | users */
+    /**
+     * The scope of how the item is shared. Valid values include:
+     * <ul>
+     *     <li>{@literal anonymous}</li>
+     *     <li>{@literal organization}</li>
+     *     <li>{@literal users}</li>
+     * </ul>
+     */
     private String scope;
+    /** Who shared the drive item. */
     private IdentitySet sharedBy;
+    /** When the drive item was shared (in UTC). */
     private String sharedDateTime;
 }

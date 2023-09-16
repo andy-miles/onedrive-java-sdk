@@ -77,18 +77,19 @@ import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 
 /**
+ * Describes a resource stored in a drive.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/driveitem">
  * API Documentation</a>.
- *
+ */
+/*
  * TODO:
- * <ol>
- * <li>Implement getPreviewItem() if there's a use-case for it
- * (https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview).</li>
- * <li>Implement support for upload sessions if there's a use-case for it
- * (https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession)</li>
- * <li>Implement support for URL based uploads if there's a use-case for it
- * (https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url)</li>
- * </ol>
+ *  1. Implement getPreviewItem() if there's a use-case for it
+ *     (https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview).
+ *  2. Implement support for upload sessions if there's a use-case for it
+ *     (https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession)
+ *  3. Implement support for URL based uploads if there's a use-case for it
+ *     (https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url)
  */
 @Getter
 @Setter
@@ -99,37 +100,65 @@ public class DriveItem extends BaseItem {
     private static final DriveItemParser DRIVE_ITEM_PARSER = new DriveItemParser();
     private static final String CONTENT_URL_SUFFIX = "/content";
 
+    /** The audio file attributes. */
     private Audio audio;
+    /** An eTag for the content of the item. */
     private String cTag;
+    /** Indicates if an item was deleted. */
     private Deleted deleted;
+    /** Indicates if an item is a file. */
     private File file;
+    /** Describes drive (client-side) properties of the local version of a drive item. */
     private FileSystemInfo fileSystemInfo;
+    /** Describes if a given drive item is a folder resource type. */
     private Folder folder;
+    /** The image attributes for a file. */
     private Image image;
+    /** The geographic coordinates and elevation of a file. */
     private GeoCoordinates location;
-    /* An empty object if defined; else is null */
+    /** If defined, malware was detected in the file. */
     private Object malware;
+    /** Indicates that a drive item is the top level item in a collection of items. */
     @SerializedName("package")
     private Package _package;
+    /** The photo attributes for a drive item file. */
     private Photo photo;
+    /** The published status of a drive item or version. */
     private PublicationFacet publication;
+    /** Indicates that a drive item references one that exists in another drive. */
     private RemoteItem remoteItem;
     /* An empty object if defined; else is null */
+    /** If defined, indicates that the item is the top-most folder in the drive. */
     private Object root;
+    /** Indicates that the item is in response to a search query. */
     private SearchResult searchResult;
+    /** Indicates that a drive item has been shared with others. */
     private Shared shared;
+    /** SharePoint resource identifiers for SharePoint and Business account items. */
     private SharePointIds sharepointIds;
+    /** The size of the item in bytes. */
     private long size;
+    /** Describes if the item is a special managed folder. */
     private SpecialFolder specialFolder;
+    /** The video file attributes. */
     private Video video;
 
     // Instance Annotations
-    /* Valid values:  fail | replace | rename */
+    /**
+     * Describes how to handle conflicts upon copy/move operations. Valid values include:
+     * <ul>
+     *     <li>{@literal fail}</li>
+     *     <li>{@literal replace}</li>
+     *     <li>{@literal rename}</li>
+     * </ul>
+     */
     @SerializedName("@microsoft.graph.conflictBehavior")
     private String conflictBehavior;
+    /** The URL that can be used to download the file's content. */
     @SerializedName("@microsoft.graph.downloadUrl")
     @GsonSerializeExclude
     private String downloadUrl;
+    /** The source URL for remote uploading of file contents. Currently not tested nor supported. */
     @GsonSerializeExclude
     @SerializedName("@microsoft.graph.sourceUrl")
     private String sourceUrl;

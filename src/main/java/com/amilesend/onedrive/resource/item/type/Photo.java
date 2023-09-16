@@ -20,17 +20,28 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Describes the photo attributes for a drive item file.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/photo">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class Photo {
+    /** The date and time the photo was taken. */
     private String takenDateTime;
+    /** The camera manufacturer. */
     private String cameraMake;
+    /** The camera model. */
     private String cameraModel;
+    /** The F-stop value from the camera. */
     private double fNumber;
+    /** The denominator for the exposure time fraction from the camera. */
     private double exposureDenominator;
+    /** The numerator for the exposure time fraction from the camera. */
     private double exposureNumerator;
+    /** The focal length from the camera. */
     private double focalLength;
+    /** The ISO value from the camera. */
     private int iso;
 }

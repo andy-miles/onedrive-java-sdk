@@ -21,10 +21,12 @@ package com.amilesend.onedrive.connection;
  * Defines the exception thrown from {@link OneDriveConnection} that is specific to an issue with parsing a response.
  */
 public class ResponseParseException extends ResponseException {
-    public ResponseParseException(final String msg) {
-        super(msg);
-    }
-
+    /**
+     * Creates a new {@code ResponseParseException}.
+     *
+     * @param msg the exception message
+     * @param cause the cause of the exception
+     */
     public ResponseParseException(final String msg, final Throwable cause) {
         super(msg, cause);
     }

@@ -34,8 +34,11 @@ import java.nio.file.Path;
 import static com.amilesend.onedrive.resource.item.DriveItem.DRIVE_ITEM_BASE_URL_PATH;
 
 /**
+ * Represents a specific version of a drive item.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/driveitemversion">
  * API Documentation.</a>
+ * @see DriveItem
  */
 @Data
 public class DriveItemVersion {
@@ -46,16 +49,25 @@ public class DriveItemVersion {
     private static final String CONTENT_URL_SUFFIX = "/content";
     private static final String RESTORE_URL_SUFFIX = "/restore";
 
+    /** The version identifier. */
     private String id;
+    /** The identity of whom last modified the version. */
     private IdentitySet lastModifiedBy;
+    /** The date and time of when the version was last modified. */
     private String lastModifiedDateTime;
+    /** Describes the published status of the version. */
     private PublicationFacet publication;
+    /** The size in bytes of the version. */
     private long size;
-    /** Used to structure the name of the download. */
+
+    /** The name of the item associated with the version. */
+    // Used to structure the name of the download.
     @GsonExclude
     private String name;
+    /** The associated item identifier for the version. */
     @GsonExclude
     private String driveItemId;
+
     @GsonExclude
     @EqualsAndHashCode.Exclude
     private final OneDriveConnection connection;

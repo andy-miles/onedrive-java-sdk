@@ -20,10 +20,17 @@ package com.amilesend.onedrive.resource.identity;
 import com.amilesend.onedrive.resource.item.type.ThumbnailSet;
 import lombok.Data;
 
-/** <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/identity">API Documentation.</a> */
+/**
+ * Describes a user, drive, or application that can take action on a resource.
+ * <p>
+ * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/identity">API Documentation.</a>
+ */
 @Data
 public class Identity {
+    /** The display name of the identity. */
     private String displayName;
+    /** The unique identifier for the identity. */
     private String id;
+    /** Thumbnails associated with the identity. */
     private ThumbnailSet thumbnails;
 }

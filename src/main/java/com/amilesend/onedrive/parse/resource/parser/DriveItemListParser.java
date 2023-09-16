@@ -48,12 +48,13 @@ import java.util.List;
 public class DriveItemListParser implements GsonParser<List<DriveItem>> {
     @Override
     public List<DriveItem> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final InputStreamReader reader = new InputStreamReader(jsonStream);
-        return gson.fromJson(reader, DriveItemListResponseBody.class).getValue();
+        return gson.fromJson(new InputStreamReader(jsonStream), DriveItemListResponseBody.class).getValue();
     }
 
+    /** Used to deserialize a response body that contains a list of drive items. */
     @Data
     public static class DriveItemListResponseBody {
+        /** The list of drive items returned for a response body. */
         private List<DriveItem> value;
     }
 }

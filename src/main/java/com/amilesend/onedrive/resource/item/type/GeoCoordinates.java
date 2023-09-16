@@ -20,12 +20,19 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
- * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/folder">
+ * Describes geographic coordinates and elevation of a location-based drive item (e.g., a photo taken from a phone).
+ * Note: All attributes are optional.
+ * <p>
+ * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/geocoordinates">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class GeoCoordinates {
+    /** The elevation in feet above sea level for the item. */
     private double altitude;
+    /** The latitude for the item. */
     private double latitude;
+    /** The longitude for the item. */
     private double longitude;
 }

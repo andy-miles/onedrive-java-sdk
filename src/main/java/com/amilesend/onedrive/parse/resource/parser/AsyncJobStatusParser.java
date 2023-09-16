@@ -32,7 +32,6 @@ import java.io.InputStreamReader;
 public class AsyncJobStatusParser implements GsonParser<AsyncJobStatus> {
     @Override
     public AsyncJobStatus parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final InputStreamReader reader = new InputStreamReader(jsonStream);
-        return gson.fromJson(reader, AsyncJobStatus.class);
+        return gson.fromJson(new InputStreamReader(jsonStream), AsyncJobStatus.class);
     }
 }

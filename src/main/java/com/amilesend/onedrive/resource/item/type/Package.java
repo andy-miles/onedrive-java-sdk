@@ -20,10 +20,13 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Indicates that a drive item is the top level item in a collection of items.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/package">
  * API Documentation</a>.
  */
 @Data
 public class Package {
+    /** The type of package. Only supported value at this time is {@literal oneNote}. */
     private String type;
 }

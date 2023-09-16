@@ -68,17 +68,24 @@ public class AuthManager {
             "https://login.microsoftonline.com/common/oauth2/v2.0/token";
     private static final String FORM_DATA_CONTENT_TYPE = FORM_DATA.toString();
 
+    /** The client identifier. */
     private final String clientId;
+    /** The client secret. */
     private final String clientSecret;
+    /** The redirect URL. */
     private final String redirectUrl;
+    /** The underlying HTTP client. */
     private final OkHttpClient httpClient;
+    /** The GSON instance used for JSON serialization. */
     private final Gson gson;
+    /** The base URL used to authenticate and refresh authorization tokens. */
     private final String baseTokenUrl;
+    /** The current authentication informaiton. */
     @Setter(AccessLevel.PACKAGE)
     @VisibleForTesting
     private volatile AuthInfo authInfo;
 
-    /* Used to initialize and manage authentication for a given auth code. */
+    /** Used to initialize and manage authentication for a given auth code. */
     @Builder(builderClassName = "BuilderWithAuthCode",
              buildMethodName = "buildWithAuthCode",
              builderMethodName = "builderWithAuthCode")
@@ -103,7 +110,7 @@ public class AuthManager {
         this.authInfo = redeemToken(authCode);
     }
 
-    /* Used to manage authentication for an existing AuthInfo that contains a refresh token. */
+    /** Used to manage authentication for an existing AuthInfo that contains a refresh token. */
     @Builder(builderClassName = "BuilderWithAuthInfo",
              builderMethodName = "builderWithAuthInfo",
              buildMethodName = "buildWithAuthInfo")

@@ -20,11 +20,16 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Describes if a given drive item is a folder resource type.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/folder">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class Folder {
+    /** The number of child items associated with the drive item. */
     private int childCount;
+    /** The properties that describe the recommended view for the folder. */
     private FolderView folderView;
 }

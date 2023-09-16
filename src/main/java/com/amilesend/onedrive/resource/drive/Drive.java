@@ -31,7 +31,6 @@ import com.amilesend.onedrive.resource.item.DriveItemPage;
 import com.amilesend.onedrive.resource.item.SpecialDriveItem;
 import com.amilesend.onedrive.resource.item.type.SharePointIds;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -46,28 +45,43 @@ import java.util.Objects;
 
 import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals;
 
-/** <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/drive">API Documentation.</a> */
+/**
+ * Top-level object that represents a user's OneDrive or SharePoint document library.
+ * <p>
+ * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/drive">API Documentation.</a>
+ */
 @Getter
 @Setter
 @ToString(callSuper = true)
 public class Drive extends BaseItem {
-    public static final String DRIVE_BASE_URL_PATH = "/me/drive/";
+    //TODO: Allow for Business and Sharepoint based paths and not just user-based drives (i.e., "/me/").
+    public static final String USER_DRIVE_BASE_URL_PATH = "/me/drive/";
 
     private static final String ACTIVITIES_URL_SUFFIX = "/activities";
-    private static final String ROOT_FOLDER_URL_PATH = DRIVE_BASE_URL_PATH + "root";
+    private static final String ROOT_FOLDER_URL_PATH = USER_DRIVE_BASE_URL_PATH + "root";
     private static final String CHANGES_URL_PATH = ROOT_FOLDER_URL_PATH + "/delta";
     private static final String SEARCH_URL_PATH = ROOT_FOLDER_URL_PATH + "/search";
-    private static final String SPECIAL_FOLDER_URL_PATH = DRIVE_BASE_URL_PATH + "special/";
+    private static final String SPECIAL_FOLDER_URL_PATH = USER_DRIVE_BASE_URL_PATH + "special/";
 
-    /* Valid values: personal | business | documentLibrary */
+    /**
+     * The drive type descriptor.  Valid types are:
+     * <ul>
+     *     <li>{@literal personal} - Personal drive</li>
+     *     <li>{@literal business} - Busieness drive</li>
+     *     <li>{@literal documentLibrary} - Sharepoint document library</li>
+     * </ul>
+     */
     private String driveType;
+    /** The user account that owns the drive. */
     private IdentitySet owner;
+    /** Drive storage space quota information. */
     private Quota quota;
+    /** Identifiers used for SharePoint. */
     private SharePointIds sharepointIds;
-    /** Either null or defined as empty.*/
+    /** Indicates that this is a system-managed drive:  Note: Either {@code null} or defined as empty. */
     private Object system;
+
     @GsonExclude
-    @EqualsAndHashCode.Exclude
     private final OneDriveConnection connection;
 
     /** Creates a new {@code Drive} */
@@ -215,7 +229,7 @@ public class Drive extends BaseItem {
 
     private String getActivitiesUrl(final String driveId) {
         return new StringBuilder(connection.getBaseUrl())
-                .append(DRIVE_BASE_URL_PATH)
+                .append(USER_DRIVE_BASE_URL_PATH)
                 .append(URLEncoder.encode(driveId, StandardCharsets.UTF_8))
                 .append(ACTIVITIES_URL_SUFFIX)
                 .toString();

@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
  */
 @RequiredArgsConstructor
 public class PermissionParser implements GsonParser<Permission> {
+    /** The permission associated with the permission to parse. */
     private final String driveItemId;
 
     @Override

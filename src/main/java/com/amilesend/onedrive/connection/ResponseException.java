@@ -20,10 +20,21 @@ package com.amilesend.onedrive.connection;
 
 /** Defines the exception thrown from {@link OneDriveConnection} that is specific to an issue with a response. */
 public class ResponseException extends OneDriveConnectionException {
+    /**
+     * Creates a new {@code ResponseException}.
+     *
+     * @param msg the exception message
+     */
     public ResponseException(final String msg) {
         super(msg);
     }
 
+    /**
+     * Creates a new {@code ResponseException}.
+     *
+     * @param msg the exception message
+     * @param cause the cause of the exception
+     */
     public ResponseException(final String msg, final Throwable cause) {
         super(msg, cause);
     }

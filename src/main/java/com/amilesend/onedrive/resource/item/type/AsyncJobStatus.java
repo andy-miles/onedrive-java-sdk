@@ -20,16 +20,38 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Provides information on the status of an asynchronous job.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/asyncjobstatus">
  * API Documentation</a>.
  */
 @Data
 public class AsyncJobStatus {
-    /* Valid values: ItemCopy | DownloadUrl */
+    /**
+     * The type of job being performed. Valid values include:
+     * <ul>
+     *     <li>{@literal ItemCopy}</li>
+     *     <li>{@literal DownloadUrl}</li>
+     * </ul>
+     */
     private String operation;
+    /** A value between 0.0 and 100.0 that indicates the current progress as a percentage. */
     private double percentageComplete;
+    /** The identifier associated with the job. */
     private String resourceId;
-    /* Valid values: notStarted | inProgress | completed | failed | cancelled | waiting | cancelPending */
+    /**
+     * The current status associated with the job. Valid values include:
+     * <ul>
+     *     <li>{@literal notStarted}</li>
+     *     <li>{@literal inProgress}</li>
+     *     <li>{@literal completed}</li>
+     *     <li>{@literal failed}</li>
+     *     <li>{@literal cancelled}</li>
+     *     <li>{@literal waiting}</li>
+     *     <li>{@literal cancelPending}</li>
+     * </ul>
+     */
     private String status;
+    /** A detailed description of the job status. */
     private String statusDescription;
 }

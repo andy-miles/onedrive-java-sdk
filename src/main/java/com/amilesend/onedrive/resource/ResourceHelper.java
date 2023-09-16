@@ -21,6 +21,13 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ResourceHelper {
+    /**
+     * Used for {@code equals()} implementation to determine if a given object is mutually defined or not.
+     *
+     * @param thisObj the base object to compare to
+     * @param thatObj the object to compare with
+     * @return {@code true} if both objects are defined (not {@code null}); else, {@code false}
+     */
     public static boolean objectDefinedEquals(final Object thisObj, final Object thatObj) {
         if (thisObj == null && thatObj == null) {
             return true;

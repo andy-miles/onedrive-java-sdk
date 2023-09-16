@@ -20,12 +20,18 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Describes the hashes for the drive item file contents. Note: Not all services define content hashes.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/hashes">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class Hashes {
+    /** The SHA1 hash for the file contents. */
     private String sha1Hash;
+    /** The CRC32 in little endian for the file contents. */
     private String crc32Hash;
+    /** A base64-encoded hash that can be used to determine if the file contents have changed. */
     private String quickXorHash;
 }

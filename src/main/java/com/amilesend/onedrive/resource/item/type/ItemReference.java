@@ -20,19 +20,37 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * Describes the identifiers on how to reference a drive item resource.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/itemreference">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class ItemReference {
+    /** The drive identifier. */
     private String driveId;
-    /* Valid values: personal | business | documentLibrary */
+    /**
+     * The drive type descriptor.  Valid types are:
+     * <ul>
+     *     <li>{@literal personal} - Personal drive</li>
+     *     <li>{@literal business} - Busieness drive</li>
+     *     <li>{@literal documentLibrary} - Sharepoint document library</li>
+     * </ul>
+     */
     private String driveType;
+    /** The drive item identifier. */
     private String id;
+    /** The list identifier. */
     private String listId;
+    /** The name of the referenced item. */
     private String name;
+    /** The path of the referenced item. */
     private String path;
+    /** The shared resource identifier of the referenced item. */
     private String shareId;
+    /** The SharePoint identifiers of the referenced item. */
     private SharePointIds sharepointIds;
+    /** The site identifier of the referenced item. */
     private String siteId;
 }

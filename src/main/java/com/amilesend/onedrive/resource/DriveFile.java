@@ -25,7 +25,6 @@ import com.amilesend.onedrive.resource.item.type.GeoCoordinates;
 import com.amilesend.onedrive.resource.item.type.Image;
 import com.amilesend.onedrive.resource.item.type.Photo;
 import com.amilesend.onedrive.resource.item.type.Video;
-import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,7 +33,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /** A wrapper around a {@link DriveItem} that represents a file. */
-@EqualsAndHashCode
 public class DriveFile extends DriveItemType {
 
     /**

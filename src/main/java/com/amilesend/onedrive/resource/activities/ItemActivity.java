@@ -21,13 +21,20 @@ import com.amilesend.onedrive.resource.identity.IdentitySet;
 import lombok.Data;
 
 /**
+ * Provides information about activities that took place on an item. Note: Only applicable for SharePoint and
+ * Business accounts.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/itemactivity">
  * API Documentation.</a>
  */
 @Data
 public class ItemActivity {
+    /** The activity identifier. */
     private String id;
+    /** Action details that took place. */
     private ItemActionSet action;
+    /** Who performed the action. */
     private IdentitySet actor;
+    /** Describes when the activity took place. */
     private ItemActivityTimeSet times;
 }

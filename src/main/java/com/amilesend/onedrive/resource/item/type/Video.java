@@ -20,19 +20,32 @@ package com.amilesend.onedrive.resource.item.type;
 import lombok.Data;
 
 /**
+ * If a drive item is a video file, this describes its attributes.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/video">
  * API Documentation</a>.
+ * @see com.amilesend.onedrive.resource.item.DriveItem
  */
 @Data
 public class Video {
+    /** Number of bits per sample. */
     private int audioBitsPerSample;
+    /** Number of channels. */
     private int audioChannels;
+    /** Encoded audio format. */
     private String audioFormat;
+    /** Number of samples per second for audio. */
     private int audioSamplesPerSecond;
+    /** The video bitrate. */
     private int bitrate;
+    /** The duration of the video in milliseconds. */
     private long duration;
+    /** The video format ("Four Character Code"). */
     private String fourCC;
+    /** The video frame rate (frams per second). */
     private double frameRate;
+    /** The video height in pixels. */
     private int height;
+    /** The video width in pixels. */
     private int width;
 }
