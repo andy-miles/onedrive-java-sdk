@@ -139,6 +139,40 @@ try {
 For more information, please refer to [javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/OneDriveFactoryStateManager.html) 
 or [source](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/OneDriveFactoryStateManager.java).
 
+### Customizing user auth token state persistence
+The [AuthInfoStore](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/connection/auth/store/AuthInfoStore.html)
+interface provides the ability to implement custom logic to manage user auth token state persistence (e.g., database, remote service, etc.).
+The default implementation is [SingleUserFileBasedAuthInfoStore](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/connection/auth/store/SingleUserFileBasedAuthInfoStore.java)
+that saves the auth state to the file system. It also serves as an example on how to implement your own AuthInfoStore implementation.
+
+```java
+public class MyAuthInfoStore implements AuthInfoStore {
+    private DependentDestinationStore myStore;
+
+    @Override
+    public void store(String id, AuthInfo authInfo) throws IOException {
+        myStore.save(id, authInfo);
+    }
+
+    @Override
+    public AuthInfo retrieve(String id) throws IOException {
+        myStore.get(id);
+    }
+}
+
+OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
+           .authInfoStore(new MyAuthInfoStore()))
+           .build();
+try {
+    OneDrive oneDrive = factoryStateManager.getInstance();
+    // Access drives, folders, and files
+} finally {
+    // Updates persisted auth tokens if refreshed during usage to your custom store
+    factoryStateManager.saveState();
+}
+
+```
+
 ### Customizing the HTTP client configuration
 
 If your use-case requires configuring the underlying <code>OkHttpClient</code> instance (e.g., configuring your own 
@@ -245,9 +279,10 @@ long downloadedBytes = downloadExec.get();
 ```
 
 ### Monitoring transfer progress
-The [TransferProgressCallback](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/connection/file/TransferProgressCallback.html) interface provides the ability to implement custom logic on update, completion, or failure scenarios (e.g., GUI updates) during file transfers.
+The [TransferProgressCallback](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/connection/file/TransferProgressCallback.html)
+interface provides the ability to implement custom logic on update, completion, or failure scenarios (e.g., GUI updates) during file transfers.
 The default implementation is [LogProgressCallback](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/connection/file/LogProgressCallback.java)
-that logs transfer updates to the configured log via SLF4J.  It also serves as an example
+that logs transfer updates to the configured log via SLF4J. It also serves as an example
 on how to implement your own TransferProgressCallback implementation.
 ```java
 public class MyProgressCallback implements TransferProgressCallback {
@@ -277,7 +312,7 @@ DriveFileDownloadExecution downloadExec = myFile.downloadAsync(Paths.get("./"), 
 - [ ] Add functional test coverage (use of a MockWebServer)
 - [ ] Add integration test coverage
 - [ ] Group and Site based access for non-personal accounts
-- [ ] Add an interface to access and persist tokens for the OneDriveFactoryStateManager (e.g., tokens stored via a database or service)
+- [X] ~~Add an interface to access and persist tokens for the OneDriveFactoryStateManager (e.g., tokens stored via a database or service)~~
 - [ ] Obtaining [embeddable file previews](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview)
 - [ ] [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
 - [ ] [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)

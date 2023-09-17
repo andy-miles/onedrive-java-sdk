@@ -22,6 +22,8 @@ import com.amilesend.onedrive.connection.OneDriveConnectionBuilder;
 import com.amilesend.onedrive.connection.auth.AuthInfo;
 import com.amilesend.onedrive.connection.auth.oauth.OAuthReceiverException;
 import com.amilesend.onedrive.connection.auth.oauth.OneDriveOAuthReceiver;
+import com.amilesend.onedrive.connection.auth.store.AuthInfoStore;
+import com.amilesend.onedrive.connection.auth.store.SingleUserFileBasedAuthInfoStore;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.common.annotations.VisibleForTesting;
@@ -29,16 +31,14 @@ import com.google.gson.Gson;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -46,9 +46,9 @@ import java.util.Optional;
 import static com.amilesend.onedrive.connection.auth.oauth.OAuthReceiver.browse;
 
 /**
- * A factory that vends authenticated {@link OneDrive} instances. It automatically instantiates a new
- * OAuth flow for first-time user authorization grants and leverages persisted refresh tokens to vend
- * subsequent instances.
+ * A factory that vends authenticated {@link OneDrive} instances for a single authenticated user. It automatically
+ * instantiates a new OAuth flow for first-time user authorization grants and leverages persisted refresh tokens to
+ * vend subsequent instances.
  * <p>
  * See {@link CredentialConfig} on how you can configure your own application client credentials.
  * <p>
@@ -79,20 +79,27 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
     private static final String DEFAULT_CALLBACK_PATH = "/Callback";
     private static final String DEFAULT_REDIRECT_URL = "http://localhost:8890" + DEFAULT_CALLBACK_PATH;
     private static final List<String> DEFAULT_SCOPES = List.of("Files.ReadWrite.All", "offline_access", "User.Read");
+    private static final String DEFAULT_USER_AUTH_KEY = "DefaultUser";
 
-    /** The path to persist the authentication information to. */
-    private final Path stateFile;
+    /** The store used to persist user auth token state. */
+    private final AuthInfoStore authInfoStore;
+    /** The JSON serializer configured for persisting auth state. */
     // Optional
     private final Gson stateGson;
     // Optional
     @Setter(AccessLevel.PACKAGE)
     @VisibleForTesting
     private CredentialConfig credentialConfig;
+    /** The http client. */
     // Optional for custom configuration (e.g., SSL, proxy, etc.).
     private OkHttpClient httpClient;
+    /** The port for the OAUTH redirect receiver to listen on. */
     private int receiverPort;
+    /** The list of scopes (permissions) for accessing the Graph API. */
     private List<String> scopes;
+    /** The redirect URL for the OAUTH redirect receiver. */
     private String redirectUrl;
+    /** The callback path for the OAUTH redirect receiver. */
     private String callbackPath;
     @Setter(AccessLevel.PACKAGE)
     @VisibleForTesting
@@ -103,12 +110,13 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
      *
      * @param httpClient the http client
      * @param receiverPort the port for the OAUTH redirect receiver to listen on
-     * @param redirectUrl the redirect URL
-     * @param callbackPath the redirect path
+     * @param redirectUrl the redirect URL for the OAUTH redirect receiver
+     * @param callbackPath the callback path for the OAUTH redirect receiver
      * @param scopes the list of scopes (permissions) for accessing the Graph API
      * @param stateGson the JSON serializer configured for persisting auth state
      * @param credentialConfig the application client credential configuration
      * @param stateFile the optional persisted auth state
+     * @param authInfoStore the store used to persist and retrieve the auth state
      */
     @Builder
     private OneDriveFactoryStateManager(final OkHttpClient httpClient,
@@ -118,15 +126,19 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
                                         final List<String> scopes,
                                         final Gson stateGson,
                                         final CredentialConfig credentialConfig,
-                                        @NonNull final Path stateFile) {
+                                        final Path stateFile,
+                                        final AuthInfoStore authInfoStore) {
         this.httpClient = httpClient == null ? new OkHttpClientBuilder().build() : httpClient;
         this.stateGson = stateGson == null ? new GsonFactory().newInstanceForStateManager() : stateGson;
         this.redirectUrl = StringUtils.isBlank(redirectUrl) ? DEFAULT_REDIRECT_URL : redirectUrl;
         this.callbackPath = callbackPath == null ? DEFAULT_CALLBACK_PATH : callbackPath;
         this.scopes = scopes == null ? DEFAULT_SCOPES : scopes;
         this.credentialConfig = credentialConfig;
-        this.stateFile = stateFile;
         this.receiverPort = receiverPort == null ? DEFAULT_RECEIVER_PORT : receiverPort.intValue();
+        Validate.isTrue(stateFile != null || authInfoStore != null,
+                "Either stateFile or authInfoStore must be defined");
+        this.authInfoStore = Optional.ofNullable(authInfoStore)
+                .orElseGet(() -> new SingleUserFileBasedAuthInfoStore(this.stateGson, stateFile));
     }
 
     @Override
@@ -151,7 +163,7 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
     }
 
     /**
-     * Persists the authentication state to the configured {@link #stateFile}.
+     * Persists the authentication state.
      *
      * @throws IOException if unable to save the authentication information
      */
@@ -160,8 +172,7 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
             return;
         }
 
-        final String state = onedrive.getAuthInfo().toJson(stateGson);
-        Files.write(stateFile, state.getBytes(StandardCharsets.UTF_8));
+        authInfoStore.store(DEFAULT_USER_AUTH_KEY, onedrive.getAuthInfo());
     }
 
     @VisibleForTesting
@@ -193,16 +204,7 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
 
     @VisibleForTesting
     Optional<AuthInfo> loadState() throws IOException {
-        if (!Files.exists(stateFile) || !Files.isReadable(stateFile)) {
-            return Optional.empty();
-        }
-
-        final String jsonState = Files.readString(stateFile);
-        if (StringUtils.isBlank(jsonState)) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(AuthInfo.fromJson(stateGson, jsonState));
+        return Optional.ofNullable(authInfoStore.retrieve(DEFAULT_USER_AUTH_KEY));
     }
 
     @VisibleForTesting
