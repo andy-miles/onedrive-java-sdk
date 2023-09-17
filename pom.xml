@@ -199,7 +199,6 @@
                     <additionalJOption>-Xdoclint:-missing,-reference</additionalJOption>
                     <show>public</show>
                     <sourcepath>target/generated-sources/delombok</sourcepath>
-<!--                    <outputDirectory>target/site/apidocs</outputDirectory>-->
                 </configuration>
                 <executions>
                     <execution>
@@ -241,32 +240,11 @@
                 </executions>
                 <!-- Hack to fix the duplicate lombok @NonNull annotations in the method parameters for the javadoc -->
                 <configuration>
-                    <basedir>${project.build.directory}</basedir>
+                    <basedir>.</basedir>
                     <includes>
-                        <include>**/com/amilesend/onedrive/**/*.html</include>
+                        <include>target/**/com/amilesend/onedrive/**/*.html</include>
                     </includes>
-                    <replacements>
-                        <!-- Remove duplicate @NonNull annotations for the first method parameter -->
-                        <replacement>
-                            <token>\(@NonNull\r\n</token>
-                            <value>(</value>
-                        </replacement>
-                        <!-- Related to above, fix the extra space -->
-                        <replacement>
-                            <token>\( @NonNull</token>
-                            <value>(@NonNull</value>
-                        </replacement>
-                        <!-- Related to above, fix the extra space for some first method parameters -->
-                        <replacement>
-                            <token>\( \&lt;</token>
-                            <value>(&lt;</value>
-                        </replacement>
-                        <!-- Remove duplicate @NonNull annotations for additional method parameters -->
-                        <replacement>
-                            <token>^ @NonNull\r\n</token>
-                            <value></value>
-                        </replacement>
-                    </replacements>
+                    <tokenValueMap>src/main/javadoc-format-fix.conf</tokenValueMap>
                     <regexFlags>
                         <regexFlag>MULTILINE</regexFlag>
                     </regexFlags>
