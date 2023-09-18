@@ -83,8 +83,7 @@ public class PermissionListParser implements GsonParser<List<Permission>> {
     private final String driveItemId;
 
     public List<Permission> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final InputStreamReader reader = new InputStreamReader(jsonStream);
-        return gson.fromJson(reader, PermissionsListResponseBody.class)
+        return gson.fromJson(new InputStreamReader(jsonStream), PermissionsListResponseBody.class)
                 .getValue()
                 .stream()
                 .filter(Objects::nonNull)

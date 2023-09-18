@@ -17,38 +17,36 @@
  */
 package com.amilesend.onedrive.resource.request;
 
-import com.amilesend.onedrive.resource.identity.DriveRecipient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 /**
- * Represents a request to share the item to one or more recipients.
+ * Represents a request to preview an item.
  * <p>
- * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_invite">
+ * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview">
  * API Documentation</a>.
  */
 @AllArgsConstructor
 @Builder
 @Data
 @NoArgsConstructor
-public class AddPermissionRequest {
-    /** The list of recipients. */
-    private List<DriveRecipient> recipients;
-    /** A message to include in the invite. */
-    private String message;
-    /** Indicates if accessing the shared item requires sign-in. */
-    private boolean requireSignIn;
-    /** Indicates if an invitation should be sent to the recipient, or just grant the permission. */
-    private boolean sendInvitation;
-    /** The allowed roles granted to the recipients. Valid values include:
+public class PreviewRequest {
+    /** The optional preview app to use. Valid values include:
      * <ul>
-     *     <li>{@literal read}</li>
-     *     <li>{@literal write}</li>
+     *     <li>{@code null} - Default and one will be chosen automatically</li>
+     *     <li>{@literal onedrive}</li>
+     *     <li>{@literal office}</li>
      * </ul>
      */
-    private List<String> roles;
+    private String viewer;
+    /** If {@code true}, the embedded view will omit controls. */
+    private boolean chromeless;
+    /** If {@code true}, the file can be edited from the UI. */
+    private boolean allowEdit;
+    /** Optional page number of the document formatted as a string. */
+    private String page;
+    /** Optional zoom level to start at. */
+    private double zoom;
 }

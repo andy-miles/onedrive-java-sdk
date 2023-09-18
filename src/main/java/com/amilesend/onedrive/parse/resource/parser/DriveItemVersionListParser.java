@@ -87,8 +87,7 @@ public class DriveItemVersionListParser implements GsonParser<List<DriveItemVers
 
     @Override
     public List<DriveItemVersion> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final InputStreamReader reader = new InputStreamReader(jsonStream);
-        return gson.fromJson(reader, DriveItemVersionListResponseBody.class)
+        return gson.fromJson(new InputStreamReader(jsonStream), DriveItemVersionListResponseBody.class)
                 .getValue()
                 .stream()
                 .filter(Objects::nonNull)

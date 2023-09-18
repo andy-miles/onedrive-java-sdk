@@ -22,10 +22,13 @@ import com.amilesend.onedrive.resource.identity.IdentitySet;
 import com.amilesend.onedrive.resource.item.AsyncJob;
 import com.amilesend.onedrive.resource.item.DriveItem;
 import com.amilesend.onedrive.resource.item.DriveItemVersion;
+import com.amilesend.onedrive.resource.item.type.FileSystemInfo;
 import com.amilesend.onedrive.resource.item.type.ItemReference;
 import com.amilesend.onedrive.resource.item.type.Permission;
 import com.amilesend.onedrive.resource.item.type.RemoteItem;
 import com.amilesend.onedrive.resource.item.type.ThumbnailSet;
+import com.amilesend.onedrive.resource.request.AddPermissionRequest;
+import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -69,7 +72,7 @@ public abstract class DriveItemType {
     }
 
     /**
-     * Gets the eTag associated with this drive.
+     * Gets the eTag associated with this item.
      *
      * @return the etag
      */
@@ -209,9 +212,52 @@ public abstract class DriveItemType {
         return !isFolder();
     }
 
+    /**
+     * Gets the local file system information associated with this drive item.
+     *
+     * @return the file system information
+     * @see FileSystemInfo
+     */
+    public FileSystemInfo getFileSystemInfo() {
+        return delegate.getFileSystemInfo();
+    }
+
+    /**
+     * Sets the local file system information associated with this drive item.
+     *
+     * @param fileSystemInfo the file system information
+     * @see FileSystemInfo
+     */
+    public void setFileSystemInfo(@NonNull final FileSystemInfo fileSystemInfo) {
+        delegate.setFileSystemInfo(fileSystemInfo);
+    }
+
     //////////////////////
     // Shared Methods
     //////////////////////
+
+    /**
+     * Adds a permission for the given request.
+     *
+     * @param request containing the recipients and roles to add
+     * @return the list of permissions
+     * @see Permission
+     * @see AddPermissionRequest
+     */
+    public List<Permission> addPermission(final AddPermissionRequest request) {
+        return delegate.addPermission(request);
+    }
+
+    /**
+     * Creates a sharing link for the given request.
+     *
+     * @param request the descriptor of the type of link to share
+     * @return the sharing permissions that includes the link
+     */
+    public Permission createSharingLink(final CreateSharingLinkRequest request) {
+        return delegate.createSharingLink(request);
+    }
+
 
     /**
      * Copies this drive item type to the specified {@code DriveFolder}.

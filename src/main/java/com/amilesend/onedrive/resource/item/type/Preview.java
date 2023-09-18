@@ -15,23 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.amilesend.onedrive.parse.resource.parser;
+package com.amilesend.onedrive.resource.item.type;
 
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.resource.drive.Drive;
-import com.google.gson.Gson;
-import lombok.NonNull;
-
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.amilesend.onedrive.parse.strategy.GsonExclude;
+import lombok.Data;
 
 /**
- * Parses a response body that contains a {@link Drive}.
- * @see Drive
+ * Represents a response to preview an item.
+ * <p>
+ * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview">
+ * API Documentation</a>.
  */
-public class DriveParser implements GsonParser<Drive> {
-    @Override
-    public Drive parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        return gson.fromJson(new InputStreamReader(jsonStream), Drive.class);
-    }
+@Data
+public class Preview {
+    /** The URL for embedding using HTTP get (e.g., iFrames).*/
+    private String getUrl;
+    /** The HTTP POST parameters to include if using {@link #getPostUrl()}. */
+    private String postParameters;
+    /** The URL suiting for embedding using HTTP POST (e.g., post, javascript, etc.).*/
+    private String postUrl;
+    /** The associated drive item identifier that this preview applies to. */
+    @GsonExclude
+    private String driveItemId;
 }

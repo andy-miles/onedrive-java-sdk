@@ -17,7 +17,10 @@
  */
 package com.amilesend.onedrive.resource.request;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * A request to create a new sharing link for an item.
@@ -25,7 +28,10 @@ import lombok.Data;
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createlink">
  * API Documentation</a>.
  */
+@AllArgsConstructor
+@Builder
 @Data
+@NoArgsConstructor
 public class CreateSharingLinkRequest {
     /**
      * The type of sharing link to create. Valid values include:

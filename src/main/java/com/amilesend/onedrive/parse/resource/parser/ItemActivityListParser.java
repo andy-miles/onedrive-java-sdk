@@ -127,8 +127,7 @@ import java.util.List;
 public class ItemActivityListParser implements GsonParser<List<ItemActivity>> {
     @Override
     public List<ItemActivity> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final InputStreamReader reader = new InputStreamReader(jsonStream);
-        return gson.fromJson(reader, ItemActivityResponseBody.class).getValue();
+        return gson.fromJson(new InputStreamReader(jsonStream), ItemActivityResponseBody.class).getValue();
     }
 
     /** Used to deserialize a response body that contains a list of item activities. */

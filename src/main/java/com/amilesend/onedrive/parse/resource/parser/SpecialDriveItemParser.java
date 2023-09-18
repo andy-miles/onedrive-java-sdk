@@ -38,8 +38,7 @@ public class SpecialDriveItemParser implements GsonParser<SpecialDriveItem> {
 
     @Override
     public SpecialDriveItem parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final InputStreamReader reader = new InputStreamReader(jsonStream);
-        final SpecialDriveItem item = gson.fromJson(reader, SpecialDriveItem.class);
+        final SpecialDriveItem item = gson.fromJson(new InputStreamReader(jsonStream), SpecialDriveItem.class);
         item.setSpecialFolderType(specialFolderType);
         return item;
     }

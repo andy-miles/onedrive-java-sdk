@@ -50,8 +50,7 @@ import java.util.List;
 public class ThumbnailSetListParser implements GsonParser<List<ThumbnailSet>> {
     @Override
     public List<ThumbnailSet> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final InputStreamReader reader = new InputStreamReader(jsonStream);
-        return gson.fromJson(reader, ThumbnailSetListResponseBody.class).getValue();
+        return gson.fromJson(new InputStreamReader(jsonStream), ThumbnailSetListResponseBody.class).getValue();
     }
 
     /** Used to deserialize a response body that contains a list of thumbnail sets. */

@@ -50,6 +50,7 @@ import com.amilesend.onedrive.resource.item.type.ItemReference;
 import com.amilesend.onedrive.resource.item.type.Package;
 import com.amilesend.onedrive.resource.item.type.Permission;
 import com.amilesend.onedrive.resource.item.type.Photo;
+import com.amilesend.onedrive.resource.item.type.Preview;
 import com.amilesend.onedrive.resource.item.type.PublicationFacet;
 import com.amilesend.onedrive.resource.item.type.RemoteItem;
 import com.amilesend.onedrive.resource.item.type.SearchResult;
@@ -265,6 +266,16 @@ public class TestDataHelper {
         permission.setInheritedFrom(newParentReference());
         return permission;
     }
+
+    public static Preview newPreview(final String driveItemId) {
+        final Preview preview = new Preview();
+        preview.setDriveItemId(driveItemId);
+        preview.setGetUrl("PreviewGetUrlValue");
+        preview.setPostUrl("PreviewPostUrlValue");
+        preview.setPostParameters("PreviewPostParametersValue");
+        return preview;
+    }
+
 
     public static ThumbnailSet newThumbnailSet() {
         final ThumbnailSet set = new ThumbnailSet();

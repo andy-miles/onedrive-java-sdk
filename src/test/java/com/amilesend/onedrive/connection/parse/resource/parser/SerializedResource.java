@@ -32,6 +32,7 @@ public enum SerializedResource {
     ITEM_ACTIVITY_LIST("/ItemActivityList.json"),
     PERMISSION("/Permission.json"),
     PERMISSION_LIST("/PermissionList.json"),
+    PREVIEW("/Preview.json"),
     SPECIAL_DRIVE_ITEM("/SpecialDriveItem.json"),
     THUMBNAIL_SET_LIST("/ThumbnailSetList.json");
 

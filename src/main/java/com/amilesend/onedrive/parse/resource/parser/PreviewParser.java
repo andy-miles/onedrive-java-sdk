@@ -18,28 +18,27 @@
 package com.amilesend.onedrive.parse.resource.parser;
 
 import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.resource.item.type.Permission;
+import com.amilesend.onedrive.resource.item.type.Preview;
 import com.google.gson.Gson;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Parses a response body that contains a {@link Permission}.
- * @see Permission
+ * Parses a response body that contains a {@link Preview}.
+ * @see Preview
  */
 @RequiredArgsConstructor
-public class PermissionParser implements GsonParser<Permission> {
+public class PreviewParser implements GsonParser<Preview> {
     /** The permission associated with the permission to parse. */
     private final String driveItemId;
 
     @Override
-    public Permission parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final Permission permission = gson.fromJson(new InputStreamReader(jsonStream), Permission.class);
-        permission.setDriveItemId(driveItemId);
+    public Preview parse(final Gson gson, final InputStream jsonStream) {
+        final Preview preview = gson.fromJson(new InputStreamReader(jsonStream), Preview.class);
+        preview.setDriveItemId(driveItemId);
 
-        return permission;
+        return preview;
     }
 }

@@ -26,6 +26,7 @@ import com.amilesend.onedrive.parse.resource.parser.DriveItemVersionListParser;
 import com.amilesend.onedrive.parse.resource.parser.ItemActivityListParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionListParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionParser;
+import com.amilesend.onedrive.parse.resource.parser.PreviewParser;
 import com.amilesend.onedrive.parse.resource.parser.ThumbnailSetListParser;
 import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.parse.strategy.GsonSerializeExclude;
@@ -41,6 +42,7 @@ import com.amilesend.onedrive.resource.item.type.ItemReference;
 import com.amilesend.onedrive.resource.item.type.Package;
 import com.amilesend.onedrive.resource.item.type.Permission;
 import com.amilesend.onedrive.resource.item.type.Photo;
+import com.amilesend.onedrive.resource.item.type.Preview;
 import com.amilesend.onedrive.resource.item.type.PublicationFacet;
 import com.amilesend.onedrive.resource.item.type.RemoteItem;
 import com.amilesend.onedrive.resource.item.type.SearchResult;
@@ -51,6 +53,7 @@ import com.amilesend.onedrive.resource.item.type.ThumbnailSet;
 import com.amilesend.onedrive.resource.item.type.Video;
 import com.amilesend.onedrive.resource.request.AddPermissionRequest;
 import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
+import com.amilesend.onedrive.resource.request.PreviewRequest;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
@@ -84,11 +87,9 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
  */
 /*
  * TODO:
- *  1. Implement getPreviewItem() if there's a use-case for it
- *     (https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview).
- *  2. Implement support for upload sessions if there's a use-case for it
+ *  1. Implement support for upload sessions if there's a use-case for it
  *     (https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession)
- *  3. Implement support for URL based uploads if there's a use-case for it
+ *  2. Implement support for URL based uploads if there's a use-case for it
  *     (https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url)
  */
 @Getter
@@ -100,47 +101,47 @@ public class DriveItem extends BaseItem {
     private static final DriveItemParser DRIVE_ITEM_PARSER = new DriveItemParser();
     private static final String CONTENT_URL_SUFFIX = "/content";
 
-    /** The audio file attributes. */
+    /** The audio file attributes (read-only). */
     private Audio audio;
-    /** An eTag for the content of the item. */
+    /** An eTag for the content of the item (read-only). */
     private String cTag;
-    /** Indicates if an item was deleted. */
+    /** Indicates if an item was deleted (read-only). */
     private Deleted deleted;
-    /** Indicates if an item is a file. */
+    /** Indicates if an item is a file (read-only). */
     private File file;
     /** Describes drive (client-side) properties of the local version of a drive item. */
     private FileSystemInfo fileSystemInfo;
-    /** Describes if a given drive item is a folder resource type. */
+    /** Describes if a given drive item is a folder resource type (read-only). */
     private Folder folder;
-    /** The image attributes for a file. */
+    /** The image attributes for a file (read-only). */
     private Image image;
-    /** The geographic coordinates and elevation of a file. */
+    /** The geographic coordinates and elevation of a file (read-only). */
     private GeoCoordinates location;
-    /** If defined, malware was detected in the file. */
+    /** If defined, malware was detected in the file (read-only). */
     private Object malware;
-    /** Indicates that a drive item is the top level item in a collection of items. */
+    /** Indicates that a drive item is the top level item in a collection of items (read-only). */
     @SerializedName("package")
     private Package _package;
-    /** The photo attributes for a drive item file. */
+    /** The photo attributes for a drive item file (read-only). */
     private Photo photo;
-    /** The published status of a drive item or version. */
+    /** The published status of a drive item or version (read-only). */
     private PublicationFacet publication;
-    /** Indicates that a drive item references one that exists in another drive. */
+    /** Indicates that a drive item references one that exists in another drive (read-only). */
     private RemoteItem remoteItem;
     /* An empty object if defined; else is null */
-    /** If defined, indicates that the item is the top-most folder in the drive. */
+    /** If defined, indicates that the item is the top-most folder in the drive (read-only). */
     private Object root;
-    /** Indicates that the item is in response to a search query. */
+    /** Indicates that the item is in response to a search query (read-only). */
     private SearchResult searchResult;
-    /** Indicates that a drive item has been shared with others. */
+    /** Indicates that a drive item has been shared with others (read-only). */
     private Shared shared;
-    /** SharePoint resource identifiers for SharePoint and Business account items. */
+    /** SharePoint resource identifiers for SharePoint and Business account items (read-only). */
     private SharePointIds sharepointIds;
-    /** The size of the item in bytes. */
+    /** The size of the item in bytes (read-only). */
     private long size;
-    /** Describes if the item is a special managed folder. */
+    /** Describes if the item is a special managed folder (read-only). */
     private SpecialFolder specialFolder;
-    /** The video file attributes. */
+    /** The video file attributes (read-only). */
     private Video video;
 
     // Instance Annotations
@@ -151,18 +152,20 @@ public class DriveItem extends BaseItem {
      *     <li>{@literal replace}</li>
      *     <li>{@literal rename}</li>
      * </ul>
+     * This member is write-only.
      */
     @SerializedName("@microsoft.graph.conflictBehavior")
     private String conflictBehavior;
-    /** The URL that can be used to download the file's content. */
+    /** The URL that can be used to download the file's content (read-only). */
     @SerializedName("@microsoft.graph.downloadUrl")
     @GsonSerializeExclude
     private String downloadUrl;
-    /** The source URL for remote uploading of file contents. Currently not tested nor supported. */
+    /** The source URL for remote uploading of file contents (write-only). Currently not tested nor supported. */
     @GsonSerializeExclude
     @SerializedName("@microsoft.graph.sourceUrl")
     private String sourceUrl;
 
+    /** Gets the underlying connection instance. */
     @GsonExclude
     private final OneDriveConnection connection;
 
@@ -535,9 +538,9 @@ public class DriveItem extends BaseItem {
      * API Documentation</a>.
      *
      * @param requestBody the descriptor of the permission to add
-     * @return the added permission
+     * @return the list of permissions for the associate item.
      */
-    public Permission addPermission(@NonNull final AddPermissionRequest requestBody) {
+    public List<Permission> addPermission(@NonNull final AddPermissionRequest requestBody) {
         return connection.execute(
                 connection.newSignedForApiWithBodyRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
@@ -547,7 +550,7 @@ public class DriveItem extends BaseItem {
                                 .toString())
                         .post(RequestBody.create(connection.getGson().toJson(requestBody), JSON_MEDIA_TYPE))
                         .build(),
-                new PermissionParser(getId()));
+                new PermissionListParser(getId()));
     }
 
     /**
@@ -556,7 +559,7 @@ public class DriveItem extends BaseItem {
      * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createlink">
      * API Documentation</a>.
      *
-     * @param requestBody the descriptor fo the type of link to share.
+     * @param requestBody the descriptor of the type of link to share
      * @return the sharing permissions that includes the link
      */
     public Permission createSharingLink(@NonNull final CreateSharingLinkRequest requestBody) {
@@ -570,6 +573,29 @@ public class DriveItem extends BaseItem {
                         .post(RequestBody.create(connection.getGson().toJson(requestBody), JSON_MEDIA_TYPE))
                         .build(),
                 new PermissionParser(getId()));
+    }
+
+    /**
+     * Gets the embeddable file preview URLs for inclusion in a web-based UI. Note: For long-lived embeddable links,
+     * use {@link #createSharingLink(CreateSharingLinkRequest)} instead.
+     * <p>
+     * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview">
+     * API Documentation</a>.
+     *
+     * @param requestBody the preview item request body
+     * @return the preview URLs
+     */
+    public Preview previewItem(@NonNull final PreviewRequest requestBody) {
+        return connection.execute(
+                connection.newSignedForApiWithBodyRequestBuilder()
+                        .url(new StringBuilder(connection.getBaseUrl())
+                                .append(DRIVE_ITEM_BASE_URL_PATH)
+                                .append(validateAndGetUrlEncodedId())
+                                .append("/preview")
+                                .toString())
+                        .post(RequestBody.create(connection.getGson().toJson(requestBody), JSON_MEDIA_TYPE))
+                        .build(),
+                new PreviewParser(getId()));
     }
 
     /**

@@ -80,10 +80,9 @@ documented APIs are implemented.
 <a name="unsupported-features"></a>
 ## Current Unsupported Features
 1. User drive access is the only supported configuration with this release, but plans to support group and site-based access is on the roadmap.
-2. Obtaining [embeddable file previews](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview)
-3. [Upload sessions](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession) for uploading larges files in segments
-4. [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
-5. [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)
+2[Upload sessions](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession) for uploading larges files in segments
+3. [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
+4. [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)
 
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
 
@@ -312,8 +311,8 @@ DriveFileDownloadExecution downloadExec = myFile.downloadAsync(Paths.get("./"), 
 - [ ] Add functional test coverage (use of a MockWebServer)
 - [ ] Add integration test coverage
 - [ ] Group and Site based access for non-personal accounts
-- [X] ~~Add an interface to access and persist tokens for the OneDriveFactoryStateManager (e.g., tokens stored via a database or service)~~
-- [ ] Obtaining [embeddable file previews](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview)
+- [X] ~~Add an interface to access and persist tokens for the OneDriveFactoryStateManager (e.g., tokens stored via a database or service)~~ (v0.1.1)
+- [X] ~~Obtaining [embeddable file previews](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview)~~ (v0.1.2)
 - [ ] [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
 - [ ] [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)
 

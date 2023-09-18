@@ -246,6 +246,15 @@ public class DriveFolder extends DriveItemType {
     }
 
     /**
+     * Updates the attributes for this folder.
+     *
+     * @return the updated drive folder
+     */
+    public DriveFolder update() {
+        return new DriveFolder(getDelegate().update());
+    }
+
+    /**
      * Moves this folder to the specified {@link DriveFolder}.
      *
      * @param destinationFolder the destination drive folder

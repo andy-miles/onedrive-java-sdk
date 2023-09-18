@@ -32,7 +32,6 @@ import java.io.InputStreamReader;
 public class DriveItemParser implements GsonParser<DriveItem> {
     @Override
     public DriveItem parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final InputStreamReader reader = new InputStreamReader(jsonStream);
-        return gson.fromJson(reader, DriveItem.class);
+        return gson.fromJson(new InputStreamReader(jsonStream), DriveItem.class);
     }
 }

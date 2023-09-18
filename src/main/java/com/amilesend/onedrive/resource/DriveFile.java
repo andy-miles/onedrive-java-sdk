@@ -24,7 +24,10 @@ import com.amilesend.onedrive.resource.item.type.Audio;
 import com.amilesend.onedrive.resource.item.type.GeoCoordinates;
 import com.amilesend.onedrive.resource.item.type.Image;
 import com.amilesend.onedrive.resource.item.type.Photo;
+import com.amilesend.onedrive.resource.item.type.Preview;
 import com.amilesend.onedrive.resource.item.type.Video;
+import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
+import com.amilesend.onedrive.resource.request.PreviewRequest;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
@@ -286,6 +289,26 @@ public class DriveFile extends DriveItemType {
     //////////////////////
     // Operations
     //////////////////////
+
+    /**
+     *Updates the attributes for this file.
+     *
+     * @return the updated drive file
+     */
+    public DriveFile update() {
+        return new DriveFile(getDelegate().update());
+    }
+
+    /**
+     * Gets the embeddable file preview URLs for inclusion in a web-based UI. Note: For long-lived embeddable links,
+     * use {@link #createSharingLink(CreateSharingLinkRequest)} instead.
+     *
+     * @param request the preview item request
+     * @return the preview URLs
+     */
+    public Preview preview(final PreviewRequest request) {
+        return getDelegate().previewItem(request);
+    }
 
     /**
      * Moves this file to the specified {@link DriveFolder}.

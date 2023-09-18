@@ -66,8 +66,7 @@ import java.util.List;
 public class DriveListParser implements GsonParser<List<Drive>> {
     @Override
     public List<Drive> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final InputStreamReader reader = new InputStreamReader(jsonStream);
-        return gson.fromJson(reader, DriveListResponseBody.class).getValue();
+        return gson.fromJson(new InputStreamReader(jsonStream), DriveListResponseBody.class).getValue();
     }
 
     /** Used to deserialize a response body that contains a list of drives. */

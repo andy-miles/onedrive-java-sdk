@@ -23,12 +23,15 @@ import com.amilesend.onedrive.parse.resource.parser.DriveItemVersionListParser;
 import com.amilesend.onedrive.parse.resource.parser.ItemActivityListParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionListParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionParser;
+import com.amilesend.onedrive.parse.resource.parser.PreviewParser;
 import com.amilesend.onedrive.parse.resource.parser.ThumbnailSetListParser;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.item.type.Permission;
+import com.amilesend.onedrive.resource.item.type.Preview;
 import com.amilesend.onedrive.resource.item.type.ThumbnailSet;
 import com.amilesend.onedrive.resource.request.AddPermissionRequest;
 import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
+import com.amilesend.onedrive.resource.request.PreviewRequest;
 import com.google.gson.Gson;
 import okhttp3.Request;
 import org.apache.commons.lang3.StringUtils;
@@ -165,18 +168,18 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
 
     @Test
     public void addPermission_withValidRequest_shouldReturnPermission() {
-        final Permission expected = mock(Permission.class);
+        final List<Permission> expected = List.of(mock(Permission.class));
         when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(expected);
         final Gson mockGson = mock(Gson.class);
         when(mockGson.toJson(any(AddPermissionRequest.class))).thenReturn("JsonPermissionRequestBody");
         when(mockConnection.getGson()).thenReturn(mockGson);
 
-        final Permission actual = driveItemUnderTest.addPermission(mock(AddPermissionRequest.class));
+        final List<Permission> actual = driveItemUnderTest.addPermission(mock(AddPermissionRequest.class));
 
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(PermissionParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(PermissionListParser.class)),
                 () -> assertEquals("http://localhost/me/drive/items/DriveItemId/invite",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("POST", requestCaptor.getValue().method()),
@@ -232,6 +235,43 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
                     driveItemUnderTest.setId(StringUtils.EMPTY);
                     assertThrows(IllegalArgumentException.class,
                             () -> driveItemUnderTest.createSharingLink(mockRequest));
+                });
+    }
+
+    @Test
+    public void previewItem_withValidRequest_shouldReturnPreview() {
+        final Preview expected = mock(Preview.class);
+        when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(expected);
+        final Gson mockGson = mock(Gson.class);
+        when(mockGson.toJson(any(PreviewRequest.class))).thenReturn("JsonPreviewRequestBody");
+        when(mockConnection.getGson()).thenReturn(mockGson);
+
+        final Preview actual = driveItemUnderTest.previewItem(mock(PreviewRequest.class));
+
+        final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+        assertAll(
+                () -> assertEquals(expected, actual),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(PreviewParser.class)),
+                () -> assertEquals("http://localhost/me/drive/items/DriveItemId/preview",
+                        requestCaptor.getValue().url().toString()),
+                () -> assertEquals("POST", requestCaptor.getValue().method()),
+                () -> assertEquals(JSON_MEDIA_TYPE, requestCaptor.getValue().body().contentType()));
+    }
+
+    @Test
+    public void previewItem_withInvalidParameters_shouldThrowException() {
+        final PreviewRequest mockRequest = mock(PreviewRequest.class);
+        assertAll(
+                () -> assertThrows(NullPointerException.class,
+                        () -> driveItemUnderTest.previewItem(null)),
+                () -> {
+                    driveItemUnderTest.setId(null);
+                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.previewItem(mockRequest));
+                },
+                () -> {
+                    driveItemUnderTest.setId(StringUtils.EMPTY);
+                    assertThrows(IllegalArgumentException.class,
+                            () -> driveItemUnderTest.previewItem(mockRequest));
                 });
     }
 

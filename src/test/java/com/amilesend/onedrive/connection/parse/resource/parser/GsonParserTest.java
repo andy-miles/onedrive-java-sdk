@@ -34,6 +34,7 @@ import com.amilesend.onedrive.parse.resource.parser.DriveParser;
 import com.amilesend.onedrive.parse.resource.parser.ItemActivityListParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionListParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionParser;
+import com.amilesend.onedrive.parse.resource.parser.PreviewParser;
 import com.amilesend.onedrive.parse.resource.parser.SpecialDriveItemParser;
 import com.amilesend.onedrive.parse.resource.parser.ThumbnailSetListParser;
 import com.amilesend.onedrive.parse.strategy.AnnotationBasedExclusionStrategy;
@@ -46,6 +47,7 @@ import com.amilesend.onedrive.resource.item.DriveItemVersion;
 import com.amilesend.onedrive.resource.item.SpecialDriveItem;
 import com.amilesend.onedrive.resource.item.type.AsyncJobStatus;
 import com.amilesend.onedrive.resource.item.type.Permission;
+import com.amilesend.onedrive.resource.item.type.Preview;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import com.amilesend.onedrive.resource.item.type.ThumbnailSet;
 import com.google.gson.Gson;
@@ -63,6 +65,7 @@ import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHe
 import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newDriveItemZipFile;
 import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newItemActivity;
 import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newPermission;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newPreview;
 import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newSpecialDriveItem;
 import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newThumbnailSet;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -270,6 +273,25 @@ public class GsonParserTest {
     @Test
     public void permissionsListParser_withInvalidParameters_shouldThrowException() {
         parse_withInvalidParameters_shouldThrowException(new PermissionListParser("driveItemIdValue"));
+    }
+
+    ///////////////////////////////
+    // PreviewParser
+    ///////////////////////////////
+
+    @Test
+    public void previewParser_withValidInputStream_shouldReturnPreview() {
+        final Preview expected = newPreview("driveItemIdValue");
+        final Preview actual = new PreviewParser("driveItemIdValue")
+                .parse(gson, SerializedResource.PREVIEW.getResource());
+        assertAll(
+                () -> assertEquals(expected, actual),
+                () -> assertEquals(expected.hashCode(), actual.hashCode()));
+    }
+
+    @Test
+    public void previewParser_withInvalidParameters_shouldThrowException() {
+        parse_withInvalidParameters_shouldThrowException(new PreviewParser("driveItemIdValue"));
     }
 
     ///////////////////////////////
