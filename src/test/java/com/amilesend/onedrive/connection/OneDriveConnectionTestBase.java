@@ -52,6 +52,7 @@ public abstract class OneDriveConnectionTestBase {
     protected static final int SUCCESS_RESPONSE_CODE = 200;
     protected static final int REMOTE_SUCCESS_RESPONSE_CODE = 202;
     protected static final int REQUEST_ERROR_CODE = 403;
+    protected static final int THROTTLED_ERROR_CODE = 429;
     protected static final int SERVER_ERROR_RESPONSE_CODE = 503;
     protected static final long BYTES_TRANSFERRED = 1024L;
 
@@ -88,6 +89,17 @@ public abstract class OneDriveConnectionTestBase {
         lenient().when(mockResponse.code()).thenReturn(code);
         lenient().when(mockResponse.isSuccessful()).thenReturn(code == SUCCESS_RESPONSE_CODE);
         lenient().when(mockResponse.body()).thenReturn(mockBody);
+
+        return mockResponse;
+    }
+
+    protected Response newMockedResponse(final int code, final Long retryAfterSeconds) {
+        final Response mockResponse = mock(Response.class);
+        when(mockResponse.code()).thenReturn(code);
+        lenient().when(mockResponse.isSuccessful()).thenReturn(String.valueOf(code).startsWith("2"));
+        if (retryAfterSeconds != null) {
+            lenient().when(mockResponse.header(eq("Retry-After"))).thenReturn(String.valueOf(retryAfterSeconds));
+        }
 
         return mockResponse;
     }

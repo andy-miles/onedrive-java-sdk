@@ -38,6 +38,7 @@ import java.util.zip.GZIPInputStream;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
@@ -66,6 +67,27 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
                     () -> assertEquals(mockDriveItem, actual),
                     () -> verify(mockParser).parse(isA(Gson.class), isA(InputStream.class)));
         }
+    }
+
+    @Test
+    public void execute_withThrottledResponse_shouldThrowException() {
+        final long expected = 60L;
+        setUpHttpClientMock(newMockedResponse(THROTTLED_ERROR_CODE, expected));
+
+        final Throwable thrown = assertThrows(ThrottledException.class,
+                () -> connectionUnderTest.execute(mock(Request.class), mock(GsonParser.class)));
+
+        assertEquals(expected, ((ThrottledException) thrown).getRetryAfterSeconds());
+    }
+
+    @Test
+    public void execute_withThrottledResponseAndNullRetryAfterHeader_shouldThrowException() {
+        setUpHttpClientMock(newMockedResponse(THROTTLED_ERROR_CODE, (Long) null));
+
+        final Throwable thrown = assertThrows(ThrottledException.class,
+                () -> connectionUnderTest.execute(mock(Request.class), mock(GsonParser.class)));
+
+        assertNull(((ThrottledException) thrown).getRetryAfterSeconds());
     }
 
     @Test
@@ -127,6 +149,27 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
     }
 
     @Test
+    public void executeNoResponse_withThrottledResponse_shouldThrowException() {
+        final long expected = 60L;
+        setUpHttpClientMock(newMockedResponse(THROTTLED_ERROR_CODE, expected));
+
+        final Throwable thrown = assertThrows(ThrottledException.class,
+                () -> connectionUnderTest.execute(mock(Request.class)));
+
+        assertEquals(expected, ((ThrottledException) thrown).getRetryAfterSeconds());
+    }
+
+    @Test
+    public void executeNoResponse_withThrottledResponseAndNullRetryAfterHeader_shouldThrowException() {
+        setUpHttpClientMock(newMockedResponse(THROTTLED_ERROR_CODE, (Long) null));
+
+        final Throwable thrown = assertThrows(ThrottledException.class,
+                () -> connectionUnderTest.execute(mock(Request.class)));
+
+        assertNull(((ThrottledException) thrown).getRetryAfterSeconds());
+    }
+
+    @Test
     public void executeNoResponse_withServerErrorResponseCode_shouldThrowException() {
         setUpHttpClientMock(newMockedResponse(SERVER_ERROR_RESPONSE_CODE));
         assertThrows(ResponseException.class, () -> connectionUnderTest.execute(mock(Request.class)));
@@ -168,6 +211,27 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
     public void executeRemoteAsync_withUnrecognizedResponseCode_shouldThrowException() {
         setUpHttpClientMock(newMockedResponse(SUCCESS_RESPONSE_CODE, "LocationUrlValue"));
         assertThrows(ResponseException.class, () -> connectionUnderTest.executeRemoteAsync(mock(Request.class)));
+    }
+
+    @Test
+    public void executeRemoteAsync_withThrottledResponse_shouldThrowException() {
+        final long expected = 60L;
+        setUpHttpClientMock(newMockedResponse(THROTTLED_ERROR_CODE, expected));
+
+        final Throwable thrown = assertThrows(ThrottledException.class,
+                () -> connectionUnderTest.executeRemoteAsync(mock(Request.class)));
+
+        assertEquals(expected, ((ThrottledException) thrown).getRetryAfterSeconds());
+    }
+
+    @Test
+    public void executeRemoteAsync_withThrottledResponseAndNullRetryAfterHeader_shouldThrowException() {
+        setUpHttpClientMock(newMockedResponse(THROTTLED_ERROR_CODE, (Long) null));
+
+        final Throwable thrown = assertThrows(ThrottledException.class,
+                () -> connectionUnderTest.executeRemoteAsync(mock(Request.class)));
+
+        assertNull(((ThrottledException) thrown).getRetryAfterSeconds());
     }
 
     @Test
@@ -232,6 +296,40 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
     @Test
     public void executeAsync_withRequestErrorResponseCode_shouldThrowException() {
         executeAsync_withErrorCode_shouldThrowException(REQUEST_ERROR_CODE, RequestException.class);
+    }
+
+    @Test
+    public void executeAsync_withThrottledResponse_shouldThrowException() {
+        final Long expected = 1000L;
+        final Response mockResponse = newMockedResponse(THROTTLED_ERROR_CODE, expected);
+        final Call mockCall = setUpHttpClientMockAsync();
+        final GsonParser<DriveItem> mockParser = mock(GsonParser.class);
+
+        // Obtain future and get the callback reference
+        final CompletableFuture<DriveItem> future =
+                connectionUnderTest.executeAsync(mock(Request.class), mockParser);
+        final Callback callback = getCallbackFromCallMock(mockCall);
+
+        // Simulate callback onResponse invocation
+        final Throwable thrown = assertThrows(ThrottledException.class,
+                () -> callback.onResponse(mockCall, mockResponse));
+        assertEquals(expected, ((ThrottledException) thrown).getRetryAfterSeconds());
+    }
+
+    @Test
+    public void executeAsync_withThrottledResponseAndNullRetryAfterHeader_shouldThrowException() {
+        final Response mockResponse = newMockedResponse(THROTTLED_ERROR_CODE, (Long) null);
+        final Call mockCall = setUpHttpClientMockAsync();
+        final GsonParser<DriveItem> mockParser = mock(GsonParser.class);
+
+        // Obtain future and get the callback reference
+        final CompletableFuture<DriveItem> future =
+                connectionUnderTest.executeAsync(mock(Request.class), mockParser);
+        final Callback callback = getCallbackFromCallMock(mockCall);
+
+        final Throwable thrown = assertThrows(ThrottledException.class,
+                () -> callback.onResponse(mockCall, mockResponse));
+        assertNull(((ThrottledException) thrown).getRetryAfterSeconds());
     }
 
     private <T extends Throwable> void executeAsync_withErrorCode_shouldThrowException(

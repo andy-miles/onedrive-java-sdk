@@ -65,6 +65,8 @@ public class OneDriveConnection {
 
     private static final String BASE_URL = "https://graph.microsoft.com/v1.0";
     private static final String GZIP_ENCODING = "gzip";
+    private static final String THROTTLED_RETRY_AFTER_HEADER = "Retry-After";
+    private static int THROTTLED_RESPONSE_CODE = 429;
 
     private final OkHttpClient httpClient;
     /** The authorization manager used to manage auth tokens. */
@@ -378,6 +380,14 @@ public class OneDriveConnection {
 
     private static void validateResponse(final Response response) {
         final int code = response.code();
+        if (code == THROTTLED_RESPONSE_CODE) {
+            final Long retryAfterSeconds = extractRetryAfterHeaderValue(response);
+            final String msg = retryAfterSeconds != null
+                    ? "Request throttled. Retry after " + retryAfterSeconds + " seconds"
+                    : "Request throttled";
+            throw new ThrottledException(msg, retryAfterSeconds);
+        }
+
         final boolean isRequestError = String.valueOf(code).startsWith("4");
         if (isRequestError) {
             throw new RequestException(new StringBuilder("Error with request (")
@@ -392,5 +402,10 @@ public class OneDriveConnection {
                     .append(response)
                     .toString());
         }
+    }
+
+    private static Long extractRetryAfterHeaderValue(final Response response) {
+        final String retryAfterHeaderValue = response.header(THROTTLED_RETRY_AFTER_HEADER);
+        return StringUtils.isNotBlank(retryAfterHeaderValue) ? Long.valueOf(retryAfterHeaderValue) : null;
     }
 }
