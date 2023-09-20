@@ -291,7 +291,7 @@ public class DriveFile extends DriveItemType {
     //////////////////////
 
     /**
-     *Updates the attributes for this file.
+     * Updates the attributes for this file.
      *
      * @return the updated drive file
      */

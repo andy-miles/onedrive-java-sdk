@@ -80,7 +80,7 @@ documented APIs are implemented.
 <a name="unsupported-features"></a>
 ## Current Unsupported Features
 1. User drive access is the only supported configuration with this release, but plans to support group and site-based access is on the roadmap.
-2[Upload sessions](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession) for uploading larges files in segments
+2. [Upload sessions](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession) for uploading larges files in segments
 3. [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
 4. [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)
 

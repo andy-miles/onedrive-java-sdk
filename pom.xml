@@ -69,13 +69,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <github.global.server>github</github.global.server>
         <maven.resolver.transport>wagon</maven.resolver.transport>
+        <lombok.version>1.18.30</lombok.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.28</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -175,7 +176,7 @@
                     <dependency>
                         <groupId>org.projectlombok</groupId>
                         <artifactId>lombok</artifactId>
-                        <version>1.18.28</version>
+                        <version>${lombok.version}</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -264,10 +265,11 @@
                             <header>com/mycila/maven/plugin/license/templates/GPL-3.txt</header>
                             <excludes>
                                 <exclude>**/README</exclude>
-                                <exclude>**/README</exclude>
+                                <exclude>**/README.md</exclude>
                                 <exclude>src/test/resources/**</exclude>
                                 <exclude>src/main/resources/**</exclude>
                                 <exclude>**/lombok.config</exclude>
+                                <exclude>src/main/java/javadoc-format-fix.conf</exclude>
                             </excludes>
                         </licenseSet>
                     </licenseSets>

@@ -85,7 +85,7 @@ public class LogProgressCallback implements TransferProgressCallback {
     }
 
     @Override
-    public void onComplete(long bytesTransferred) {
+    public void onComplete(final long bytesTransferred) {
         log.atLevel(loggingLevel)
                 .log("{} complete with {} bytes transferred", transferType.getLogPrefix(), bytesTransferred);
     }
