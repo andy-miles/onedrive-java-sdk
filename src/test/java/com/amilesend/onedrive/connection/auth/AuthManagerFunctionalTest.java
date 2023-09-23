@@ -23,6 +23,8 @@ import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -40,62 +42,76 @@ public class AuthManagerFunctionalTest {
     static final long EXPIRES_TIME_MILLIS = System.currentTimeMillis() + Duration.ofDays(2L).toMillis();
     static final String TOKEN_JSON_RESPONSE =
             "{" +
-            "\"access_token\": \"AccessToken\"," +
-            "\"expires_in\": " + EXPIRES_TIME_MILLIS + "," +
-            "\"ext_expires_in\": " + EXPIRES_TIME_MILLIS + "," +
-            "\"refresh_token\": \"RefreshToken\"," +
-            "\"scope\": \"Scope1 Scope2 Scope3\"," +
-            "\"token_type\": \"bearer\"" +
+                "\"access_token\": \"AccessToken\"," +
+                "\"expires_in\": " + EXPIRES_TIME_MILLIS + "," +
+                "\"ext_expires_in\": " + EXPIRES_TIME_MILLIS + "," +
+                "\"refresh_token\": \"RefreshToken\"," +
+                "\"scope\": \"Scope1 Scope2 Scope3\"," +
+                "\"token_type\": \"bearer\"" +
             "}";
 
-    @SneakyThrows
-    @Test
-    public void builderWithAuthCode_withValidParameters_shouldRedeemToken() {
-        builder_withValidParameters_shouldCallService(true);
-    }
-
-    @Test
-    public void builderWithAuthInfo_withValidParameters_shouldRefreshToken() {
-        builder_withValidParameters_shouldCallService(false);
-    }
+    private MockWebServer mockWebServer;
+    private OkHttpClient httpClient;
+    private String baseUrl;
 
     @SneakyThrows
-    private void builder_withValidParameters_shouldCallService(final boolean isAuthCode) {
-        final MockWebServer mockWebServer = new MockWebServer();
+    @BeforeEach
+    public void setUp() {
+        mockWebServer = new MockWebServer();
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
                 .setBody(TOKEN_JSON_RESPONSE));
         mockWebServer.start();
-        final String baseUrl = mockWebServer.url(TOKEN_URL_PATH).toString();
 
-        final AuthManager authManager = isAuthCode
-                ? AuthManager.builderWithAuthCode()
-                        .authCode(AUTH_CODE)
-                        .clientId(CLIENT_ID)
-                        .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(new GsonFactory())
-                        .httpClient(newHttpClient())
-                        .redirectUrl(REDIRECT_URL)
-                        .baseTokenUrl(baseUrl)
-                        .buildWithAuthCode()
-                : AuthManager.builderWithAuthInfo()
-                        .authInfo(AuthInfo.builder()
-                                .accessToken("StaleAccessToken")
-                                .expiresIn(EXPIRES_TIME_MILLIS)
-                                .extExpiresIn(EXPIRES_TIME_MILLIS)
-                                .refreshToken("OldRefreshToken")
-                                .scopes(List.of("Scope1", "Scope2", "Scope3"))
-                                .build())
-                        .clientId(CLIENT_ID)
-                        .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(new GsonFactory())
-                        .httpClient(newHttpClient())
-                        .redirectUrl(REDIRECT_URL)
-                        .baseTokenUrl(baseUrl)
-                        .buildWithAuthInfo();
+        httpClient = new OkHttpClientBuilder().isForTest(true).build();
+        baseUrl = mockWebServer.url(TOKEN_URL_PATH).toString();
+    }
 
-        final AuthInfo actual = authManager.getAuthInfo();
+    @SneakyThrows
+    @AfterEach
+    public void cleanUp() {
+        mockWebServer.shutdown();
+    }
+
+    @SneakyThrows
+    @Test
+    public void builderWithAuthCode_withValidParameters_shouldRedeemToken() {
+        final AuthManager authManager = AuthManager.builderWithAuthCode()
+                .authCode(AUTH_CODE)
+                .clientId(CLIENT_ID)
+                .clientSecret(CLIENT_SECRET)
+                .gson(GsonFactory.getInstance().getInstanceForAuthManager())
+                .httpClient(newHttpClient())
+                .redirectUrl(REDIRECT_URL)
+                .baseTokenUrl(baseUrl)
+                .buildWithAuthCode();
+
+        validateAuthInfo(authManager.getAuthInfo());
+    }
+
+    @Test
+    public void builderWithAuthInfo_withValidParameters_shouldRefreshToken() {
+        final AuthManager authManager =  AuthManager.builderWithAuthInfo()
+                .authInfo(AuthInfo.builder()
+                        .accessToken("StaleAccessToken")
+                        .expiresIn(EXPIRES_TIME_MILLIS)
+                        .extExpiresIn(EXPIRES_TIME_MILLIS)
+                        .refreshToken("OldRefreshToken")
+                        .scopes(List.of("Scope1", "Scope2", "Scope3"))
+                        .build())
+                .clientId(CLIENT_ID)
+                .clientSecret(CLIENT_SECRET)
+                .gson(GsonFactory.getInstance().getInstanceForAuthManager())
+                .httpClient(newHttpClient())
+                .redirectUrl(REDIRECT_URL)
+                .baseTokenUrl(baseUrl)
+                .buildWithAuthInfo();
+
+        validateAuthInfo(authManager.getAuthInfo());
+    }
+
+    private static void validateAuthInfo(final AuthInfo actual) {
         assertAll(
                 () -> assertEquals("AccessToken", actual.getAccessToken()),
                 () -> assertEquals(EXPIRES_TIME_MILLIS, actual.getExpiresIn()),
@@ -104,8 +120,6 @@ public class AuthManagerFunctionalTest {
                 () -> assertEquals("RefreshToken", actual.getRefreshToken()),
                 () -> assertEquals(List.of("Scope1", "Scope2", "Scope3"), actual.getScopes()),
                 () -> assertEquals("bearer", actual.getTokenType()));
-
-        mockWebServer.shutdown();
     }
 
     private OkHttpClient newHttpClient() {

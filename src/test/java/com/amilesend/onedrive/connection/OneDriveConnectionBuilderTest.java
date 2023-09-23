@@ -61,6 +61,7 @@ public class OneDriveConnectionBuilderTest {
     @BeforeEach
     public void setUp() {
         lenient().when(mockGsonFactory.newInstanceForConnection(any(OneDriveConnection.class))).thenReturn(mockGson);
+        lenient().when(mockGsonFactory.getInstanceForAuthManager()).thenReturn(mockGson);
         builderUnderTest = new OneDriveConnectionBuilder(mockGsonFactory);
     }
 
@@ -193,7 +194,7 @@ public class OneDriveConnectionBuilderTest {
             final AuthManager managerToReturn) {
         final AuthManager.BuilderWithAuthCode mockBuilder = mock(AuthManager.BuilderWithAuthCode.class);
         when(mockBuilder.httpClient(any(OkHttpClient.class))).thenReturn(mockBuilder);
-        when(mockBuilder.gsonFactory(any(GsonFactory.class))).thenReturn(mockBuilder);
+        when(mockBuilder.gson(any(Gson.class))).thenReturn(mockBuilder);
         when(mockBuilder.clientId(anyString())).thenReturn(mockBuilder);
         when(mockBuilder.clientSecret(anyString())).thenReturn(mockBuilder);
         when(mockBuilder.redirectUrl(anyString())).thenReturn(mockBuilder);
@@ -206,7 +207,7 @@ public class OneDriveConnectionBuilderTest {
             final AuthManager managerToReturn) {
         final AuthManager.BuilderWithAuthInfo mockBuilder = mock(AuthManager.BuilderWithAuthInfo.class);
         when(mockBuilder.httpClient(any(OkHttpClient.class))).thenReturn(mockBuilder);
-        when(mockBuilder.gsonFactory(any(GsonFactory.class))).thenReturn(mockBuilder);
+        when(mockBuilder.gson(any(Gson.class))).thenReturn(mockBuilder);
         when(mockBuilder.clientId(anyString())).thenReturn(mockBuilder);
         when(mockBuilder.clientSecret(anyString())).thenReturn(mockBuilder);
         when(mockBuilder.redirectUrl(anyString())).thenReturn(mockBuilder);

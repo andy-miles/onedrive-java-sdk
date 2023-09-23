@@ -172,6 +172,31 @@ try {
 
 ```
 
+#### Using the provided SingleUserEncryptedFileBasedAuthInfoStore
+
+This SDK also provides a [SingleUserEncryptedFileBasedAuthInfoStore](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/connection/auth/store/SingleUserEncryptedFileBasedAuthInfoStore.java)
+implementation that encrypts and saves the auth state to the file system. A specified keystore file path along with associated passwords must be specified.
+If the key store file does not exist, a new one will be created along with a newly generated crypto key that is used to encrypt and decrypt the AuthInfo.
+
+```java
+Path myOneDriveUserState = Paths.get("./MyOneDriveUserState.json")
+Path myKeyStorePath = Paths.get("./MyKeyStoreFile");
+char[] myKeyStorePassword = System.getProperty("MyKeyStorePassword").toCharArray();
+char[] myAuthStateCryptoKeyPassword = System.getProperty("MyCryptoKeyPassword").toCharArray();
+
+// Helper to manage storage of the crypto key
+KeyStoreHelper keyStoreHelper = new KeyStoreHelper(myKeyStorePath, myKeyStorePassword);
+// Helper to encrypt/decrypt AuthInfo contents
+CryptoHelper cryptoHelper = new CryptoHelperFactory(keyStoreHelper, myAuthStateCryptoKeyPassword).newInstance();
+// The AuthInfoStore implementation that encrypts + saves and reads + decrypts from the filesystem.
+SingleUserEncryptedFileBasedAuthInfoStore authInfoStore =
+        new SingleUserEncryptedFileBasedAuthInfoStore(myOneDriveUserState, cryptoHelper);
+
+OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
+        .authInfoStore(authInfoStore)
+        .build();
+```
+
 ### Customizing the HTTP client configuration
 
 If your use-case requires configuring the underlying <code>OkHttpClient</code> instance (e.g., configuring your own 

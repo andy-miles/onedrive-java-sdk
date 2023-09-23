@@ -15,29 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.amilesend.onedrive.connection;
+package com.amilesend.onedrive.connection.auth.store;
 
-import lombok.Getter;
-
-import javax.annotation.Nullable;
-
-/** Defines the exception thrown from {@link OneDriveConnection} when a request is throttled. */
-public class ThrottledException extends RequestException {
+/** Defines the exception thrown from {@link AuthInfoStore}. */
+public class AuthInfoStoreException extends Exception {
     /**
-     * The time in seconds that the request can be retried.
-     * Note: This can be null and is optionally provided by the response. */
-    @Getter
-    @Nullable
-    private final Long retryAfterSeconds;
-
-    /**
-     * Creates a new {@code ThrottledException}.
+     * Creates a new {@code AuthInfoStoreException}.
      *
      * @param msg the exception message
-     * @param retryAfterSeconds the amount of time in seconds that the request can be retried
      */
-    public ThrottledException(final String msg, final Long retryAfterSeconds) {
+    public AuthInfoStoreException(final String msg) {
         super(msg);
-        this.retryAfterSeconds = retryAfterSeconds;
+    }
+
+    /**
+     * Creates a new {@code AuthInfoStoreException}.
+     *
+     * @param msg the exception message
+     * @param cause the cause of the exception
+     */
+    public AuthInfoStoreException(final String msg, Throwable cause) {
+        super(msg, cause);
     }
 }

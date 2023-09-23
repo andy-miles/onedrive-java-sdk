@@ -17,7 +17,6 @@
  */
 package com.amilesend.onedrive.connection.auth;
 
-import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.SneakyThrows;
@@ -27,7 +26,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -45,9 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
@@ -67,14 +63,8 @@ public class AuthManagerTest {
     private OkHttpClient mockHttpClient;
     @Mock
     private Gson mockGson;
-    @Mock
-    private GsonFactory mockGsonFactory;
     private AuthManager authManagerUnderTest;
 
-    @BeforeEach
-    public void setUp() {
-        lenient().when(mockGsonFactory.newInstanceForAuthManager()).thenReturn(mockGson);
-    }
 
     //////////////////////////
     // builderWithAuthCode
@@ -86,13 +76,13 @@ public class AuthManagerTest {
         setUpCall(newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(eq(mockGson), anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
 
             authManagerUnderTest = AuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gsonFactory(mockGsonFactory)
+                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
                     .baseTokenUrl(BASE_AUTH_URL)
@@ -113,7 +103,7 @@ public class AuthManagerTest {
                         .authCode(AUTH_CODE)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .baseTokenUrl(BASE_AUTH_URL)
@@ -125,7 +115,7 @@ public class AuthManagerTest {
         setUpCall(newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(eq(mockGson), anyString()))
+            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString()))
                     .thenThrow(new JsonSyntaxException("Exception"));
 
             final Throwable thrown = assertThrows(AuthManagerException.class,
@@ -133,7 +123,7 @@ public class AuthManagerTest {
                             .authCode(AUTH_CODE)
                             .clientId(CLIENT_ID)
                             .clientSecret(CLIENT_SECRET)
-                            .gsonFactory(mockGsonFactory)
+                            .gson(mockGson)
                             .httpClient(mockHttpClient)
                             .redirectUrl(REDIRECT_URL)
                             .baseTokenUrl(BASE_AUTH_URL)
@@ -151,7 +141,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
@@ -160,7 +150,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
@@ -169,7 +159,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(null) // Null clientId
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
@@ -178,7 +168,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(StringUtils.EMPTY) // Blank clientId
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
@@ -187,7 +177,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(null) // Null clientSecret
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
@@ -196,7 +186,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(StringUtils.EMPTY) // Blank clientSecret
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
@@ -205,7 +195,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(null) // Null gsonFactory
+                        .gson(null) // Null gson
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
@@ -214,7 +204,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(null) // Null httpClient
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
@@ -223,7 +213,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(null) // Null redirectUrl
                         .buildWithAuthCode()),
@@ -232,7 +222,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(StringUtils.EMPTY) // Blank redirectUrl
                         .buildWithAuthCode()));
@@ -248,13 +238,13 @@ public class AuthManagerTest {
         setUpCall(newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(eq(mockGson), anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
 
             authManagerUnderTest = AuthManager.builderWithAuthInfo()
                     .authInfo(expected)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gsonFactory(mockGsonFactory)
+                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
                     .baseTokenUrl(BASE_AUTH_URL)
@@ -275,7 +265,7 @@ public class AuthManagerTest {
                         .authInfo(newAuthInfo())
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .baseTokenUrl(BASE_AUTH_URL)
@@ -291,7 +281,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthInfo()),
@@ -300,7 +290,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(null) // Null clientId
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthInfo()),
@@ -309,7 +299,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(StringUtils.EMPTY) // Blank clientId
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthInfo()),
@@ -318,7 +308,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(null) // Null clientSecret
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthInfo()),
@@ -327,7 +317,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(StringUtils.EMPTY) // Blank clientSecret
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthInfo()),
@@ -336,7 +326,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(null) // Null gsonFactory
+                        .gson(null) // Null gson
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthInfo()),
@@ -345,7 +335,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(null) // Null httpClient
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthInfo()),
@@ -354,7 +344,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(null) // Null redirectUrl
                         .buildWithAuthInfo()),
@@ -363,7 +353,7 @@ public class AuthManagerTest {
                         .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gsonFactory(mockGsonFactory)
+                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(StringUtils.EMPTY) // Blank redirectUrl
                         .buildWithAuthInfo()));
@@ -388,12 +378,12 @@ public class AuthManagerTest {
         setUpCall(newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(eq(mockGson), anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
             authManagerUnderTest = AuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gsonFactory(mockGsonFactory)
+                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
                     .baseTokenUrl(BASE_AUTH_URL)
@@ -432,12 +422,12 @@ public class AuthManagerTest {
         setUpCall(newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(eq(mockGson), anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
             authManagerUnderTest = AuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gsonFactory(mockGsonFactory)
+                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
                     .baseTokenUrl(BASE_AUTH_URL)
@@ -476,12 +466,12 @@ public class AuthManagerTest {
         setUpCall(newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(eq(mockGson), anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
             authManagerUnderTest = AuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gsonFactory(mockGsonFactory)
+                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
                     .baseTokenUrl(BASE_AUTH_URL)
@@ -507,12 +497,12 @@ public class AuthManagerTest {
         setUpCall(newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(eq(mockGson), anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
             authManagerUnderTest = AuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gsonFactory(mockGsonFactory)
+                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
                     .baseTokenUrl(BASE_AUTH_URL)
@@ -532,12 +522,12 @@ public class AuthManagerTest {
         setUpCall(newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(eq(mockGson), anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
             authManagerUnderTest = AuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gsonFactory(mockGsonFactory)
+                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
                     .baseTokenUrl(BASE_AUTH_URL)

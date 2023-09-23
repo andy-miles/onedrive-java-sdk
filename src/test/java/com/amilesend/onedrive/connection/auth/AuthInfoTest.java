@@ -41,11 +41,11 @@ public class AuthInfoTest {
             "\"token_type\": \"bearer\"" +
             "}";
 
-    final Gson gson = new GsonFactory().newInstanceForAuthManager();
+    final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
 
     @Test
     public void fromJson_withValidJson_shouldReturnAuthInfo() {
-        final AuthInfo actual = AuthInfo.fromJson(gson, TOKEN_JSON_RESPONSE);
+        final AuthInfo actual = AuthInfo.fromJson(TOKEN_JSON_RESPONSE);
 
         assertAll(
                 () -> assertEquals("AccessToken", actual.getAccessToken()),
@@ -59,7 +59,7 @@ public class AuthInfoTest {
 
     @Test
     public void fromJson_withNoScopes_shouldReturnAuthInfo() {
-        final AuthInfo actual = AuthInfo.fromJson(gson, TOKEN_NO_SCOPE_JSON_RESPONSE);
+        final AuthInfo actual = AuthInfo.fromJson(TOKEN_NO_SCOPE_JSON_RESPONSE);
 
         assertAll(
                 () -> assertEquals("AccessToken", actual.getAccessToken()),
@@ -80,7 +80,7 @@ public class AuthInfoTest {
                 .refreshToken("RefreshToken")
                 .scopes(List.of("Scope1", "Scope2", "Scope3"))
                 .build()
-                .toJson(gson);
+                .toJson();
 
         assertAll(
                 () -> assertTrue(actual.startsWith("{")),
@@ -101,7 +101,7 @@ public class AuthInfoTest {
                 .extExpiresIn(EXPIRES_TIME_MILLIS)
                 .refreshToken("RefreshToken")
                 .build()
-                .toJson(gson);
+                .toJson();
 
         assertAll(
                 () -> assertTrue(actual.startsWith("{")),

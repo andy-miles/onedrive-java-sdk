@@ -17,7 +17,6 @@
  */
 package com.amilesend.onedrive.connection.auth;
 
-import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import lombok.AccessLevel;
@@ -80,7 +79,7 @@ public class AuthManager {
     private final Gson gson;
     /** The base URL used to authenticate and refresh authorization tokens. */
     private final String baseTokenUrl;
-    /** The current authentication informaiton. */
+    /** The current authentication information. */
     @Setter(AccessLevel.PACKAGE)
     @VisibleForTesting
     private volatile AuthInfo authInfo;
@@ -90,7 +89,7 @@ public class AuthManager {
              buildMethodName = "buildWithAuthCode",
              builderMethodName = "builderWithAuthCode")
     private AuthManager(@NonNull final OkHttpClient httpClient,
-                        @NonNull final GsonFactory gsonFactory,
+                        @NonNull final Gson gson,
                         final String baseTokenUrl,
                         final String clientId,
                         final String clientSecret,
@@ -103,7 +102,7 @@ public class AuthManager {
 
         this.baseTokenUrl = StringUtils.isNotBlank(baseTokenUrl) ? baseTokenUrl : AUTH_TOKEN_URL;
         this.httpClient = httpClient;
-        this.gson = gsonFactory.newInstanceForAuthManager();
+        this.gson = gson;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.redirectUrl = redirectUrl;
@@ -115,7 +114,7 @@ public class AuthManager {
              builderMethodName = "builderWithAuthInfo",
              buildMethodName = "buildWithAuthInfo")
     private AuthManager(@NonNull final OkHttpClient httpClient,
-                        @NonNull final GsonFactory gsonFactory,
+                        @NonNull final Gson gson,
                         final String baseTokenUrl,
                         final String clientId,
                         final String clientSecret,
@@ -127,7 +126,7 @@ public class AuthManager {
 
         this.baseTokenUrl = StringUtils.isNotBlank(baseTokenUrl) ? baseTokenUrl : AUTH_TOKEN_URL;
         this.httpClient = httpClient;
-        this.gson = gsonFactory.newInstanceForAuthManager();
+        this.gson = gson;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.redirectUrl = redirectUrl;
@@ -224,7 +223,7 @@ public class AuthManager {
                 }
 
                 final String json = response.body().string();
-                authInfo = AuthInfo.fromJson(gson, json);
+                authInfo = AuthInfo.fromJson(json);
                 return authInfo;
             }
         } catch (final AuthManagerException ex) {

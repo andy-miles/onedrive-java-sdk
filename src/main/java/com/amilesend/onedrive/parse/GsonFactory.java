@@ -27,36 +27,53 @@ import com.amilesend.onedrive.parse.strategy.AnnotationBasedExclusionStrategy;
 import com.amilesend.onedrive.parse.strategy.AnnotationBasedSerializationExclusionStrategy;
 import com.amilesend.onedrive.resource.drive.Drive;
 import com.amilesend.onedrive.resource.item.DriveItem;
-import com.amilesend.onedrive.resource.item.SpecialDriveItem;
 import com.amilesend.onedrive.resource.item.DriveItemVersion;
+import com.amilesend.onedrive.resource.item.SpecialDriveItem;
 import com.amilesend.onedrive.resource.item.type.Permission;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import static com.google.gson.FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES;
 
 /** Factory that vends new pre-configured {@link Gson} instances. */
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class GsonFactory {
+    private static final GsonFactory INSTANCE = new GsonFactory();
+    private static final Gson AUTH_MANAGER_GSON_INSTANCE = new GsonBuilder()
+            .setFieldNamingPolicy(LOWER_CASE_WITH_UNDERSCORES)
+            .create();
+    private static final Gson STATE_MANAGER_GSON_INSTANCE = new GsonBuilder().setPrettyPrinting().create();
+
+
     /**
-     * Gets a new {@link Gson} instance that is configured for use by
+     * Gets the singleton {@code GsonFactory} instance.
+     *
+     * @return the factory instance
+     */
+    public static GsonFactory getInstance() {
+        return INSTANCE;
+    }
+
+    /**
+     * Gets the {@link Gson} instance that is configured for use by
      * {@link com.amilesend.onedrive.connection.auth.AuthManager}.
      *
      * @return the pre-configured Gson instance
      */
-    public Gson newInstanceForAuthManager() {
-        return new GsonBuilder()
-                .setFieldNamingPolicy(LOWER_CASE_WITH_UNDERSCORES)
-                .create();
+    public Gson getInstanceForAuthManager() {
+        return AUTH_MANAGER_GSON_INSTANCE;
     }
 
     /**
-     * Gets a new {@link Gson} instance that is configured for use by
+     * Gets the {@link Gson} instance that is configured for use by
      * {@link com.amilesend.onedrive.OneDriveFactoryStateManager}.
      *
      * @return the pre-configured Gson instance
      */
-    public Gson newInstanceForStateManager() {
-        return new GsonBuilder().setPrettyPrinting().create();
+    public Gson getInstanceForStateManager() {
+        return STATE_MANAGER_GSON_INSTANCE;
     }
 
     /**

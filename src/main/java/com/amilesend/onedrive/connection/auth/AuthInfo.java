@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.connection.auth;
 
+import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.Builder;
@@ -67,14 +68,14 @@ public class AuthInfo {
     private final String refreshToken;
 
     /**
-     * Deserializes the given {@code authInfoJson} string and {@link Gson} to a new {@code AuthInfo} object.
+     * Deserializes the given {@code authInfoJson} string to a new {@code AuthInfo} object.
      *
-     * @param gson used to deserialize the JSON formatted string to a {@code AuthInfo} object
      * @param authInfoJson the JSON-formatted auth info
      * @return the new {@code AuthInfo} object
      * @throws JsonSyntaxException if there is an error while deserializing the JSON string
      */
-    public static AuthInfo fromJson(final Gson gson, final String authInfoJson) {
+    public static AuthInfo fromJson(final String authInfoJson) {
+        final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
         final AuthInfoInternal internalAuthInfo = gson.fromJson(authInfoJson, AuthInfoInternal.class);
         return AuthInfo.builder()
                 .tokenType(internalAuthInfo.getTokenType())
@@ -100,12 +101,12 @@ public class AuthInfo {
     }
 
     /**
-     * Serializes this {@code AuthInfo} to a JSON formatted string with the given {@link Gson}.
+     * Serializes this {@code AuthInfo} to a JSON formatted string.
      *
-     * @param gson used to serialize this object to a JSON formatted string
      * @return the JSON formatted {@code AuthInfo}
      */
-    public String toJson(final Gson gson) {
+    public String toJson() {
+        final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
         final AuthInfoInternal internalAuthInfo = AuthInfoInternal.builder()
                 .tokenType(tokenType)
                 .scope(toScope(scopes))

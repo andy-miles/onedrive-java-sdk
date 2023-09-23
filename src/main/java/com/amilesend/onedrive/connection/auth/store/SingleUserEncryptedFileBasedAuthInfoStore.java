@@ -18,6 +18,11 @@
 package com.amilesend.onedrive.connection.auth.store;
 
 import com.amilesend.onedrive.connection.auth.AuthInfo;
+import com.amilesend.onedrive.crypto.CryptoHelper;
+import com.amilesend.onedrive.crypto.CryptoHelperException;
+import com.amilesend.onedrive.crypto.EncryptedEnvelope;
+import com.amilesend.onedrive.parse.GsonFactory;
+import com.google.gson.Gson;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -28,17 +33,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * A simple {@link AuthInfoStore} implementation that stores and retrieves user authentication information
+ * An {@link AuthInfoStore} implementation that stores and retrieves encrypted user authentication information
  * to the filesystem. This assumes a single user associated with the specified file path, which means
  * that any provided keyed identifiers are ignored.
  * @see AuthInfo
  * @see AuthInfoStore
  */
 @RequiredArgsConstructor
-public class SingleUserFileBasedAuthInfoStore implements AuthInfoStore {
+public class SingleUserEncryptedFileBasedAuthInfoStore implements AuthInfoStore {
     /** The path to save and read from. */
     @NonNull
     private final Path stateFilePath;
+    /** The crypto helper instance used to encrypt and decrypt the auth info file state contents. */
+    @NonNull
+    private final CryptoHelper cryptoHelper;
 
     /**
      * Saves the given {@code authInfo} to the file system.
@@ -50,7 +58,14 @@ public class SingleUserFileBasedAuthInfoStore implements AuthInfoStore {
     @Override
     public void store(final String id, @NonNull final AuthInfo authInfo) throws AuthInfoStoreException {
         try {
-            Files.write(stateFilePath, authInfo.toJson().getBytes(StandardCharsets.UTF_8));
+            final EncryptedEnvelope encryptedEnvelope = cryptoHelper.encrypt(
+                    authInfo.toJson().getBytes(StandardCharsets.UTF_8),
+                    "OneDriveConnection AuthInfo");
+            final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
+            Files.write(stateFilePath, gson.toJson(encryptedEnvelope).getBytes(StandardCharsets.UTF_8));
+        } catch (final CryptoHelperException ex) {
+            throw new AuthInfoStoreException(
+                    "An error occurred while encrypting the auth info: " + ex.getMessage(), ex);
         } catch (final IOException ex) {
             throw new AuthInfoStoreException("Unable to store AuthInfo: " + ex.getMessage(), ex);
         }
@@ -69,14 +84,18 @@ public class SingleUserFileBasedAuthInfoStore implements AuthInfoStore {
             return null;
         }
 
-        final String jsonState;
         try {
-            jsonState = Files.readString(stateFilePath);
-            if (StringUtils.isBlank(jsonState)) {
+            final String encryptedEnvelopeJson = Files.readString(stateFilePath);
+            if (StringUtils.isBlank(encryptedEnvelopeJson)) {
                 return null;
             }
 
-            return AuthInfo.fromJson(jsonState);
+            final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
+            final EncryptedEnvelope encryptedEnvelope = gson.fromJson(encryptedEnvelopeJson, EncryptedEnvelope.class);
+            final String decryptedAuthInfoJson = new String(cryptoHelper.decrypt(encryptedEnvelope), StandardCharsets.UTF_8);
+            return AuthInfo.fromJson(decryptedAuthInfoJson);
+        } catch (final CryptoHelperException ex) {
+            throw new AuthInfoStoreException("Unable to decrypt AuthInfo: " + ex.getMessage(), ex);
         } catch (final IOException ex) {
             throw new AuthInfoStoreException("Unable to retrieve AuthInfo: " + ex.getMessage(), ex);
         }

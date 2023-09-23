@@ -33,7 +33,6 @@ public class OneDriveConnectionBuilder {
     private String clientSecret;
     private String redirectUrl;
     private OkHttpClient httpClient;
-    @NonNull
     private final GsonFactory gsonFactory;
 
     /**
@@ -42,7 +41,7 @@ public class OneDriveConnectionBuilder {
      * @return the builder
      */
     public static OneDriveConnectionBuilder newInstance() {
-        return new OneDriveConnectionBuilder(new GsonFactory());
+        return new OneDriveConnectionBuilder(GsonFactory.getInstance());
     }
 
     @VisibleForTesting
@@ -105,7 +104,7 @@ public class OneDriveConnectionBuilder {
         final OkHttpClient client = getHttpClientOrDefault();
         final AuthManager authManager =AuthManager.builderWithAuthCode()
                 .httpClient(client)
-                .gsonFactory(gsonFactory)
+                .gson(gsonFactory.getInstanceForAuthManager())
                 .clientId(clientId)
                 .clientSecret(clientSecret)
                 .redirectUrl(redirectUrl)
@@ -126,7 +125,7 @@ public class OneDriveConnectionBuilder {
         final OkHttpClient client = getHttpClientOrDefault();
         final AuthManager authManager = AuthManager.builderWithAuthInfo()
                 .httpClient(client)
-                .gsonFactory(gsonFactory)
+                .gson(gsonFactory.getInstanceForAuthManager())
                 .clientId(clientId)
                 .clientSecret(clientSecret)
                 .redirectUrl(redirectUrl)

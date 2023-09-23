@@ -23,6 +23,7 @@ import com.amilesend.onedrive.connection.auth.AuthInfo;
 import com.amilesend.onedrive.connection.auth.oauth.OAuthReceiverException;
 import com.amilesend.onedrive.connection.auth.oauth.OneDriveOAuthReceiver;
 import com.amilesend.onedrive.connection.auth.store.AuthInfoStore;
+import com.amilesend.onedrive.connection.auth.store.AuthInfoStoreException;
 import com.amilesend.onedrive.connection.auth.store.SingleUserFileBasedAuthInfoStore;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import com.amilesend.onedrive.parse.GsonFactory;
@@ -129,7 +130,7 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
                                         final Path stateFile,
                                         final AuthInfoStore authInfoStore) {
         this.httpClient = httpClient == null ? new OkHttpClientBuilder().build() : httpClient;
-        this.stateGson = stateGson == null ? new GsonFactory().newInstanceForStateManager() : stateGson;
+        this.stateGson = stateGson == null ? GsonFactory.getInstance().getInstanceForStateManager() : stateGson;
         this.redirectUrl = StringUtils.isBlank(redirectUrl) ? DEFAULT_REDIRECT_URL : redirectUrl;
         this.callbackPath = callbackPath == null ? DEFAULT_CALLBACK_PATH : callbackPath;
         this.scopes = scopes == null ? DEFAULT_SCOPES : scopes;
@@ -138,7 +139,7 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
         Validate.isTrue(stateFile != null || authInfoStore != null,
                 "Either stateFile or authInfoStore must be defined");
         this.authInfoStore = Optional.ofNullable(authInfoStore)
-                .orElseGet(() -> new SingleUserFileBasedAuthInfoStore(this.stateGson, stateFile));
+                .orElseGet(() -> new SingleUserFileBasedAuthInfoStore(stateFile));
     }
 
     @Override
@@ -157,7 +158,7 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
             final OneDrive oneDrive = fetchOneDrive();
             log.info("OneDrive logged in user: {}", oneDrive.getUserDisplayName());
             return oneDrive;
-        } catch (final OAuthReceiverException | IOException ex) {
+        } catch (final OAuthReceiverException ex) {
             throw new OneDriveException("Error while obtaining OneDrive instance", ex);
         }
     }
@@ -165,46 +166,59 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
     /**
      * Persists the authentication state.
      *
-     * @throws IOException if unable to save the authentication information
+     * @throws OneDriveException if unable to save the authentication information
      */
-    public void saveState() throws IOException {
+    public void saveState() throws OneDriveException {
         if (onedrive == null) {
             return;
         }
 
-        authInfoStore.store(DEFAULT_USER_AUTH_KEY, onedrive.getAuthInfo());
+        try {
+            authInfoStore.store(DEFAULT_USER_AUTH_KEY, onedrive.getAuthInfo());
+        } catch (final AuthInfoStoreException ex) {
+            throw new OneDriveException("Unable to save state: " + ex.getMessage(), ex);
+        }
     }
 
     @VisibleForTesting
-    OneDrive fetchOneDrive() throws OAuthReceiverException, IOException {
+    OneDrive fetchOneDrive() throws OAuthReceiverException, OneDriveException {
         if (onedrive != null) {
             return onedrive;
         }
 
-        final CredentialConfig config = loadCredentialConfig();
-        final Optional<AuthInfo> authInfoOpt = loadState();
-        final OneDriveConnectionBuilder connectionBuilder = OneDriveConnectionBuilder.newInstance()
-                .httpClient(httpClient)
-                .clientId(config.getClientId())
-                .clientSecret(config.getClientSecret())
-                .redirectUrl(redirectUrl);
-        OneDriveConnection connection;
-        // If persisted state exists, use it to leverage the refresh token; otherwise, obtain the auth code
-        if (authInfoOpt.isPresent()) {
-            log.debug("Creating OneDriveConnection from persisted state");
-            connection = connectionBuilder.build(authInfoOpt.get());
-        } else {
-            log.debug("No state found. Authenticating application for user");
-            connection = connectionBuilder.build(authenticate(config));
+        try {
+            final CredentialConfig config = loadCredentialConfig();
+            final Optional<AuthInfo> authInfoOpt = loadState();
+            final OneDriveConnectionBuilder connectionBuilder = OneDriveConnectionBuilder.newInstance()
+                    .httpClient(httpClient)
+                    .clientId(config.getClientId())
+                    .clientSecret(config.getClientSecret())
+                    .redirectUrl(redirectUrl);
+            OneDriveConnection connection;
+            // If persisted state exists, use it to leverage the refresh token; otherwise, obtain the auth code
+            if (authInfoOpt.isPresent()) {
+                log.debug("Creating OneDriveConnection from persisted state");
+                connection = connectionBuilder.build(authInfoOpt.get());
+            } else {
+                log.debug("No state found. Authenticating application for user");
+                connection = connectionBuilder.build(authenticate(config));
+            }
+            onedrive = new OneDrive(connection);
+            saveState();
+            return onedrive;
+        } catch (final IOException ex) {
+            throw new OneDriveException(
+                    "An error occurred while fetching credential or auth state: " + ex.getMessage(), ex);
         }
-        onedrive = new OneDrive(connection);
-        saveState();
-        return onedrive;
     }
 
     @VisibleForTesting
-    Optional<AuthInfo> loadState() throws IOException {
-        return Optional.ofNullable(authInfoStore.retrieve(DEFAULT_USER_AUTH_KEY));
+    Optional<AuthInfo> loadState() throws OneDriveException {
+        try {
+            return Optional.ofNullable(authInfoStore.retrieve(DEFAULT_USER_AUTH_KEY));
+        } catch (final AuthInfoStoreException ex) {
+            throw new OneDriveException("Unable to load state: " + ex.getMessage(), ex);
+        }
     }
 
     @VisibleForTesting

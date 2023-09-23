@@ -34,7 +34,7 @@ public interface AuthInfoStore {
      * @throws IOException if an error occurred while saving the authentication information
      * @see AuthInfo
      */
-    void store(String id, AuthInfo authInfo) throws IOException;
+    void store(String id, AuthInfo authInfo) throws AuthInfoStoreException;
 
     /**
      * Retrieves the {@link AuthInfo} for the given keyed identifier.
@@ -43,5 +43,5 @@ public interface AuthInfoStore {
      * @return the authentication information
      * @throws IOException if an error occurred while retrieving the authentication information
      */
-    AuthInfo retrieve(String id) throws IOException;
+    AuthInfo retrieve(String id) throws AuthInfoStoreException;
 }

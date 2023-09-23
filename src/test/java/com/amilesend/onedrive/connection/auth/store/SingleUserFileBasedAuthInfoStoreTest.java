@@ -18,7 +18,6 @@
 package com.amilesend.onedrive.connection.auth.store;
 
 import com.amilesend.onedrive.connection.auth.AuthInfo;
-import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,8 +47,6 @@ public class SingleUserFileBasedAuthInfoStoreTest {
     private static final String ID = "DoesNotMatter";
 
     @Mock
-    private Gson mockGson;
-    @Mock
     private Path mockStateFilePath;
     @InjectMocks
     private SingleUserFileBasedAuthInfoStore storeUnderTest;
@@ -61,7 +59,7 @@ public class SingleUserFileBasedAuthInfoStoreTest {
     @Test
     public void store_withAuthInfo_shouldWrite() {
         final AuthInfo mockAuthInfo = mock(AuthInfo.class);
-        when(mockAuthInfo.toJson(any(Gson.class))).thenReturn("StateContents");
+        when(mockAuthInfo.toJson()).thenReturn("StateContents");
 
         try (final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)) {
             storeUnderTest.store(ID, mockAuthInfo);
@@ -69,22 +67,22 @@ public class SingleUserFileBasedAuthInfoStoreTest {
         }
     }
 
-    @SneakyThrows
     @Test
     public void store_withNullAuthInfo_shouldThrowException() {
         assertThrows(NullPointerException.class, () -> storeUnderTest.store(ID, null));
     }
 
-    @SneakyThrows
     @Test
     public void store_withIOException_shouldThrowException() {
         final AuthInfo mockAuthInfo = mock(AuthInfo.class);
-        when(mockAuthInfo.toJson(any(Gson.class))).thenReturn("StateContents");
+        when(mockAuthInfo.toJson()).thenReturn("StateContents");
 
         try (final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)) {
             filesMockedStatic.when(() -> Files.write(any(Path.class), any(byte[].class)))
                     .thenThrow(new IOException("Exception"));
-            assertThrows(IOException.class, () -> storeUnderTest.store(ID, mockAuthInfo));
+            final Throwable thrown =
+                    assertThrows(AuthInfoStoreException.class, () -> storeUnderTest.store(ID, mockAuthInfo));
+            assertInstanceOf(IOException.class, thrown.getCause());
         }
     }
 
@@ -102,7 +100,7 @@ public class SingleUserFileBasedAuthInfoStoreTest {
             filesMockedStatic.when(() -> Files.exists(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.isReadable(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.readString(any(Path.class))).thenReturn("JsonState");
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(any(Gson.class), anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
 
             assertEquals(expected, storeUnderTest.retrieve(ID));
         }
@@ -141,7 +139,6 @@ public class SingleUserFileBasedAuthInfoStoreTest {
         }
     }
 
-    @SneakyThrows
     @Test
     public void retrieve_withIOException_shouldThrowException() {
         try (final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)) {
@@ -149,7 +146,9 @@ public class SingleUserFileBasedAuthInfoStoreTest {
             filesMockedStatic.when(() -> Files.isReadable(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.readString(any(Path.class))).thenThrow(new IOException("Exception"));
 
-            assertThrows(IOException.class, () ->  assertNull(storeUnderTest.retrieve(ID)));
+            final Throwable thrown =
+                    assertThrows(AuthInfoStoreException.class, () ->  assertNull(storeUnderTest.retrieve(ID)));
+            assertInstanceOf(IOException.class, thrown.getCause());
         }
     }
 }

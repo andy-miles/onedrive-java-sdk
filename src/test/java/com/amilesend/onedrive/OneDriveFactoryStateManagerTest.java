@@ -24,6 +24,7 @@ import com.amilesend.onedrive.connection.auth.oauth.OAuthReceiver;
 import com.amilesend.onedrive.connection.auth.oauth.OAuthReceiverException;
 import com.amilesend.onedrive.connection.auth.oauth.OneDriveOAuthReceiver;
 import com.amilesend.onedrive.connection.auth.store.AuthInfoStore;
+import com.amilesend.onedrive.connection.auth.store.AuthInfoStoreException;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
@@ -125,7 +126,7 @@ public class OneDriveFactoryStateManagerTest {
     public void saveState_withDefaultAuthInfoStore_shouldWriteState() {
         managerUnderTest.setOnedrive(mockOneDrive);
         final AuthInfo mockAuthInfo = mock(AuthInfo.class);
-        when(mockAuthInfo.toJson(any(Gson.class))).thenReturn("StateContents");
+        when(mockAuthInfo.toJson()).thenReturn("StateContents");
         when(mockOneDrive.getAuthInfo()).thenReturn(mockAuthInfo);
 
         try (final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)) {
@@ -158,16 +159,20 @@ public class OneDriveFactoryStateManagerTest {
 
     @SneakyThrows
     @Test
-    public void saveState_withIOException_shouldThrowException() {
+    public void saveState_withAuthInfoStoreException_shouldThrowException() {
         managerUnderTest.setOnedrive(mockOneDrive);
         final AuthInfo mockAuthInfo = mock(AuthInfo.class);
-        when(mockAuthInfo.toJson(any(Gson.class))).thenReturn("StateContents");
+        when(mockAuthInfo.toJson()).thenReturn("StateContents");
         when(mockOneDrive.getAuthInfo()).thenReturn(mockAuthInfo);
 
         try (final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)) {
             filesMockedStatic.when(() -> Files.write(any(Path.class), any(byte[].class)))
                             .thenThrow(new IOException("Exception"));
-            assertThrows(IOException.class, () -> managerUnderTest.saveState());
+            final Throwable thrown = assertThrows(OneDriveException.class, () -> managerUnderTest.saveState());
+
+            assertAll(
+                    () -> assertInstanceOf(AuthInfoStoreException.class, thrown.getCause()),
+                    () -> assertInstanceOf(IOException.class, thrown.getCause().getCause()));
         }
     }
 
@@ -187,9 +192,10 @@ public class OneDriveFactoryStateManagerTest {
         managerUnderTest.setOnedrive(mockOneDrive);
         final AuthInfo mockAuthInfo = mock(AuthInfo.class);
         when(mockOneDrive.getAuthInfo()).thenReturn(mockAuthInfo);
-        doThrow(new IOException("Exception")).when(mockAuthInfoStore).store(anyString(), any(AuthInfo.class));
+        doThrow(new AuthInfoStoreException("Exception")).when(mockAuthInfoStore).store(anyString(), any(AuthInfo.class));
 
-        assertThrows(IOException.class, () -> managerUnderTest.saveState());
+        final Throwable thrown = assertThrows(OneDriveException.class, () -> managerUnderTest.saveState());
+        assertInstanceOf(AuthInfoStoreException.class, thrown.getCause());
     }
 
     @SneakyThrows
@@ -234,8 +240,8 @@ public class OneDriveFactoryStateManagerTest {
 
     @SneakyThrows
     @Test
-    public void getInstance_withIOException_shouldThrowException() {
-        doThrow(new IOException("Exception")).when(managerUnderTest).fetchOneDrive();
+    public void getInstance_withOneDriveException_shouldThrowException() {
+        doThrow(new OneDriveException("Exception", new IOException("Cause"))).when(managerUnderTest).fetchOneDrive();
         final Throwable thrown = assertThrows(OneDriveException.class, () -> managerUnderTest.getInstance());
         assertInstanceOf(IOException.class, thrown.getCause());
     }
@@ -320,7 +326,8 @@ public class OneDriveFactoryStateManagerTest {
     @Test
     public void fetchOnedrive_withIOException_shouldThrowException() {
         doThrow(new IOException("Exception")).when(managerUnderTest).loadCredentialConfig();
-        assertThrows(IOException.class, () -> managerUnderTest.fetchOneDrive());
+        final Throwable thrown = assertThrows(OneDriveException.class, () -> managerUnderTest.fetchOneDrive());
+        assertInstanceOf(IOException.class, thrown.getCause());
     }
 
     /////////////////////
@@ -337,7 +344,7 @@ public class OneDriveFactoryStateManagerTest {
             filesMockedStatic.when(() -> Files.exists(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.isReadable(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.readString(any(Path.class))).thenReturn("JsonState");
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(any(Gson.class), anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
 
             assertEquals(expected, managerUnderTest.loadState().get());
         }
@@ -421,13 +428,16 @@ public class OneDriveFactoryStateManagerTest {
             filesMockedStatic.when(() -> Files.isReadable(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.readString(any(Path.class))).thenThrow(new IOException("Exception"));
 
-            assertThrows(IOException.class, () -> managerUnderTest.loadState());
+            final Throwable thrown = assertThrows(OneDriveException.class, () -> managerUnderTest.loadState());
+            assertAll(
+                    () -> assertInstanceOf(AuthInfoStoreException.class, thrown.getCause()),
+                    () -> assertInstanceOf(IOException.class, thrown.getCause().getCause()));
         }
     }
 
     @SneakyThrows
     @Test
-    public void loadState_withIOExecptionFromStore_shouldThrowExecption() {
+    public void loadState_withAuthInfoStoreException_shouldThrowException() {
         managerUnderTest = spy(OneDriveFactoryStateManager.builder()
                 .httpClient(mockHttpClient)
                 .receiverPort(PORT)
@@ -438,9 +448,10 @@ public class OneDriveFactoryStateManagerTest {
                 .credentialConfig(mockConfig)
                 .authInfoStore(mockAuthInfoStore)
                 .build());
-        when(mockAuthInfoStore.retrieve(anyString())).thenThrow(new IOException("Exception"));
+        when(mockAuthInfoStore.retrieve(anyString())).thenThrow(new AuthInfoStoreException("Cause"));
 
-        assertThrows(IOException.class, () -> managerUnderTest.loadState());
+        final Throwable thrown = assertThrows(OneDriveException.class, () -> managerUnderTest.loadState());
+        assertInstanceOf(AuthInfoStoreException.class, thrown.getCause());
     }
 
     ///////////////////////////
