@@ -112,6 +112,12 @@ public class TestDataHelper {
         return item;
     }
 
+    public static DriveItem newRootDriveItemFolder(final OneDriveConnection connection) {
+        final DriveItem item = newDriveItemFolder(connection);
+        item.setRoot(new Object());
+        return item;
+    }
+
     public static DriveItem newDriveItemZipFile(final OneDriveConnection connection, final int suffix) {
         final DriveItem item = new DriveItem(connection);
         item.setFile(newFile());
@@ -140,7 +146,6 @@ public class TestDataHelper {
         item.setName("DriveItemName" + suffix);
         item.setParentReference(newParentReference());
         item.setWebUrl("WebUrlValue");
-
         item.setAudio(newAudio());
         item.setCTag("cTagValue");
         item.setDeleted(newDeleted());
@@ -215,7 +220,6 @@ public class TestDataHelper {
     public static SpecialDriveItem newSpecialDriveItem(final OneDriveConnection connection) {
         final SpecialDriveItem item = new SpecialDriveItem(connection);
         item.setSpecialFolderType(SpecialFolder.Type.MUSIC);
-
         item.setId("DriveItemId");
         item.setCreatedBy(newIdentitySet());
         item.setCreatedDateTime("CreatedTimestampValue");
@@ -226,7 +230,6 @@ public class TestDataHelper {
         item.setName("DriveItemName");
         item.setParentReference(newParentReference());
         item.setWebUrl("WebUrlValue");
-
         item.setAudio(newAudio());
         item.setCTag("cTagValue");
         item.setDeleted(newDeleted());

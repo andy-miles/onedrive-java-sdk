@@ -34,21 +34,21 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AuthManagerFunctionalTest {
-    private static final String TOKEN_URL_PATH = "/common/oauth2/v2.0/token";
-    private static final String AUTH_CODE = "TestAuthCode";
-    private static final String CLIENT_ID = "TestClientId";
-    private static final String CLIENT_SECRET = "TestClientSecret";
-    private static final String REDIRECT_URL = "http://TestRedirectUrl";
-    static final long EXPIRES_TIME_MILLIS = System.currentTimeMillis() + Duration.ofDays(2L).toMillis();
-    static final String TOKEN_JSON_RESPONSE =
+    public static final long EXPIRES_TIME_MILLIS = System.currentTimeMillis() + Duration.ofDays(2L).toMillis();
+    public static final String TOKEN_JSON_RESPONSE =
             "{" +
-                "\"access_token\": \"AccessToken\"," +
-                "\"expires_in\": " + EXPIRES_TIME_MILLIS + "," +
-                "\"ext_expires_in\": " + EXPIRES_TIME_MILLIS + "," +
-                "\"refresh_token\": \"RefreshToken\"," +
-                "\"scope\": \"Scope1 Scope2 Scope3\"," +
-                "\"token_type\": \"bearer\"" +
+                    "\"access_token\": \"AccessToken\"," +
+                    "\"expires_in\": " + EXPIRES_TIME_MILLIS + "," +
+                    "\"ext_expires_in\": " + EXPIRES_TIME_MILLIS + "," +
+                    "\"refresh_token\": \"RefreshToken\"," +
+                    "\"scope\": \"Scope1 Scope2 Scope3\"," +
+                    "\"token_type\": \"bearer\"" +
             "}";
+    public static final String TOKEN_URL_PATH = "/common/oauth2/v2.0/token";
+    public static final String AUTH_CODE = "TestAuthCode";
+    public static final String CLIENT_ID = "TestClientId";
+    public static final String CLIENT_SECRET = "TestClientSecret";
+    public static final String REDIRECT_URL = "http://TestRedirectUrl";
 
     private MockWebServer mockWebServer;
     private OkHttpClient httpClient;
@@ -111,7 +111,7 @@ public class AuthManagerFunctionalTest {
         validateAuthInfo(authManager.getAuthInfo());
     }
 
-    private static void validateAuthInfo(final AuthInfo actual) {
+    public static void validateAuthInfo(final AuthInfo actual) {
         assertAll(
                 () -> assertEquals("AccessToken", actual.getAccessToken()),
                 () -> assertEquals(EXPIRES_TIME_MILLIS, actual.getExpiresIn()),

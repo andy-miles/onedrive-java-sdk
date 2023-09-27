@@ -40,7 +40,7 @@ public class OneDriveOAuthReceiver extends OAuthReceiver {
     private final List<String> scopes;
 
     /**
-     * Builes a new {@code OneDriveOAuthReceiver}.
+     * Builds a new {@code OneDriveOAuthReceiver}.
      *
      * @param host host of the receiver (Default: {@code localhost})
      * @param port optional port of the receiver to listen on

@@ -18,14 +18,19 @@
 package com.amilesend.onedrive.connection.parse.resource.parser;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.GZIPOutputStream;
 
 public enum SerializedResource {
     ASYNC_JOB_STATUS("/AsyncJobStatus.json"),
     DRIVE("/Drive.json"),
     DRIVE_ITEM("/DriveItem.json"),
+    DRIVE_ITEM_FOLDER("/DriveItemFolder.json"),
     DRIVE_ITEM_LIST("/DriveItemList.json"),
     DRIVE_ITEM_PAGE("/DriveItemPage.json"),
+    DRIVE_ITEM_ROOT_FOLDER("/DriveItemRootFolder.json"),
     DRIVE_ITEM_VERSION_LIST("/DriveItemVersionList.json"),
     DRIVE_ITEM_ZIP_FILE("/DriveItemZipFile.json"),
     DRIVE_LIST("/DriveList.json"),
@@ -33,8 +38,10 @@ public enum SerializedResource {
     PERMISSION("/Permission.json"),
     PERMISSION_LIST("/PermissionList.json"),
     PREVIEW("/Preview.json"),
+    SINGLE_DRIVE_ITEM_PAGE("/SingleDriveItemPage.json"),
     SPECIAL_DRIVE_ITEM("/SpecialDriveItem.json"),
-    THUMBNAIL_SET_LIST("/ThumbnailSetList.json");
+    THUMBNAIL_SET_LIST("/ThumbnailSetList.json"),
+    UPDATED_DRIVE_ITEM_ZIP_FILE("/UpdatedDriveItemZipFile.json");
 
     private final String resourcePath;
 
@@ -44,5 +51,17 @@ public enum SerializedResource {
 
     public InputStream getResource() {
         return new BufferedInputStream(this.getClass().getResourceAsStream(resourcePath));
+    }
+
+    public byte[] toGzipCompressedBytes() throws IOException {
+        final byte[] uncompressed = getResource().readAllBytes();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(uncompressed.length);
+        try(final GZIPOutputStream gos = new GZIPOutputStream(baos)) {
+            gos.write(uncompressed);
+        } finally {
+            baos.close();
+        }
+
+        return baos.toByteArray();
     }
 }

@@ -298,6 +298,7 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
         executeAsync_withErrorCode_shouldThrowException(REQUEST_ERROR_CODE, RequestException.class);
     }
 
+    @SneakyThrows
     @Test
     public void executeAsync_withThrottledResponse_shouldThrowException() {
         final Long expected = 1000L;
@@ -306,16 +307,17 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
         final GsonParser<DriveItem> mockParser = mock(GsonParser.class);
 
         // Obtain future and get the callback reference
-        final CompletableFuture<DriveItem> future =
-                connectionUnderTest.executeAsync(mock(Request.class), mockParser);
-        final Callback callback = getCallbackFromCallMock(mockCall);
-
+        final CompletableFuture<DriveItem> future = connectionUnderTest.executeAsync(mock(Request.class), mockParser);
         // Simulate callback onResponse invocation
-        final Throwable thrown = assertThrows(ThrottledException.class,
-                () -> callback.onResponse(mockCall, mockResponse));
-        assertEquals(expected, ((ThrottledException) thrown).getRetryAfterSeconds());
+        getCallbackFromCallMock(mockCall).onResponse(mockCall, mockResponse);
+
+        final Throwable thrown = assertThrows(ExecutionException.class, () -> future.get());
+        assertAll(
+                () -> assertInstanceOf(ThrottledException.class, thrown.getCause()),
+                () -> assertEquals(expected, ((ThrottledException) thrown.getCause()).getRetryAfterSeconds()));
     }
 
+    @SneakyThrows
     @Test
     public void executeAsync_withThrottledResponseAndNullRetryAfterHeader_shouldThrowException() {
         final Response mockResponse = newMockedResponse(THROTTLED_ERROR_CODE, (Long) null);
@@ -323,15 +325,17 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
         final GsonParser<DriveItem> mockParser = mock(GsonParser.class);
 
         // Obtain future and get the callback reference
-        final CompletableFuture<DriveItem> future =
-                connectionUnderTest.executeAsync(mock(Request.class), mockParser);
-        final Callback callback = getCallbackFromCallMock(mockCall);
+        final CompletableFuture<DriveItem> future = connectionUnderTest.executeAsync(mock(Request.class), mockParser);
+        // Simulate callback onResponse invocation
+        getCallbackFromCallMock(mockCall).onResponse(mockCall, mockResponse);
 
-        final Throwable thrown = assertThrows(ThrottledException.class,
-                () -> callback.onResponse(mockCall, mockResponse));
-        assertNull(((ThrottledException) thrown).getRetryAfterSeconds());
+        final Throwable thrown = assertThrows(ExecutionException.class, () -> future.get());
+        assertAll(
+                () -> assertInstanceOf(ThrottledException.class, thrown.getCause()),
+                () -> assertNull(((ThrottledException) thrown.getCause()).getRetryAfterSeconds()));
     }
 
+    @SneakyThrows
     private <T extends Throwable> void executeAsync_withErrorCode_shouldThrowException(
             final int code, final Class<T> expectedExceptionType) {
         final Response mockResponse = newMockedResponse(code);
@@ -339,17 +343,11 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
         final GsonParser<DriveItem> mockParser = mock(GsonParser.class);
 
         // Obtain future and get the callback reference
-        final CompletableFuture<DriveItem> future =
-                connectionUnderTest.executeAsync(mock(Request.class), mockParser);
-        final Callback callback = getCallbackFromCallMock(mockCall);
-
+        final CompletableFuture<DriveItem> future = connectionUnderTest.executeAsync(mock(Request.class), mockParser);
+        // Simulate callback onResponse invocation
+        getCallbackFromCallMock(mockCall).onResponse(mockCall, mockResponse);
 
         try (final MockedConstruction<GZIPInputStream> streamCons = mockConstruction(GZIPInputStream.class)) {
-
-            // Simulate callback onResponse invocation
-            assertThrows(expectedExceptionType, () -> callback.onResponse(mockCall, mockResponse));
-
-            // Validate future
             final Throwable thrown = assertThrows(ExecutionException.class, () -> future.get());
             assertInstanceOf(expectedExceptionType, thrown.getCause());
         }

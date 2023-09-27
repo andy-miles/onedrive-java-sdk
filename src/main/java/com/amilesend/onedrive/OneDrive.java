@@ -22,11 +22,14 @@ import com.amilesend.onedrive.connection.auth.AuthInfo;
 import com.amilesend.onedrive.parse.resource.parser.DriveListParser;
 import com.amilesend.onedrive.parse.resource.parser.DriveParser;
 import com.amilesend.onedrive.resource.Drive;
+import com.amilesend.onedrive.resource.identity.Identity;
+import com.amilesend.onedrive.resource.identity.IdentitySet;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -88,7 +91,11 @@ public class OneDrive {
      * @return the user's display name
      */
     public String getUserDisplayName() {
-        return getUserDrive().getOwner().getUser().getDisplayName();
+        return Optional.ofNullable(getUserDrive())
+                .map(Drive::getOwner)
+                .map(IdentitySet::getUser)
+                .map(Identity::getDisplayName)
+                .orElse("Unknown");
     }
 
     /**

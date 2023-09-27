@@ -1,0 +1,181 @@
+{
+  "value": [
+    {
+      "file": {
+        "hashes": {
+          "sha1Hash": "sha1Value",
+          "crc32Hash": "crcHashValue",
+          "quickXorHash": "quickXorHashValue"
+        },
+        "mimeType": "application/zip",
+        "processingMetadata": false
+      },
+      "fileSystemInfo": {
+        "createdDateTime": "CreatedTimeStampValue",
+        "lastAccessedDateTime": "LastAccessedTimeStampValue"
+      },
+      "size": 4096,
+      "id": "ZipFileIdValue1",
+      "createdBy": {
+        "user": {
+          "displayName": "IdentityName",
+          "id": "IdentityId",
+          "thumbnails": {
+            "id": "ThumbnailId",
+            "large": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "LargeThumbnailUrlValue",
+              "width": 100
+            },
+            "medium": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "MediumThumbnailUrlValue",
+              "width": 100
+            },
+            "small": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SmallThumbnailUrlValue",
+              "width": 100
+            },
+            "source": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SourceThumbnailUrlValue",
+              "width": 100
+            }
+          }
+        }
+      },
+      "createdDateTime": "CreatedTimeStampValue",
+      "description": "SomeDescription",
+      "lastModifiedBy": {
+        "user": {
+          "displayName": "IdentityName",
+          "id": "IdentityId",
+          "thumbnails": {
+            "id": "ThumbnailId",
+            "large": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "LargeThumbnailUrlValue",
+              "width": 100
+            },
+            "medium": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "MediumThumbnailUrlValue",
+              "width": 100
+            },
+            "small": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SmallThumbnailUrlValue",
+              "width": 100
+            },
+            "source": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SourceThumbnailUrlValue",
+              "width": 100
+            }
+          }
+        }
+      },
+      "lastModifiedDateTime": "LastModifiedTimeStampValue",
+      "name": "SomeFile1.zip",
+      "parentReference": {
+        "driveId": "DriveIdValue",
+        "driveType": "personal",
+        "id": "ParentIdValue",
+        "name": "ParentFolderName",
+        "path": "ParentFolderPath"
+      }
+    },
+    {
+      "folder": {
+        "childCount": 3,
+        "folderView": {
+          "sortBy": "name",
+          "sortOrder": "ascending",
+          "viewType": "details"
+        }
+      },
+      "size": 0,
+      "id": "FolderIdValue",
+      "createdBy": {
+        "user": {
+          "displayName": "IdentityName",
+          "id": "IdentityId",
+          "thumbnails": {
+            "id": "ThumbnailId",
+            "large": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "LargeThumbnailUrlValue",
+              "width": 100
+            },
+            "medium": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "MediumThumbnailUrlValue",
+              "width": 100
+            },
+            "small": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SmallThumbnailUrlValue",
+              "width": 100
+            },
+            "source": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SourceThumbnailUrlValue",
+              "width": 100
+            }
+          }
+        }
+      },
+      "createdDateTime": "CreatedTimeStampValue",
+      "description": "SomeFolder",
+      "lastModifiedBy": {
+        "user": {
+          "displayName": "IdentityName",
+          "id": "IdentityId",
+          "thumbnails": {
+            "id": "ThumbnailId",
+            "large": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "LargeThumbnailUrlValue",
+              "width": 100
+            },
+            "medium": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "MediumThumbnailUrlValue",
+              "width": 100
+            },
+            "small": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SmallThumbnailUrlValue",
+              "width": 100
+            },
+            "source": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SourceThumbnailUrlValue",
+              "width": 100
+            }
+          }
+        }
+      },
+      "lastModifiedDateTime": "LastModifiedTimeStampValue",
+      "name": "FolderName"
+    }
+  ],
+  "@odata.nextLink": ""
+}

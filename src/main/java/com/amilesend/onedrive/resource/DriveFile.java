@@ -176,7 +176,8 @@ public class DriveFile extends DriveItemType {
      * @param folderPath the folder to download the file to
      */
     public void download(final Path folderPath) {
-        getDelegate().download(folderPath, LogProgressCallback.builder()
+        getDelegate()
+                .download(folderPath, LogProgressCallback.builder()
                 .transferType(LogProgressCallback.TransferType.DOWNLOAD)
                 .build());
     }

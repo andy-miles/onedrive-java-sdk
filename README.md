@@ -139,6 +139,9 @@ For more information, please refer to [javadoc](https://www.amilesend.com/onedri
 or [source](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/OneDriveFactoryStateManager.java).
 
 ### Customizing user auth token state persistence
+<details>
+<summary>AuthInfoStore example</summary>
+
 The [AuthInfoStore](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/connection/auth/store/AuthInfoStore.html)
 interface provides the ability to implement custom logic to manage user auth token state persistence (e.g., database, remote service, etc.).
 The default implementation is [SingleUserFileBasedAuthInfoStore](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/connection/auth/store/SingleUserFileBasedAuthInfoStore.java)
@@ -172,7 +175,12 @@ try {
 
 ```
 
+</details>
+
 #### Using the provided SingleUserEncryptedFileBasedAuthInfoStore
+
+<details>
+<summary>SingleUserEncryptedFileBasedAuthInfoStore example</summary>
 
 This SDK also provides a [SingleUserEncryptedFileBasedAuthInfoStore](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/connection/auth/store/SingleUserEncryptedFileBasedAuthInfoStore.java)
 implementation that encrypts and saves the auth state to the file system. A specified keystore file path along with associated passwords must be specified.
@@ -197,7 +205,12 @@ OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.bu
         .build();
 ```
 
+</details>
+
 ### Customizing the HTTP client configuration
+
+<details>
+<summary>OkHttpClientBuilder example</summary>
 
 If your use-case requires configuring the underlying <code>OkHttpClient</code> instance (e.g., configuring your own 
 SSL cert verification, proxy, and/or connection timeouts), you can configure the client with the provided
@@ -227,7 +240,13 @@ try {
 }
 ```
 
+</details>
+
 ### Obtaining a <code>OneDrive</code> with a custom OAuth flow
+
+<details>
+<summary>Custom OAuth flow</summary>
+
 Once you obtain the <code>authCode</code>, you can initialize a new <code>OneDrive</code> directly via:
 ```java
 OneDrive oneDrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
@@ -250,6 +269,8 @@ OneDrive oneDrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
 authInfo = oneDrive.getAuthInfo(); // Gets the updated tokens after refresh
 ```
 
+</details>
+
 ### Obtaining list of contents of a user's default drive
 ```java
 DriveFolder rootFolder = oneDrive.getUserDrive().getRootFolder();
@@ -267,7 +288,7 @@ List<DriveFile> driveFiles = rootFolder.getChildFiles()
 ### Upload a new file to the "Documents" folder
 ```java
 DriveFolder documentsFolder = documentsFolder = root.search("Documents").stream()
-        .filter(di -> di.isFolder())
+        .filter(DriveItemType::isFolder)
         .findFirst()
         .map(DriveFolder.class::cast)
         .orElseThrow(() -> new IllegalStateException("Documents not found"));
@@ -286,7 +307,7 @@ DriveFile myDrivefile = uploadedExec.get();
 ### Download a file to the specified folder
 ```java
 DriveFile myDriveFile = root.search("MyFile.zip").stream()
-        .filter(di -> di.isFile())
+        .filter(DriveItemType::isFile)
         .findFirst()
         .map(DriveFile.class::cast)
         .orElseThrow(() -> new IllegalStateException("MyFile.zip not found"));
@@ -333,7 +354,7 @@ DriveFileDownloadExecution downloadExec = myFile.downloadAsync(Paths.get("./"), 
 
 <!-- ROADMAP -->
 ## Roadmap
-- [ ] Add functional test coverage (use of a MockWebServer)
+- [x] ~~Add functional test coverage (use of a MockWebServer)~~
 - [ ] Add integration test coverage
 - [ ] Group and Site based access for non-personal accounts
 - [X] ~~Add an interface to access and persist tokens for the OneDriveFactoryStateManager (e.g., tokens stored via a database or service)~~ (v0.1.1)

@@ -80,17 +80,19 @@ public class OneDriveConnection {
     private final String baseUrl;
 
     /**
-     * Creates a new {@code OneDriveConnection} object.
+     * Creates a new {@code OneDriveConnection} object. It is recommended to use the {@link OneDriveConnectionBuilder}
+     * instead.
      *
      * @param httpClient the configured HTTP client
      * @param authManager the authorization manager used to manage auth and refresh tokens
      * @param gsonFactory the factory used to vend configured GSON instances for request/reply serialization
      * @param baseUrl the base URL to use for Graph API invocations
+     * @see OneDriveConnectionBuilder
      */
-    OneDriveConnection(@NonNull final OkHttpClient httpClient,
-                       @NonNull final AuthManager authManager,
-                       @NonNull final GsonFactory gsonFactory,
-                       final String baseUrl) {
+    public OneDriveConnection(@NonNull final OkHttpClient httpClient,
+                              @NonNull final AuthManager authManager,
+                              @NonNull final GsonFactory gsonFactory,
+                              final String baseUrl) {
         this.httpClient = httpClient;
         this.authManager = authManager;
         this.gson = gsonFactory.newInstanceForConnection(this);
@@ -239,7 +241,6 @@ public class OneDriveConnection {
                     future.complete(parser.parse(getGson(), new GZIPInputStream(response.body().byteStream())));
                 } catch (final Exception ex) {
                     future.completeExceptionally(ex);
-                    throw ex;
                 } finally {
                     response.close();
                 }

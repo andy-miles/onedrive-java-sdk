@@ -17,7 +17,10 @@
  */
 package com.amilesend.onedrive.resource.identity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Describes a person, group, or other recipient that a item was shared to using a share action.
@@ -26,7 +29,10 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.activities.action.ShareAction
  */
+@AllArgsConstructor
+@Builder
 @Data
+@NoArgsConstructor
 public class DriveRecipient {
     /** The recipient's email address. */
     private String email;

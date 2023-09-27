@@ -27,11 +27,14 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
+import java.util.Optional;
+
 /** Builder to configure and return a new {@link OneDriveConnection} instance. */
 public class OneDriveConnectionBuilder {
     private String clientId;
     private String clientSecret;
     private String redirectUrl;
+    private String baseUrl;
     private OkHttpClient httpClient;
     private final GsonFactory gsonFactory;
 
@@ -94,6 +97,18 @@ public class OneDriveConnectionBuilder {
     }
 
     /**
+     * The connection base URL. This is optional and should not be used until support for
+     * business and site accounts is implemented.
+     *
+     * @param baseUrl the base path for the connection
+     * @return this builder
+     */
+    public OneDriveConnectionBuilder baseUrl(final String baseUrl) {
+        this.baseUrl = baseUrl;
+        return this;
+    }
+
+    /**
      * Builds a new {@link OneDriveConnection} instance with the given {@code authCode}.
      *
      * @param authCode the authorization code obtained from the OAuth handshake.
@@ -110,8 +125,8 @@ public class OneDriveConnectionBuilder {
                 .redirectUrl(redirectUrl)
                 .authCode(authCode)
                 .buildWithAuthCode();
-        final String useDefaultBaseUrl = StringUtils.EMPTY;
-        return new OneDriveConnection(client, authManager, gsonFactory, useDefaultBaseUrl);
+        final String baseUrlToUse = Optional.ofNullable(baseUrl).orElse(StringUtils.EMPTY);
+        return new OneDriveConnection(client, authManager, gsonFactory, baseUrlToUse);
     }
 
     /**
@@ -131,8 +146,8 @@ public class OneDriveConnectionBuilder {
                 .redirectUrl(redirectUrl)
                 .authInfo(authInfo)
                 .buildWithAuthInfo();
-        final String useDefaultBaseUrl = StringUtils.EMPTY;
-        return new OneDriveConnection(client, authManager, gsonFactory, useDefaultBaseUrl);
+        final String baseUrlToUse = Optional.ofNullable(baseUrl).orElse(StringUtils.EMPTY);
+        return new OneDriveConnection(client, authManager, gsonFactory, baseUrlToUse);
     }
 
     private OkHttpClient getHttpClientOrDefault() {
