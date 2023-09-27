@@ -32,7 +32,8 @@
   },
   "fileSystemInfo": {
     "createdDateTime": "CreatedTimeStampValue",
-    "lastAccessedDateTime": "LastAccessedTimeStampValue"
+    "lastAccessedDateTime": "LastAccessedTimeStampValue",
+    "lastModifiedDateTime": "LastModifiedTimeStampValue"
   },
   "folder": {
     "childCount": 3,
@@ -115,7 +116,8 @@
     },
     "fileSystemInfo": {
       "createdDateTime": "CreatedTimeStampValue",
-      "lastAccessedDateTime": "LastAccessedTimeStampValue"
+      "lastAccessedDateTime": "LastAccessedTimeStampValue",
+      "lastModifiedDateTime": "LastModifiedTimeStampValue"
     },
     "folder": {
       "childCount": 3,

@@ -17,7 +17,9 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Indicates if an item was deleted.
@@ -26,8 +28,10 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class Deleted {
+    @Builder.Default
     /** Describes the state of the deleted item. */
-    private String state;
+    private final String state = StringUtils.EMPTY;
 }

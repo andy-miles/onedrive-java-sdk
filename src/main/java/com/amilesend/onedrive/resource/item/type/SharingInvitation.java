@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.resource.item.type;
 
 import com.amilesend.onedrive.resource.identity.IdentitySet;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,12 +27,13 @@ import lombok.Data;
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/sharinginvitation">
  * API Documentation</a>.
  */
+@Builder
 @Data
 public class SharingInvitation {
     /** the email address for the recipient. */
-    private String email;
+    private final String email;
     /** Describes who sent the invitation. */
-    private IdentitySet invitedBy;
-    /** Flag that idicates if the recipient needs to sign in in order to access the shared resource. */
-    private boolean signInRequired;
+    private final IdentitySet invitedBy;
+    /** Flag that indicates if the recipient needs to sign in in order to access the shared resource. */
+    private final boolean signInRequired;
 }

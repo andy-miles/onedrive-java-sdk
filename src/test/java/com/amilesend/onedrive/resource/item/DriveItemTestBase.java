@@ -46,9 +46,11 @@ public abstract class DriveItemTestBase {
         lenient().when(mockConnection.newSignedForApiRequestBuilder()).thenReturn(requestBuilder);
         lenient().when(mockConnection.newSignedForApiWithBodyRequestBuilder()).thenReturn(requestBuilder);
 
-        driveItemUnderTest = spy(new DriveItem(mockConnection));
-        driveItemUnderTest.setName(DRIVE_ITEM_NAME);
-        driveItemUnderTest.setSize(DRIVE_ITEM_SIZE);
-        driveItemUnderTest.setId(DRIVE_ITEM_ID);
+        driveItemUnderTest = spy(DriveItem.builder()
+                .connection(mockConnection)
+                .id(DRIVE_ITEM_ID)
+                .name(DRIVE_ITEM_NAME)
+                .size(DRIVE_ITEM_SIZE)
+                .build());
     }
 }

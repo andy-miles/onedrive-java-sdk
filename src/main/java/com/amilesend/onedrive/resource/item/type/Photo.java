@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,22 +27,23 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class Photo {
     /** The date and time the photo was taken. */
-    private String takenDateTime;
+    private final String takenDateTime;
     /** The camera manufacturer. */
-    private String cameraMake;
+    private final  String cameraMake;
     /** The camera model. */
-    private String cameraModel;
+    private final  String cameraModel;
     /** The F-stop value from the camera. */
-    private double fNumber;
+    private final  double fNumber;
     /** The denominator for the exposure time fraction from the camera. */
-    private double exposureDenominator;
+    private final  double exposureDenominator;
     /** The numerator for the exposure time fraction from the camera. */
-    private double exposureNumerator;
+    private final  double exposureNumerator;
     /** The focal length from the camera. */
-    private double focalLength;
+    private final  double focalLength;
     /** The ISO value from the camera. */
-    private int iso;
+    private final  int iso;
 }

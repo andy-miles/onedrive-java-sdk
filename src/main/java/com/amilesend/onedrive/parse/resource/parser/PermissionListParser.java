@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.amilesend.onedrive.parse.resource.parser.PermissionParser.copyWithDriveItemId;
+
 /**
  * Parses a response body that contains a list of {@link Permission}s.
  * <p>Example response body:</p>
@@ -87,11 +89,7 @@ public class PermissionListParser implements GsonParser<List<Permission>> {
                 .getValue()
                 .stream()
                 .filter(Objects::nonNull)
-                .map(div -> {
-                    // Inject the associated drive item id
-                    div.setDriveItemId(driveItemId);
-                    return div;
-                })
+                .map(div -> copyWithDriveItemId(div, driveItemId))
                 .collect(Collectors.toList());
     }
 

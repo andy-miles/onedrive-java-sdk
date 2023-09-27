@@ -24,6 +24,7 @@ import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import com.amilesend.onedrive.resource.item.type.PublicationFacet;
 import com.google.common.annotations.VisibleForTesting;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -40,6 +41,7 @@ import static com.amilesend.onedrive.resource.item.DriveItem.DRIVE_ITEM_BASE_URL
  * API Documentation.</a>
  * @see DriveItem
  */
+@Builder
 @Data
 public class DriveItemVersion {
     @VisibleForTesting
@@ -50,23 +52,23 @@ public class DriveItemVersion {
     private static final String RESTORE_URL_SUFFIX = "/restore";
 
     /** The version identifier. */
-    private String id;
+    private final String id;
     /** The identity of whom last modified the version. */
-    private IdentitySet lastModifiedBy;
+    private final IdentitySet lastModifiedBy;
     /** The date and time of when the version was last modified. */
-    private String lastModifiedDateTime;
+    private final String lastModifiedDateTime;
     /** Describes the published status of the version. */
-    private PublicationFacet publication;
+    private final PublicationFacet publication;
     /** The size in bytes of the version. */
-    private long size;
+    private final long size;
 
     /** The name of the item associated with the version. */
     // Used to structure the name of the download.
     @GsonExclude
-    private String name;
+    private final String name;
     /** The associated item identifier for the version. */
     @GsonExclude
-    private String driveItemId;
+    private final String driveItemId;
 
     @GsonExclude
     @EqualsAndHashCode.Exclude
@@ -91,19 +93,12 @@ public class DriveItemVersion {
      * @param callback the callback be notified of transfer progress
      */
     public void download(@NonNull final Path folderPath, @NonNull TransferProgressCallback callback) {
-        final String versionId = getId();
-        final String name = getName();
-        final String driveItemId = getDriveItemId();
-        Validate.notBlank(versionId, "id must not be blank");
-        Validate.notBlank(name, "name must not be blank");
-        Validate.notBlank(driveItemId, "driveItemId must not be blank");
-
         connection.download(
                 connection.newSignedForRequestBuilder()
-                        .url(getContentsUrl(driveItemId, versionId))
+                        .url(getContentsUrl(getDriveItemId(), getId()))
                         .build(),
                 folderPath,
-                name,
+                getName(),
                 getSize(),
                 callback);
     }

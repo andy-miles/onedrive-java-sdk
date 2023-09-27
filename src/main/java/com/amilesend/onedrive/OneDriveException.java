@@ -19,6 +19,12 @@ package com.amilesend.onedrive;
 
 /** Defines the exception thrown from {@link OneDriveFactoryStateManager}. */
 public class OneDriveException extends Exception {
+    /**
+     * Creates a new {@code OneDriveException}.
+     *
+     * @param msg the exception message
+     * @param cause the cause of the exception
+     */
     public OneDriveException(final String msg, Throwable cause) {
         super(msg, cause);
     }

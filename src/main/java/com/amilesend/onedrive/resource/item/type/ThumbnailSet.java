@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -27,16 +28,17 @@ import lombok.Data;
  * @see com.amilesend.onedrive.resource.item.DriveItem
  * @see com.amilesend.onedrive.resource.identity.Identity
  */
+@Builder
 @Data
 public class ThumbnailSet {
     /** The item identifier. */
-    private String id;
+    private final String id;
     /** A 1920x1920 scaled thumbnail. */
-    private Thumbnail large;
+    private final Thumbnail large;
     /** A 176x176 scaled thumbnail. */
-    private Thumbnail medium;
+    private final Thumbnail medium;
     /** A 48x48 scopped thumbnail. */
-    private Thumbnail small;
+    private final Thumbnail small;
     /** Source used to generate the other thumbnail sizes. */
-    private Thumbnail source;
+    private final Thumbnail source;
 }

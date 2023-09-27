@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.activities;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -25,10 +26,11 @@ import lombok.Data;
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/itemactivitytimeset">
  * API Documentation.</a>
  */
+@Builder
 @Data
 public class ItemActivityTimeSet {
     /** Describes when the activity took place. */
-    private String observedDateTime;
+    private final String observedDateTime;
     /** Describes when the activity was recorded. */
-    private String recordedDateTime;
+    private final String recordedDateTime;
 }

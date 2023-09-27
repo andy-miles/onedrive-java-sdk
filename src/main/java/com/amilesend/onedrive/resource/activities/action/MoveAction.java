@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.activities.action;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,10 +27,11 @@ import lombok.Data;
  * API Documentation.</a>
  * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
+@Builder
 @Data
 public class MoveAction {
     /** The name of the location the item was moved from. */
-    private String from;
+    private final String from;
     /** The name of the location the item was moved to. */
-    private String to;
+    private final String to;
 }

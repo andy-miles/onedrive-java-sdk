@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,26 +27,27 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class Video {
     /** Number of bits per sample. */
-    private int audioBitsPerSample;
+    private final int audioBitsPerSample;
     /** Number of channels. */
-    private int audioChannels;
+    private final int audioChannels;
     /** Encoded audio format. */
-    private String audioFormat;
+    private final String audioFormat;
     /** Number of samples per second for audio. */
-    private int audioSamplesPerSecond;
+    private final int audioSamplesPerSecond;
     /** The video bitrate. */
-    private int bitrate;
+    private final int bitrate;
     /** The duration of the video in milliseconds. */
-    private long duration;
+    private final long duration;
     /** The video format ("Four Character Code"). */
-    private String fourCC;
+    private final String fourCC;
     /** The video frame rate (frams per second). */
-    private double frameRate;
+    private final double frameRate;
     /** The video height in pixels. */
-    private int height;
+    private final int height;
     /** The video width in pixels. */
-    private int width;
+    private final int width;
 }

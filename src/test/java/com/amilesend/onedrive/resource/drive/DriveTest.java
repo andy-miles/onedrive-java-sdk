@@ -36,7 +36,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -64,14 +63,16 @@ public class DriveTest {
 
     @Mock
     private OneDriveConnection mockConnection;
-    @InjectMocks
     private Drive driveUnderTest;
 
     @BeforeEach
     public void setUp() {
         lenient().when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
         lenient().when(mockConnection.newSignedForApiRequestBuilder()).thenReturn(new Request.Builder());
-        driveUnderTest.setId(DRIVE_ID);
+        driveUnderTest = Drive.builder()
+                .connection(mockConnection)
+                .id(DRIVE_ID)
+                .build();
     }
 
     @Test
@@ -94,19 +95,6 @@ public class DriveTest {
                 () -> assertEquals("http://localhost/me/drive/DriveIdValue/activities",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
-    }
-
-    @Test
-    public void getActivities_withInvalidDriveId_shouldThrowException() {
-        assertAll(
-                () -> {
-                    driveUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveUnderTest.getActivities());
-                },
-                () -> {
-                    driveUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> driveUnderTest.getActivities());
-                });
     }
 
     @SneakyThrows
@@ -184,15 +172,15 @@ public class DriveTest {
                 () -> assertTrue(thisItem.equals(thisItem)),
                 () -> assertTrue(thisItem.equals(thatItem)),
                 () -> assertFalse(thisItem.equals(null)),
-                () -> assertFalse(thisItem.equals(new DriveItemVersion(mockConnection))),
+                () -> assertFalse(thisItem.equals(DriveItemVersion.builder().connection(mockConnection).build())),
                 () -> {
                     thatItem.setName("DifferentName");
                     assertFalse(thisItem.equals(thatItem));
                     thatItem.setName(thisItem.getName());
                 },
                 () -> {
-                    thatItem.setSystem(null);
-                    assertFalse(thisItem.equals(thatItem));
+                    final Drive differentSystemDrive = newDrive(mockConnection, null);
+                    assertFalse(thisItem.equals(differentSystemDrive));
                 });
     }
 

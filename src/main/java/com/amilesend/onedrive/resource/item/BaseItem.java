@@ -20,6 +20,7 @@ package com.amilesend.onedrive.resource.item;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import com.amilesend.onedrive.resource.item.type.ItemReference;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -28,27 +29,29 @@ import org.apache.commons.lang3.StringUtils;
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/baseitem"> API Documentation</a>.
  */
 @Data
+@SuperBuilder
 public class BaseItem {
     /** The unique identifier for the item. */
-    private String id;
+    private final String id;
     /** The source identity that created the item. */
-    private IdentitySet createdBy;
+    private final IdentitySet createdBy;
     /** Describes when the item was created. */
-    private String createdDateTime;
+    private final String createdDateTime;
+    /** Associated ETag for the item. */
+    private final String eTag;
+    /** The identity that last modified the item. */
+    private final IdentitySet lastModifiedBy;
+    /** Describes when the item was last modified. */
+    private final String lastModifiedDateTime;
+    /** URL for the resource shown in a browser. */
+    private final String webUrl;
+
     /** Description of the item. */
     private String description;
-    /** Associated ETag for the item. */
-    private String eTag;
-    /** The identity that last modified the item. */
-    private IdentitySet lastModifiedBy;
-    /** Describes when the item was last modified. */
-    private String lastModifiedDateTime;
     /** The name of the item. */
     private String name;
     /** Describes the parent information. */
     private ItemReference parentReference;
-    /** URL for the resource shown in a browser. */
-    private String webUrl;
 
     /**
      * Utility method for child method operations that determines if a given {@link DriveItemPage} contains a

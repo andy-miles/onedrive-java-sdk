@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.connection.file;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Builder;
 import lombok.NonNull;
 import okio.BufferedSink;
@@ -52,6 +53,7 @@ public class TransferFileWriter {
      * @return the number of total read bytes
      * @throws IOException if unable to write the contents to the configured path
      */
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE")
     public long write(@NonNull final BufferedSource source, final long size) throws IOException {
         Validate.isTrue(size >= 0L, "Size should be >= 0");
 

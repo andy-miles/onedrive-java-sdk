@@ -18,10 +18,8 @@
 package com.amilesend.onedrive.resource.request;
 
 import com.amilesend.onedrive.resource.identity.DriveRecipient;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -31,24 +29,22 @@ import java.util.List;
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_invite">
  * API Documentation</a>.
  */
-@AllArgsConstructor
 @Builder
 @Data
-@NoArgsConstructor
 public class AddPermissionRequest {
     /** The list of recipients. */
-    private List<DriveRecipient> recipients;
+    private final List<DriveRecipient> recipients;
     /** A message to include in the invite. */
-    private String message;
+    private final String message;
     /** Indicates if accessing the shared item requires sign-in. */
-    private boolean requireSignIn;
+    private final boolean requireSignIn;
     /** Indicates if an invitation should be sent to the recipient, or just grant the permission. */
-    private boolean sendInvitation;
+    private final boolean sendInvitation;
     /** The allowed roles granted to the recipients. Valid values include:
      * <ul>
      *     <li>{@literal read}</li>
      *     <li>{@literal write}</li>
      * </ul>
      */
-    private List<String> roles;
+    private final List<String> roles;
 }

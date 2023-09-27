@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -25,8 +26,9 @@ import lombok.Data;
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/package">
  * API Documentation</a>.
  */
+@Builder
 @Data
 public class Package {
     /** The type of package. Only supported value at this time is {@literal oneNote}. */
-    private String type;
+    private final String type;
 }

@@ -324,8 +324,8 @@ public class DriveFileFunctionalTest extends FunctionalTestBase {
     public void getPermissions_withValidRequest_shouldReturnPermissionList() {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.PERMISSION_LIST);
         final OneDriveConnection oneDriveConnection = getOneDriveConnection();
-        final Permission expectedPermission = newPermission(oneDriveConnection, "driveItemIdValue");
-        expectedPermission.setDriveItemId("ZipFileIdValue1");
+        final Permission expectedPermission =
+                newPermission(oneDriveConnection, "driveItemIdValue", "ZipFileIdValue1");
         final List<Permission> expected = List.of(expectedPermission, expectedPermission);
 
         final List<Permission> actual = fileUnderTest.getPermissions();
@@ -379,20 +379,18 @@ public class DriveFileFunctionalTest extends FunctionalTestBase {
     public void getVersions_withValidRequest_shouldReturnDriveItemVersionList() {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE_ITEM_VERSION_LIST);
         final OneDriveConnection oneDriveConnection = getOneDriveConnection();
-        final DriveItemVersion firstEntry = newDriveItemVersion(oneDriveConnection, "1");
-        final String driveItemId = fileUnderTest.getId();
+        final String id = fileUnderTest.getId();
         final String name = fileUnderTest.getName();
-        firstEntry.setName(name);
-        firstEntry.setDriveItemId(driveItemId);
-        final DriveItemVersion secondEntry = newDriveItemVersion(oneDriveConnection, "2");
-        secondEntry.setName(name);
-        secondEntry.setDriveItemId(driveItemId);
-        final List<DriveItemVersion> expected = List.of(firstEntry, secondEntry);
+        final List<DriveItemVersion> expected = List.of(
+                copyWithNameAndDriveItemId(newDriveItemVersion(oneDriveConnection, "1"), name, id),
+                copyWithNameAndDriveItemId(newDriveItemVersion(oneDriveConnection, "2"), name, id));
 
         final List<DriveItemVersion> actual = fileUnderTest.getVersions();
 
         assertEquals(expected, actual);
     }
+
+
 
     @Test
     public void getVersions_withErrorResponse_shouldThrowException() {
@@ -414,8 +412,8 @@ public class DriveFileFunctionalTest extends FunctionalTestBase {
     public void addPermission_withValidRequest_shouldReturnPermissionList() {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.PERMISSION_LIST);
         final OneDriveConnection oneDriveConnection = getOneDriveConnection();
-        final Permission expectedPermission = newPermission(oneDriveConnection, "driveItemIdValue");
-        expectedPermission.setDriveItemId("ZipFileIdValue1");
+        final Permission expectedPermission =
+                newPermission(oneDriveConnection, "driveItemIdValue", "ZipFileIdValue1");
         final List<Permission> expected = List.of(expectedPermission, expectedPermission);
 
         final List<Permission> actual = fileUnderTest.addPermission(AddPermissionRequest.builder()
@@ -454,8 +452,8 @@ public class DriveFileFunctionalTest extends FunctionalTestBase {
     @Test
     public void createSharingLink_withValidRequest_shouldReturnPermission() {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.PERMISSION);
-        final Permission expected = newPermission(getOneDriveConnection(), "driveItemIdValue");
-        expected.setDriveItemId("ZipFileIdValue1");
+        final Permission expected =
+                newPermission(getOneDriveConnection(), "driveItemIdValue", "ZipFileIdValue1");
 
         final Permission actual = fileUnderTest.createSharingLink(CreateSharingLinkRequest.builder()
                 .scope("anonymous")
@@ -538,5 +536,20 @@ public class DriveFileFunctionalTest extends FunctionalTestBase {
     public void delete_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
         assertThrows(ResponseException.class, () -> fileUnderTest.delete());
+    }
+
+    static DriveItemVersion copyWithNameAndDriveItemId(final DriveItemVersion orig,
+                                                       final String name,
+                                                       final String driveItemId) {
+        return DriveItemVersion.builder()
+                .connection(orig.getConnection())
+                .driveItemId(driveItemId)
+                .id(orig.getId())
+                .lastModifiedBy(orig.getLastModifiedBy())
+                .lastModifiedDateTime(orig.getLastModifiedDateTime())
+                .name(name)
+                .publication(orig.getPublication())
+                .size(orig.getSize())
+                .build();
     }
 }

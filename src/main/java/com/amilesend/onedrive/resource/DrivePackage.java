@@ -15,27 +15,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.amilesend.onedrive.parse.resource.creator;
+package com.amilesend.onedrive.resource;
 
-import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.item.DriveItem;
-import com.google.gson.InstanceCreator;
-import lombok.RequiredArgsConstructor;
 
-import java.lang.reflect.Type;
+/** A wrapper around a {@link DriveItem} that represents a package (OneNote). */
+public class DrivePackage extends DriveItemFolderType {
+    /**
+     * Creates a new {@code DrivePackage} that wraps the given {@code getDelegate()} {@link DriveItem}.
+     *
+     * @param delegate the drive item to wrap
+     */
+    public DrivePackage(final DriveItem delegate) {
+        super(delegate);
+    }
 
-/**
- * A custom {@link InstanceCreator} implementation that injects the {@link OneDriveConnection} to the
- * resource type so that method operations can be performed on the {@link DriveItem} resource.
- */
-@RequiredArgsConstructor
-public class DriveItemInstanceCreator implements InstanceCreator<DriveItem> {
-    /** The current client connection instance. */
-    private final OneDriveConnection connection;
-
-    /** Creates a new {@code DriveItemInstanceCreator} with the current client connection instance. */
     @Override
-    public DriveItem createInstance(final Type type) {
-        return DriveItem.builder().connection(connection).build();
+    public String toString() {
+        return new StringBuilder("DrivePackage(name=")
+                .append(getName())
+                .append(", id=")
+                .append(getId())
+                .append(", isDeleted=")
+                .append(isDeleted())
+                .append(", isRemote=")
+                .append(isRemote())
+                .append(")")
+                .toString();
     }
 }

@@ -24,6 +24,7 @@ import com.amilesend.onedrive.resource.item.DriveItem;
 import com.amilesend.onedrive.resource.item.DriveItemVersion;
 import com.amilesend.onedrive.resource.item.type.FileSystemInfo;
 import com.amilesend.onedrive.resource.item.type.ItemReference;
+import com.amilesend.onedrive.resource.item.type.Package;
 import com.amilesend.onedrive.resource.item.type.Permission;
 import com.amilesend.onedrive.resource.item.type.RemoteItem;
 import com.amilesend.onedrive.resource.item.type.ThumbnailSet;
@@ -200,7 +201,7 @@ public abstract class DriveItemType {
      * @return {@code true} if this item is a folder; else, {@code false}
      */
     public boolean isFolder() {
-        return delegate.getFolder() != null;
+        return delegate.getFolder() != null && !isPackage();
     }
 
     /**
@@ -230,6 +231,24 @@ public abstract class DriveItemType {
      */
     public void setFileSystemInfo(@NonNull final FileSystemInfo fileSystemInfo) {
         delegate.setFileSystemInfo(fileSystemInfo);
+    }
+
+    /**
+     * Describes if this is a package.
+     *
+     * @return {@code true} if this item is a package; else, {@code false}
+     */
+    public boolean isPackage() {
+        return getPackage() != null;
+    }
+
+    /**
+     * Gets the package information associated with this drive item.
+     *
+     * @return the package information
+     */
+    public Package getPackage() {
+        return delegate.get_package();
     }
 
     //////////////////////
@@ -326,5 +345,15 @@ public abstract class DriveItemType {
     @Override
     public int hashCode() {
         return Objects.hash(getDelegate());
+    }
+
+    static DriveItemType wrapDriveItemToType(final DriveItem driveItem) {
+        if (driveItem.get_package() != null) {
+            return new DrivePackage(driveItem);
+        } else if (driveItem.getFolder() != null) {
+            return new DriveFolder(driveItem);
+        }
+
+        return new DriveFile(driveItem);
     }
 }

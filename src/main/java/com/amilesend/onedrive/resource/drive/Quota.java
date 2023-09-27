@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.drive;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -24,16 +25,17 @@ import lombok.Data;
  * <p>
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/quota"> API Documentation.</a>
  */
+@Builder
 @Data
 public class Quota {
     /** Total storage space in bytes. */
-    private long total;
+    private final long total;
     /** Used storage space in bytes. */
-    private long used;
+    private final long used;
     /** Remaining storage space in bytes. */
-    private long remaining;
+    private final long remaining;
     /** Storage space used by deleted items (recycle bin) in bytes. */
-    private long deleted;
+    private final long deleted;
     /** The storage space state.  Valid values include:
      * <ul>
      *     <li>{@literal normal}</li>
@@ -42,7 +44,7 @@ public class Quota {
      *     <li>{@literal exceeded}</li>
      * </ul>
      */
-    private String state;
+    private final String state;
     /** The total number of files (not applicable to personal OneDrive accounts). */
-    private long fileCount;
+    private final long fileCount;
 }

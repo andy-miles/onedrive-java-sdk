@@ -22,6 +22,7 @@ import com.amilesend.onedrive.parse.resource.parser.AsyncJobStatusParser;
 import com.amilesend.onedrive.resource.item.type.AsyncJobStatus;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -35,6 +36,7 @@ import org.apache.commons.lang3.Validate;
  *
  * @see AsyncJobStatus
  */
+@Builder
 @EqualsAndHashCode
 public class AsyncJob {
     private static final AsyncJobStatusParser PARSER = new AsyncJobStatusParser();

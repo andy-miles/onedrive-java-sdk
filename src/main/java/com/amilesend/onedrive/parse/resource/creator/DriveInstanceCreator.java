@@ -36,6 +36,6 @@ public class DriveInstanceCreator implements InstanceCreator<Drive> {
     /** Creates a new {@code DriveInstanceCreator} with the current client connection instance. */
     @Override
     public Drive createInstance(final Type type) {
-        return new Drive(connection);
+        return Drive.builder().connection(connection).build();
     }
 }

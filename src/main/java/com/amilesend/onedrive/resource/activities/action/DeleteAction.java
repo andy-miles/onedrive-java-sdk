@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.activities.action;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,10 +27,11 @@ import lombok.Data;
  * API Documentation.</a>
  * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
+@Builder
 @Data
 public class DeleteAction {
     /** The name of the deleted item. */
-    private String name;
+    private final String name;
     /** The type of item that was deleted. Valid values: {@code File} or {@code Folder}. */
-    private String objectType;
+    private final String objectType;
 }

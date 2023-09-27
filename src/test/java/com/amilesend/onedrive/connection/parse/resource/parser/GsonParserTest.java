@@ -185,7 +185,7 @@ public class GsonParserTest {
     ///////////////////////////////
 
     @Test
-    public void driveParser_withValidInputStream_shouldReturnDriveItemVersionList() {
+    public void driveParser_withValidInputStream_shouldReturnDrive() {
         final Drive expected = newDrive(connection, 1);
         final Drive actual = new DriveParser().parse(gson, SerializedResource.DRIVE.getResource());
         assertAll(
@@ -203,7 +203,7 @@ public class GsonParserTest {
     ///////////////////////////////
 
     @Test
-    public void driveListParser_withValidInputStream_shouldReturnDriveItemVersionList() {
+    public void driveListParser_withValidInputStream_shouldReturnDriveList() {
         final List<Drive> expected = List.of(newDrive(connection, 1), newDrive(connection, 2));
         final List<Drive> actual = new DriveListParser().parse(gson, SerializedResource.DRIVE_LIST.getResource());
         assertAll(

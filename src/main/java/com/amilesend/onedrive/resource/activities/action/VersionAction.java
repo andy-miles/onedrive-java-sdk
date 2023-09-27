@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.activities.action;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,8 +27,9 @@ import lombok.Data;
  * API Documentation.</a>
  * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
+@Builder
 @Data
 public class VersionAction {
     /** The name of the new version. */
-    private String newVersion;
+    private final String newVersion;
 }

@@ -36,6 +36,6 @@ public class SpecialDriveItemInstanceCreator implements InstanceCreator<SpecialD
     /** Creates a new {@code SpecialDriveItemInstanceCreator} with the current client connection instance. */
     @Override
     public SpecialDriveItem createInstance(final Type type) {
-        return new SpecialDriveItem(connection);
+        return SpecialDriveItem.builder().connection(connection).build();
     }
 }

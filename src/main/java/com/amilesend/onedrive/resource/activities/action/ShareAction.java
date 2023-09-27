@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.resource.activities.action;
 
 import com.amilesend.onedrive.resource.identity.IdentitySet;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -29,8 +30,9 @@ import java.util.List;
  * API Documentation.</a>
  * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
+@Builder
 @Data
 public class ShareAction {
     /** The list of shared users tha the item was shared with. */
-    private List<IdentitySet> recipients;
+    private final List<IdentitySet> recipients;
 }

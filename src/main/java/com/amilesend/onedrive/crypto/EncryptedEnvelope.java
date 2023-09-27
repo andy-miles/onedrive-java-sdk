@@ -19,13 +19,11 @@ package com.amilesend.onedrive.crypto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * The envelope that encapsulates encrypted content that is used to persist to the file system.
  */
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 public class EncryptedEnvelope {
     /** The encrypted bytes. */

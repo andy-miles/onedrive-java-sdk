@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.resource.activities.action;
 
 import com.amilesend.onedrive.resource.identity.IdentitySet;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -29,12 +30,13 @@ import java.util.List;
  * API Documentation.</a>
  * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
+@Builder
 @Data
 public class CommentAction {
     /** Indicates if the activity was a reply to an existing thread. */
-    private boolean isReply;
+    private final boolean isReply;
     /** The user who started the thread. */
-    private IdentitySet parentAuthor;
+    private final IdentitySet parentAuthor;
     /** The list of users who participated in the thread. */
-    private List<IdentitySet> participants;
+    private final List<IdentitySet> participants;
 }

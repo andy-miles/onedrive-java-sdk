@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,12 +27,13 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class FileSystemInfo {
     /** The date and time the file was created on the client (in UTC). */
-    private String createdDateTime;
+    private final String createdDateTime;
     /** The date and time the file was last accessed on the client (in UTC). */
-    private String lastAccessedDateTime;
+    private final String lastAccessedDateTime;
     /** The date and time the file was last modified on the client (in UTC). */
-    private String lastModifiedDateTime;
+    private final String lastModifiedDateTime;
 }

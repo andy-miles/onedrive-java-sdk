@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.connection.file;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
@@ -37,6 +38,7 @@ public class TransferFileUtil {
      * @return the string formatted mime type
      * @throws IOException if an error occurred while reading the file
      */
+    @SuppressFBWarnings("URLCONNECTION_SSRF_FD")
     public static String fetchMimeTypeFromFile(@NonNull final File file) throws IOException {
         final URLConnection urlConnection = file.toURI().toURL().openConnection();
         try {

@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -27,6 +28,7 @@ import lombok.Data;
  * @see Folder
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class FolderView {
     /**

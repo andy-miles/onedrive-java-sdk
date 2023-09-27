@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -27,6 +28,7 @@ import lombok.Data;
  * @see com.amilesend.onedrive.resource.item.DriveItem
  * @see com.amilesend.onedrive.resource.item.DriveItemVersion
  */
+@Builder
 @Data
 public class PublicationFacet {
     /* Valid values: published | checkout */
@@ -37,7 +39,7 @@ public class PublicationFacet {
      *     <li>{@literal checkout}</li>
      * </ul>
      */
-    private String level;
+    private final String level;
     /** The version identifier. */
-    private String versionId;
+    private final String versionId;
 }

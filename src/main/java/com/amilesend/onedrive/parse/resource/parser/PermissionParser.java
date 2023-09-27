@@ -38,8 +38,28 @@ public class PermissionParser implements GsonParser<Permission> {
     @Override
     public Permission parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
         final Permission permission = gson.fromJson(new InputStreamReader(jsonStream), Permission.class);
-        permission.setDriveItemId(driveItemId);
+        return copyWithDriveItemId(permission, driveItemId);
+    }
 
-        return permission;
+    /**
+     * Copies the given {@code permission} and injects the {@code driveItemId}.
+     *
+     * @param permission the permission to copy
+     * @param driveItemId the driveItemId to set
+     * @return the copied permission
+     */
+    static Permission copyWithDriveItemId(final Permission permission, final String driveItemId) {
+        return Permission.builder()
+                .connection(permission.getConnection())
+                .driveItemId(driveItemId)
+                .grantedTo(permission.getGrantedTo())
+                .grantedToIdentities(permission.getGrantedToIdentities())
+                .id(permission.getId())
+                .inheritedFrom(permission.getInheritedFrom())
+                .invitation(permission.getInvitation())
+                .link(permission.getLink())
+                .roles(permission.getRoles())
+                .shareId(permission.getShareId())
+                .build();
     }
 }

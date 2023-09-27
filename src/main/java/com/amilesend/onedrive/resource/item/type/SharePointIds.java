@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -27,20 +28,21 @@ import lombok.Data;
  * @see com.amilesend.onedrive.resource.drive.Drive
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class SharePointIds {
     /** Item list identifier. */
-    private String listId;
+    private final String listId;
     /** Item identifier for an element contained within the list (as an integer). */
-    private String listItemId;
+    private final String listItemId;
     /** The unique identifier for an element contained within the list. */
-    private String listItemUniqueId;
+    private final String listItemUniqueId;
     /** The site collection identifier. */
-    private String siteId;
+    private final String siteId;
     /** The SharePointURL for the site that contains the item. */
-    private String siteUrl;
+    private final String siteUrl;
     /** The tenant identiifer. */
-    private String tenantId;
+    private final String tenantId;
     /** The item's site identifier for SharePoint web. */
-    private String webId;
+    private final String webId;
 }

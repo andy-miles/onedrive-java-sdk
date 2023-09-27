@@ -17,10 +17,8 @@
  */
 package com.amilesend.onedrive.resource.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * Represents a request to preview an item.
@@ -28,10 +26,8 @@ import lombok.NoArgsConstructor;
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview">
  * API Documentation</a>.
  */
-@AllArgsConstructor
 @Builder
 @Data
-@NoArgsConstructor
 public class PreviewRequest {
     /** The optional preview app to use. Valid values include:
      * <ul>
@@ -40,13 +36,13 @@ public class PreviewRequest {
      *     <li>{@literal office}</li>
      * </ul>
      */
-    private String viewer;
+    private final String viewer;
     /** If {@code true}, the embedded view will omit controls. */
-    private boolean chromeless;
+    private final boolean chromeless;
     /** If {@code true}, the file can be edited from the UI. */
-    private boolean allowEdit;
+    private final boolean allowEdit;
     /** Optional page number of the document formatted as a string. */
-    private String page;
+    private final String page;
     /** Optional zoom level to start at. */
-    private double zoom;
+    private final double zoom;
 }

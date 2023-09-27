@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.crypto;
 
 import com.google.common.annotations.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
@@ -85,6 +86,7 @@ public class CryptoHelper {
      * @return the decrypted contents
      * @throws CryptoHelperException if an error occurred while decrypting the envelope's contents
      */
+    @SuppressFBWarnings("STATIC_IV")
     public byte[] decrypt(@NonNull final EncryptedEnvelope envelope) throws CryptoHelperException {
         log.debug("Decrypting {}", envelope.getDescription());
         final IvParameterSpec ivSpec = new IvParameterSpec(envelope.getIv());

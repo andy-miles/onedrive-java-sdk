@@ -24,7 +24,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -133,9 +132,10 @@ public class AuthInfo {
             return Collections.emptyList();
         }
 
-        return Arrays.stream(scope.split(" "))
-                .map(String::trim)
-                .collect(Collectors.toList());
+        return Collections.unmodifiableList(
+                Arrays.stream(scope.split(" "))
+                        .map(String::trim)
+                        .collect(Collectors.toList()));
     }
 
     /**
@@ -144,19 +144,18 @@ public class AuthInfo {
      */
     @Builder
     @Getter
-    @Setter
     private static class AuthInfoInternal {
         /** The type of token. */
-        private String tokenType;
+        private final String tokenType;
         /** The scopes associated with the authentication. */
-        private String scope;
+        private final String scope;
         /** The expiration time in milliseconds. */
-        private long expiresIn;
+        private final long expiresIn;
         /** The expiration time in milliseconds. */
-        private long extExpiresIn;
+        private final long extExpiresIn;
         /** The current access token. */
-        private String accessToken;
+        private final String accessToken;
         /** the current refresh token. */
-        private String refreshToken;
+        private final String refreshToken;
     }
 }

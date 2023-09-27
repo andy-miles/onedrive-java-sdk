@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.resource.item.type;
 
 import com.amilesend.onedrive.parse.strategy.GsonExclude;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,15 +27,16 @@ import lombok.Data;
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview">
  * API Documentation</a>.
  */
+@Builder
 @Data
 public class Preview {
     /** The URL for embedding using HTTP get (e.g., iFrames).*/
-    private String getUrl;
+    private final String getUrl;
     /** The HTTP POST parameters to include if using {@link #getPostUrl()}. */
-    private String postParameters;
+    private final String postParameters;
     /** The URL suiting for embedding using HTTP POST (e.g., post, javascript, etc.).*/
-    private String postUrl;
+    private final String postUrl;
     /** The associated drive item identifier that this preview applies to. */
     @GsonExclude
-    private String driveItemId;
+    private final String driveItemId;
 }

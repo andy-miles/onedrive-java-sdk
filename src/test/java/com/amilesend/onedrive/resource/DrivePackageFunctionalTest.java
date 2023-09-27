@@ -52,14 +52,21 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DriveFolderFunctionalTest extends FunctionalTestBase {
-    private DriveFolder folderUnderTest;
+public class DrivePackageFunctionalTest extends FunctionalTestBase {
+    private DrivePackage drivePackageUnderTest;
 
     @BeforeEach
-    public void configureDrive() {
+    public void configureDrivePackage() {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE);
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE_ITEM_ROOT_FOLDER);
-        folderUnderTest = getOneDriveUnderTest().getUserDrive().getRootFolder();
+        setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE_ITEM_PACKAGE);
+        drivePackageUnderTest = getOneDriveUnderTest()
+                .getUserDrive()
+                .getRootFolder()
+                .getChildPackages()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Unable to retrieve DrivePackage to test"));
     }
 
     //////////////////
@@ -72,7 +79,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE_ITEM_ZIP_FILE);
         final DriveFile expected = new DriveFile(newDriveItemZipFile(getOneDriveConnection(), 1));
 
-        final DriveFile actual = folderUnderTest.upload(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK);
+        final DriveFile actual = drivePackageUnderTest.upload(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK);
 
         assertEquals(expected, actual);
     }
@@ -81,21 +88,21 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     public void upload_withErrorResponse_shouldThrowException(@TempDir final Path tempDir) {
         setUpMockResponse(ERROR_STATUS_CODE);
         assertThrows(RequestException.class,
-                () -> folderUnderTest.upload(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK));
+                () -> drivePackageUnderTest.upload(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK));
     }
 
     @Test
     public void upload_withServiceErrorResponse_shouldThrowException(@TempDir final Path tempDir) {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
         assertThrows(ResponseException.class,
-                () -> folderUnderTest.upload(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK));
+                () -> drivePackageUnderTest.upload(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK));
     }
 
     @Test
     public void upload_withIOException_shouldThrowException(@TempDir final Path tempDir) {
         final Path filePathToUpload = tempDir.resolve("testFileToUpload.txt");
         assertThrows(IOException.class,
-                () -> folderUnderTest.upload(filePathToUpload.toFile(), NO_OP_TRANSFER_PROGRESS_CALLBACK));
+                () -> drivePackageUnderTest.upload(filePathToUpload.toFile(), NO_OP_TRANSFER_PROGRESS_CALLBACK));
     }
 
     //////////////////
@@ -109,7 +116,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         final DriveFile expected = new DriveFile(newDriveItemZipFile(getOneDriveConnection(), 1));
 
         final DriveFile actual =
-                folderUnderTest.uploadAsync(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK).get();
+                drivePackageUnderTest.uploadAsync(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK).get();
 
         assertEquals(expected, actual);
     }
@@ -119,7 +126,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(ERROR_STATUS_CODE);
         final Throwable thrown = assertThrows(
                 ExecutionException.class,
-                () -> folderUnderTest.uploadAsync(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK).get());
+                () -> drivePackageUnderTest.uploadAsync(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK).get());
         assertInstanceOf(RequestException.class, thrown.getCause());
     }
 
@@ -128,7 +135,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
         final Throwable thrown = assertThrows(
                 ExecutionException.class,
-                () -> folderUnderTest.uploadAsync(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK).get());
+                () -> drivePackageUnderTest.uploadAsync(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK).get());
         assertInstanceOf(ResponseException.class, thrown.getCause());
     }
 
@@ -136,7 +143,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     public void uploadAsync_withIOException_shouldThrowException(@TempDir final Path tempDir) {
         final Path filePathToUpload = tempDir.resolve("testFileToUpload.txt");
         final Throwable thrown = assertThrows(IOException.class,
-                () -> folderUnderTest.uploadAsync(filePathToUpload.toFile(), NO_OP_TRANSFER_PROGRESS_CALLBACK).get());
+                () -> drivePackageUnderTest.uploadAsync(filePathToUpload.toFile(), NO_OP_TRANSFER_PROGRESS_CALLBACK).get());
     }
 
     //////////////////
@@ -148,7 +155,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE_ITEM_FOLDER);
         final DriveFolder expected = new DriveFolder(newDriveItemFolder(getOneDriveConnection()));
 
-        final DriveFolder actual = folderUnderTest.createFolder("NewFolder");
+        final DriveFolder actual = drivePackageUnderTest.createFolder("NewFolder");
 
         assertEquals(expected, actual);
     }
@@ -156,13 +163,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void createFolder_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.createFolder("NewFolder"));
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.createFolder("NewFolder"));
     }
 
     @Test
     public void createFolder_withServiceRepsonse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.createFolder("NewFolder"));
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.createFolder("NewFolder"));
     }
 
     /////////////////////
@@ -174,7 +181,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE_ITEM_LIST);
         final List<DriveFolder> expected = List.of(new DriveFolder(newDriveItemFolder(getOneDriveConnection())));
 
-        final List<DriveFolder> actual = folderUnderTest.getChildFolders();
+        final List<DriveFolder> actual = drivePackageUnderTest.getChildFolders();
 
         assertEquals(expected, actual);
     }
@@ -182,13 +189,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void getChildFolders_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.getChildFolders());
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.getChildFolders());
     }
 
     @Test
     public void getChildFolders_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.getChildFolders());
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.getChildFolders());
     }
 
     /////////////////////
@@ -200,7 +207,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE_ITEM_LIST);
         final List<DriveFile> expected = List.of(new DriveFile(newDriveItemZipFile(getOneDriveConnection(), 1)));
 
-        final List<DriveFile> actual = folderUnderTest.getChildFiles();
+        final List<DriveFile> actual = drivePackageUnderTest.getChildFiles();
 
         assertEquals(expected, actual);
     }
@@ -208,13 +215,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void getChildFiles_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.getChildFiles());
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.getChildFiles());
     }
 
     @Test
     public void getChildFiles_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.getChildFiles());
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.getChildFiles());
     }
 
     /////////////////////
@@ -229,7 +236,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
                 new DriveFile(newDriveItemZipFile(oneDriveConnection, 1)),
                 new DriveFolder(newDriveItemFolder(oneDriveConnection)));
 
-        final List<? extends DriveItemType> actual = folderUnderTest.getChildren();
+        final List<? extends DriveItemType> actual = drivePackageUnderTest.getChildren();
 
         assertEquals(expected, actual);
     }
@@ -237,13 +244,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void getChildren_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.getChildren());
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.getChildren());
     }
 
     @Test
     public void getChildren_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.getChildren());
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.getChildren());
     }
 
     ///////////////////
@@ -258,7 +265,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
                 new DriveFile(newDriveItemZipFile(oneDriveConnection, 1)),
                 new DriveFolder(newDriveItemFolder(oneDriveConnection)));
 
-        final List<? extends DriveItemType> actual = folderUnderTest.search("SearchQuery");
+        final List<? extends DriveItemType> actual = drivePackageUnderTest.search("SearchQuery");
 
         assertEquals(expected, actual);
     }
@@ -266,13 +273,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void search_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.search("SearchQuery"));
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.search("SearchQuery"));
     }
 
     @Test
     public void search_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.search("SearchQuery"));
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.search("SearchQuery"));
     }
 
     ///////////////////
@@ -284,7 +291,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE_ITEM_FOLDER);
         final DriveFolder expected = new DriveFolder(newDriveItemFolder(getOneDriveConnection()));
 
-        final DriveFolder actual = folderUnderTest.update();
+        final DriveFolder actual = drivePackageUnderTest.update();
 
         assertEquals(expected, actual);
     }
@@ -292,13 +299,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void update_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.update());
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.update());
     }
 
     @Test
     public void update_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.update());
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.update());
     }
 
     ///////////////////
@@ -310,7 +317,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE_ITEM_FOLDER);
         final DriveFolder expected = new DriveFolder(newDriveItemFolder(getOneDriveConnection()));
 
-        final DriveFolder actual = folderUnderTest.move("newParentId", "newName");
+        final DriveFolder actual = drivePackageUnderTest.move("newParentId", "newName");
 
         assertEquals(expected, actual);
     }
@@ -318,13 +325,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void move_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.move("newParentId", "newName"));
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.move("newParentId", "newName"));
     }
 
     @Test
     public void move_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.move("newParentId", "newName"));
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.move("newParentId", "newName"));
     }
 
     ///////////////////
@@ -336,7 +343,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.ITEM_ACTIVITY_LIST);
         final List<ItemActivity> expected = List.of(newItemActivity(1), newItemActivity(2));
 
-        final List<ItemActivity> actual = folderUnderTest.getActivities();
+        final List<ItemActivity> actual = drivePackageUnderTest.getActivities();
 
         assertEquals(expected, actual);
     }
@@ -344,13 +351,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void getActivities_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.getActivities());
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.getActivities());
     }
 
     @Test
     public void getActivities_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.getActivities());
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.getActivities());
     }
 
     ///////////////////
@@ -362,10 +369,10 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.PERMISSION_LIST);
         final OneDriveConnection oneDriveConnection = getOneDriveConnection();
         final Permission expectedPermission =
-                newPermission(oneDriveConnection, "driveItemIdValue", "FolderIdValue");
+                newPermission(oneDriveConnection, "driveItemIdValue", "PackageIdValue");
         final List<Permission> expected = List.of(expectedPermission, expectedPermission);
 
-        final List<Permission> actual = folderUnderTest.getPermissions();
+        final List<Permission> actual = drivePackageUnderTest.getPermissions();
 
         assertEquals(expected, actual);
     }
@@ -373,13 +380,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void getPermissions_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.getPermissions());
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.getPermissions());
     }
 
     @Test
     public void getPermissions_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.getPermissions());
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.getPermissions());
     }
 
     ///////////////////
@@ -391,7 +398,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.THUMBNAIL_SET_LIST);
         final List<ThumbnailSet> expected = List.of(newThumbnailSet(), newThumbnailSet());
 
-        final List<ThumbnailSet> actual = folderUnderTest.getThumbnails();
+        final List<ThumbnailSet> actual = drivePackageUnderTest.getThumbnails();
 
         assertEquals(expected, actual);
     }
@@ -399,13 +406,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void getThumbnails_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.getThumbnails());
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.getThumbnails());
     }
 
     @Test
     public void getThumbnails_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.getThumbnails());
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.getThumbnails());
     }
 
     ///////////////////
@@ -417,13 +424,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE_ITEM_VERSION_LIST);
         final OneDriveConnection oneDriveConnection = getOneDriveConnection();
         final DriveItemVersion firstEntry = newDriveItemVersion(oneDriveConnection, "1");
-        final String id = folderUnderTest.getId();
-        final String name = folderUnderTest.getName();
+        final String id = drivePackageUnderTest.getId();
+        final String name = drivePackageUnderTest.getName();
         final List<DriveItemVersion> expected = List.of(
                 copyWithNameAndDriveItemId(newDriveItemVersion(oneDriveConnection, "1"), name, id),
                 copyWithNameAndDriveItemId(newDriveItemVersion(oneDriveConnection, "2"), name, id));
 
-        final List<DriveItemVersion> actual = folderUnderTest.getVersions();
+        final List<DriveItemVersion> actual = drivePackageUnderTest.getVersions();
 
         assertEquals(expected, actual);
     }
@@ -431,13 +438,13 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void getVersions_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.getVersions());
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.getVersions());
     }
 
     @Test
     public void getVersions_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.getVersions());
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.getVersions());
     }
 
     ///////////////////
@@ -449,19 +456,19 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.PERMISSION_LIST);
         final OneDriveConnection oneDriveConnection = getOneDriveConnection();
         final Permission expectedPermission =
-                newPermission(oneDriveConnection, "driveItemIdValue", "FolderIdValue");;
+                newPermission(oneDriveConnection, "driveItemIdValue", "PackageIdValue");;
         final List<Permission> expected = List.of(expectedPermission, expectedPermission);
 
-        final List<Permission> actual = folderUnderTest.addPermission(AddPermissionRequest.builder()
+        final List<Permission> actual = drivePackageUnderTest.addPermission(AddPermissionRequest.builder()
                 .message("Message")
                 .roles(List.of("Role1"))
                 .requireSignIn(false)
                 .sendInvitation(false)
                 .recipients(List.of(DriveRecipient.builder()
-                                .alias("Alias")
-                                .email("email@someemail.com")
-                                .objectId("ObjectId")
-                                .build()))
+                        .alias("Alias")
+                        .email("email@someemail.com")
+                        .objectId("ObjectId")
+                        .build()))
                 .build());
 
         assertEquals(expected, actual);
@@ -471,14 +478,14 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     public void addPermission_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
         assertThrows(RequestException.class,
-                () -> folderUnderTest.addPermission(AddPermissionRequest.builder().build()));
+                () -> drivePackageUnderTest.addPermission(AddPermissionRequest.builder().build()));
     }
 
     @Test
     public void addPermission_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
         assertThrows(ResponseException.class,
-                () -> folderUnderTest.addPermission(AddPermissionRequest.builder().build()));
+                () -> drivePackageUnderTest.addPermission(AddPermissionRequest.builder().build()));
     }
 
     ///////////////////////
@@ -489,9 +496,9 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     public void createSharingLink_withValidRequest_shouldReturnPermission() {
         setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.PERMISSION);
         final Permission expected =
-                newPermission(getOneDriveConnection(), "driveItemIdValue", "FolderIdValue");
+                newPermission(getOneDriveConnection(), "driveItemIdValue", "PackageIdValue");
 
-        final Permission actual = folderUnderTest.createSharingLink(CreateSharingLinkRequest.builder()
+        final Permission actual = drivePackageUnderTest.createSharingLink(CreateSharingLinkRequest.builder()
                 .scope("anonymous")
                 .type("view")
                 .build());
@@ -502,7 +509,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void createSharingLink_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.createSharingLink(CreateSharingLinkRequest.builder()
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.createSharingLink(CreateSharingLinkRequest.builder()
                 .scope("anonymous")
                 .type("view")
                 .build()));
@@ -511,7 +518,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void createSharingLink_withServiceError_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.createSharingLink(CreateSharingLinkRequest.builder()
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.createSharingLink(CreateSharingLinkRequest.builder()
                 .scope("anonymous")
                 .type("view")
                 .build()));
@@ -526,7 +533,7 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
         setUpMockResponse(SUCCESS_ASYNC_JOB_CODE, "MonitoringUrlValue");
         final AsyncJob expected = new AsyncJob("MonitoringUrlValue", getOneDriveConnection());
 
-        final AsyncJob actual = folderUnderTest.copy("DestinationIdValue", "NewNameValue");
+        final AsyncJob actual = drivePackageUnderTest.copy("DestinationIdValue", "NewNameValue");
 
         assertEquals(expected, actual);
     }
@@ -534,19 +541,19 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     @Test
     public void copy_withNonExpectedSuccessResponseCode_shouldThrowException() {
         setUpMockResponse(SUCCESS_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.copy("DestinationIdValue", "NewNameValue"));
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.copy("DestinationIdValue", "NewNameValue"));
     }
 
     @Test
     public void copy_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.copy("DestinationIdValue", "NewNameValue"));
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.copy("DestinationIdValue", "NewNameValue"));
     }
 
     @Test
     public void copy_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.copy("DestinationIdValue", "NewNameValue"));
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.copy("DestinationIdValue", "NewNameValue"));
     }
 
     ///////////////////////
@@ -557,20 +564,20 @@ public class DriveFolderFunctionalTest extends FunctionalTestBase {
     public void delete_withValidRequest_shouldUpdateDeletedState() {
         setUpMockResponse(SUCCESS_STATUS_CODE);
 
-        folderUnderTest.delete();
+        drivePackageUnderTest.delete();
 
-        assertTrue(folderUnderTest.isDeleted());
+        assertTrue(drivePackageUnderTest.isDeleted());
     }
 
     @Test
     public void delete_withErrorResponse_shouldThrowException() {
         setUpMockResponse(ERROR_STATUS_CODE);
-        assertThrows(RequestException.class, () -> folderUnderTest.delete());
+        assertThrows(RequestException.class, () -> drivePackageUnderTest.delete());
     }
 
     @Test
     public void delete_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
-        assertThrows(ResponseException.class, () -> folderUnderTest.delete());
+        assertThrows(ResponseException.class, () -> drivePackageUnderTest.delete());
     }
 }

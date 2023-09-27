@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,10 +27,11 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class Image {
     /** The image height in pixels. */
-    private int height;
+    private final int height;
     /** The image width in pixels. */
-    private int width;
+    private final int width;
 }

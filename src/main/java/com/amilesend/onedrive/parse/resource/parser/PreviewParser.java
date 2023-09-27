@@ -37,8 +37,11 @@ public class PreviewParser implements GsonParser<Preview> {
     @Override
     public Preview parse(final Gson gson, final InputStream jsonStream) {
         final Preview preview = gson.fromJson(new InputStreamReader(jsonStream), Preview.class);
-        preview.setDriveItemId(driveItemId);
-
-        return preview;
+        return Preview.builder()
+                .driveItemId(driveItemId)
+                .getUrl(preview.getGetUrl())
+                .postParameters(preview.getPostParameters())
+                .postUrl(preview.getPostUrl())
+                .build();
     }
 }

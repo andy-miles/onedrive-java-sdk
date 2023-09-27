@@ -23,7 +23,6 @@ import com.amilesend.onedrive.parse.GsonParser;
 import com.amilesend.onedrive.parse.resource.parser.DriveItemParser;
 import lombok.SneakyThrows;
 import okhttp3.Request;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -86,16 +85,6 @@ public class DriveItemUploadTest extends DriveItemTestBase {
         final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
 
         assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class,
-                            () -> driveItemUnderTest.upload(mockFile, mockCallback));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> driveItemUnderTest.upload(mockFile, mockCallback));
-                },
                 () -> assertThrows(NullPointerException.class,
                         () -> driveItemUnderTest.upload(null, mockCallback)),
                 () -> assertThrows(NullPointerException.class,
@@ -140,16 +129,6 @@ public class DriveItemUploadTest extends DriveItemTestBase {
         final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
 
         assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class,
-                            () -> driveItemUnderTest.uploadAsync(mockFile, mockCallback));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> driveItemUnderTest.uploadAsync(mockFile, mockCallback));
-                },
                 () -> assertThrows(NullPointerException.class,
                         () -> driveItemUnderTest.uploadAsync(null, mockCallback)),
                 () -> assertThrows(NullPointerException.class,
@@ -188,20 +167,7 @@ public class DriveItemUploadTest extends DriveItemTestBase {
     @SneakyThrows
     @Test
     public void uploadNew_withInvalidParameters_shouldThrowException() {
-        final File mockFile = mock(File.class);
-        final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
-
         assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class,
-                            () -> driveItemUnderTest.uploadNew(mockFile, mockCallback));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> driveItemUnderTest.uploadNew(mockFile, mockCallback));
-                },
                 () -> assertThrows(NullPointerException.class,
                         () -> driveItemUnderTest.uploadNew(null, mock(TransferProgressCallback.class))),
                 () -> assertThrows(NullPointerException.class,
@@ -242,20 +208,7 @@ public class DriveItemUploadTest extends DriveItemTestBase {
     @SneakyThrows
     @Test
     public void uploadNewAsync_withInvalidParameters_shouldThrowException() {
-        final File mockFile = mock(File.class);
-        final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
-
         assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class,
-                            () -> driveItemUnderTest.uploadNewAsync(mockFile, mockCallback));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> driveItemUnderTest.uploadNewAsync(mockFile, mockCallback));
-                },
                 () -> assertThrows(NullPointerException.class,
                         () -> driveItemUnderTest.uploadNewAsync(null, mock(TransferProgressCallback.class))),
                 () -> assertThrows(NullPointerException.class,

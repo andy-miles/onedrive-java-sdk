@@ -24,6 +24,7 @@ import org.apache.commons.lang3.Validate;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -122,8 +123,10 @@ public class KeyStoreHelper {
         initKeyStoreFileIfNotExist();
 
         final KeyStore keyStore = KeyStore.getInstance(KEY_STORE_TYPE);
-        keyStore.load(Files.newInputStream(keyStorePath), keyStorePassword);
-        return keyStore;
+        try (final InputStream keyStoreStream = Files.newInputStream(keyStorePath)) {
+            keyStore.load(keyStoreStream, keyStorePassword);
+            return keyStore;
+        }
     }
 
     @VisibleForTesting

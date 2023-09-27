@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.resource.item.type;
 
 import com.amilesend.onedrive.resource.identity.IdentitySet;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -27,10 +28,11 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class Shared {
     /** The owner of the drive item. */
-    private IdentitySet owner;
+    private final IdentitySet owner;
     /**
      * The scope of how the item is shared. Valid values include:
      * <ul>
@@ -39,9 +41,9 @@ public class Shared {
      *     <li>{@literal users}</li>
      * </ul>
      */
-    private String scope;
+    private final String scope;
     /** Who shared the drive item. */
-    private IdentitySet sharedBy;
+    private final IdentitySet sharedBy;
     /** When the drive item was shared (in UTC). */
-    private String sharedDateTime;
+    private final String sharedDateTime;
 }

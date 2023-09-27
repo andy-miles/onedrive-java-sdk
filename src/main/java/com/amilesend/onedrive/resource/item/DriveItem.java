@@ -60,6 +60,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import okhttp3.RequestBody;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -93,7 +94,7 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
  *     (https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url)
  */
 @Getter
-@Setter
+@SuperBuilder
 @ToString(callSuper = true)
 public class DriveItem extends BaseItem {
     public static final String DRIVE_ITEM_BASE_URL_PATH = "/me/drive/items/";
@@ -102,49 +103,56 @@ public class DriveItem extends BaseItem {
     private static final String CONTENT_URL_SUFFIX = "/content";
 
     /** The audio file attributes (read-only). */
-    private Audio audio;
+    private final Audio audio;
     /** An eTag for the content of the item (read-only). */
-    private String cTag;
-    /** Indicates if an item was deleted (read-only). */
-    private Deleted deleted;
+    private final String cTag;
     /** Indicates if an item is a file (read-only). */
-    private File file;
-    /** Describes drive (client-side) properties of the local version of a drive item. */
-    private FileSystemInfo fileSystemInfo;
+    private final File file;
     /** Describes if a given drive item is a folder resource type (read-only). */
-    private Folder folder;
+    private final Folder folder;
     /** The image attributes for a file (read-only). */
-    private Image image;
+    private final Image image;
     /** The geographic coordinates and elevation of a file (read-only). */
-    private GeoCoordinates location;
+    private final GeoCoordinates location;
     /** If defined, malware was detected in the file (read-only). */
-    private Object malware;
+    private final Object malware;
     /** Indicates that a drive item is the top level item in a collection of items (read-only). */
     @SerializedName("package")
-    private Package _package;
+    private final Package _package;
     /** The photo attributes for a drive item file (read-only). */
-    private Photo photo;
+    private final Photo photo;
     /** The published status of a drive item or version (read-only). */
-    private PublicationFacet publication;
+    private final PublicationFacet publication;
     /** Indicates that a drive item references one that exists in another drive (read-only). */
-    private RemoteItem remoteItem;
+    private final RemoteItem remoteItem;
     /* An empty object if defined; else is null */
     /** If defined, indicates that the item is the top-most folder in the drive (read-only). */
-    private Object root;
+    private final Object root;
     /** Indicates that the item is in response to a search query (read-only). */
-    private SearchResult searchResult;
+    private final SearchResult searchResult;
     /** Indicates that a drive item has been shared with others (read-only). */
-    private Shared shared;
+    private final Shared shared;
     /** SharePoint resource identifiers for SharePoint and Business account items (read-only). */
-    private SharePointIds sharepointIds;
+    private final SharePointIds sharepointIds;
     /** The size of the item in bytes (read-only). */
-    private long size;
+    private final long size;
     /** Describes if the item is a special managed folder (read-only). */
-    private SpecialFolder specialFolder;
+    private final SpecialFolder specialFolder;
     /** The video file attributes (read-only). */
-    private Video video;
+    private final Video video;
+    /** The URL that can be used to download the file's content (read-only). */
+    @SerializedName("@microsoft.graph.downloadUrl")
+    @GsonSerializeExclude
+    private final String downloadUrl;
+    /** Gets the underlying connection instance. */
+    @GsonExclude
+    private final OneDriveConnection connection;
 
-    // Instance Annotations
+    /** Indicates if an item was deleted (read-only). */
+    private Deleted deleted;
+    @Setter
+    /** Describes drive (client-side) properties of the local version of a drive item. */
+    private FileSystemInfo fileSystemInfo;
     /**
      * Describes how to handle conflicts upon copy/move operations. Valid values include:
      * <ul>
@@ -155,25 +163,13 @@ public class DriveItem extends BaseItem {
      * This member is write-only.
      */
     @SerializedName("@microsoft.graph.conflictBehavior")
+    @Setter
     private String conflictBehavior;
-    /** The URL that can be used to download the file's content (read-only). */
-    @SerializedName("@microsoft.graph.downloadUrl")
-    @GsonSerializeExclude
-    private String downloadUrl;
     /** The source URL for remote uploading of file contents (write-only). Currently not tested nor supported. */
     @GsonSerializeExclude
     @SerializedName("@microsoft.graph.sourceUrl")
+    @Setter
     private String sourceUrl;
-
-    /** Gets the underlying connection instance. */
-    @GsonExclude
-    private final OneDriveConnection connection;
-
-    /** Creates a new {@code Drive} */
-    public DriveItem(@NonNull final OneDriveConnection connection) {
-        super();
-        this.connection = connection;
-    }
 
     ////////////////////////
     // Download
@@ -395,7 +391,7 @@ public class DriveItem extends BaseItem {
      * @return the updated drive item
      */
     public DriveItem move(final String destinationParentId, final String newName) {
-        validateDestinationParentIdAndNameAndSet(destinationParentId, newName);
+        validateDestinationParentIdAndNewName(destinationParentId, newName);
         return update();
     }
 
@@ -409,7 +405,7 @@ public class DriveItem extends BaseItem {
      * @see AsyncJob
      */
     public AsyncJob copy(final String destinationParentId, final String newName) {
-        validateDestinationParentIdAndNameAndSet(destinationParentId, newName);
+        validateDestinationParentIdAndNewName(destinationParentId, newName);
         final String monitoringUrl = connection.executeRemoteAsync(
                 connection.newSignedForApiWithBodyRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
@@ -435,9 +431,7 @@ public class DriveItem extends BaseItem {
                         .delete()
                         .build());
         // Set the deleted state for this drive item for consumers that still have reference to the object.
-        final Deleted deleted = new Deleted();
-        deleted.setState(StringUtils.EMPTY);
-        this.setDeleted(deleted);
+        this.deleted = Deleted.builder().build();
     }
 
     ////////////////////////
@@ -722,7 +716,7 @@ public class DriveItem extends BaseItem {
         return URLEncoder.encode(driveItemId, StandardCharsets.UTF_8);
     }
 
-    private void validateDestinationParentIdAndNameAndSet(final String destinationParentId, final String newName) {
+    private void validateDestinationParentIdAndNewName(final String destinationParentId, final String newName) {
         Validate.isTrue(StringUtils.isNotBlank(destinationParentId)
                         || StringUtils.isNotBlank(newName),
                 "Both destinationParentId and newName must not be blank");
@@ -737,8 +731,7 @@ public class DriveItem extends BaseItem {
         if (StringUtils.isNotBlank(destinationParentId)) {
             final ItemReference parentReference = getParentReference() != null
                     ? getParentReference()
-                    : new ItemReference();
-            parentReference.setId(destinationParentId);
+                    : ItemReference.builder().id(destinationParentId).build();
             setParentReference(parentReference);
         }
 

@@ -20,7 +20,6 @@ package com.amilesend.onedrive.resource.item;
 import com.amilesend.onedrive.connection.file.TransferProgressCallback;
 import lombok.SneakyThrows;
 import okhttp3.Request;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -72,15 +71,6 @@ public class DriveItemDownloadTest extends DriveItemTestBase {
         final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
 
         assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.download(mockPath, mockCallback));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> driveItemUnderTest.download(mockPath, mockCallback));
-                },
                 () -> assertThrows(NullPointerException.class,
                         () -> driveItemUnderTest.download(null, mockCallback)),
                 () -> assertThrows(NullPointerException.class,
@@ -124,16 +114,6 @@ public class DriveItemDownloadTest extends DriveItemTestBase {
         final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
 
         assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class,
-                            () -> driveItemUnderTest.downloadAsync(mockPath, mockCallback));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> driveItemUnderTest.downloadAsync(mockPath, mockCallback));
-                },
                 () -> assertThrows(NullPointerException.class,
                         () -> driveItemUnderTest.downloadAsync(null, mockCallback)),
                 () -> assertThrows(NullPointerException.class,

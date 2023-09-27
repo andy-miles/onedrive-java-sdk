@@ -19,41 +19,34 @@ package com.amilesend.onedrive.resource.item.type;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import okhttp3.Request;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newPermission;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PermissionTest {
     private static final String BASE_URL = "http://localhost";
-    private static final String DRIVE_ITEM_ID = "DriveItemId";
-    private static final String PERMISSION_ID = "PermissionId";
     private static final int SUCCESS_RESPONSE_CODE = 200;
 
     @Mock
     private OneDriveConnection mockConnection;
-    @InjectMocks
     private Permission permissionUnderTest;
 
     @BeforeEach
     public void setUp() {
-        lenient().when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
-        lenient().when(mockConnection.newSignedForRequestBuilder()).thenReturn(new Request.Builder());
-        permissionUnderTest.setId(PERMISSION_ID);
-        permissionUnderTest.setDriveItemId(DRIVE_ITEM_ID);
+        when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
+        when(mockConnection.newSignedForRequestBuilder()).thenReturn(new Request.Builder());
+        permissionUnderTest = newPermission(mockConnection, "DriveItemId");
     }
 
     @Test
@@ -65,33 +58,8 @@ public class PermissionTest {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> verify(mockConnection).execute(requestCaptor.capture()),
-                () -> assertEquals(BASE_URL + "/me/drive/items/DriveItemId/permissions/PermissionId",
+                () -> assertEquals(
+                        BASE_URL + "/me/drive/items/DriveItemId/permissions/PermissionId-DriveItemId",
                         requestCaptor.getValue().url().toString()));
-    }
-
-    @Test
-    public void deletePermissions_withInvalidIds_shouldThrowException() {
-        assertAll(
-                () -> {
-                    permissionUnderTest.setDriveItemId(null);
-                    permissionUnderTest.setId(PERMISSION_ID);
-                    assertThrows(NullPointerException.class, () -> permissionUnderTest.deletePermission());
-                },
-                () -> {
-                    permissionUnderTest.setDriveItemId(StringUtils.EMPTY);
-                    permissionUnderTest.setId(PERMISSION_ID);
-                    assertThrows(IllegalArgumentException.class, () -> permissionUnderTest.deletePermission());
-                },
-                () -> {
-                    permissionUnderTest.setDriveItemId(DRIVE_ITEM_ID);
-                    permissionUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> permissionUnderTest.deletePermission());
-                },
-                () -> {
-                    permissionUnderTest.setDriveItemId(DRIVE_ITEM_ID);
-                    permissionUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> permissionUnderTest.deletePermission());
-                }
-        );
     }
 }

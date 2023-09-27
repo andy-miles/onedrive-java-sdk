@@ -20,8 +20,8 @@ package com.amilesend.onedrive.resource.item.type;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
+import lombok.Builder;
 import lombok.Data;
-import org.apache.commons.lang3.Validate;
 
 import java.util.List;
 
@@ -34,20 +34,21 @@ import static com.amilesend.onedrive.resource.item.DriveItem.DRIVE_ITEM_BASE_URL
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class Permission {
     /** The permission identifier. */
-    private String id;
+    private final String id;
     /** Describes the users and applications for this permission. */
-    private IdentitySet grantedTo;
+    private final IdentitySet grantedTo;
     /** Details of users to whom permission was granted for links. */
-    private List<IdentitySet> grantedToIdentities;
+    private final List<IdentitySet> grantedToIdentities;
     /** Sharing invitation for this permission. */
-    private SharingInvitation invitation;
+    private final SharingInvitation invitation;
     /** Reference to the parent permission (if applicable). */
-    private ItemReference inheritedFrom;
+    private final ItemReference inheritedFrom;
     /** Link type permission details. */
-    private SharingLink link;
+    private final SharingLink link;
     /**
      * The type of permission. Valid values include:
      * <ul>
@@ -57,13 +58,13 @@ public class Permission {
      *     <li>{@literal member} - For SharePoint and Business</li>
      * </ul>
      */
-    private List<String> roles;
+    private final List<String> roles;
     /** The token that can be used to access the shared item. */
-    private String shareId;
+    private final String shareId;
 
     /** The associated drive item identifier that this permission applies to. */
     @GsonExclude
-    private String driveItemId;
+    private final String driveItemId;
 
     @GsonExclude
     private final OneDriveConnection connection;
@@ -72,19 +73,13 @@ public class Permission {
      * Deletes this permission.
      */
     public void deletePermission() {
-        // Members are mutable; validate
-        final String driveItemId = getDriveItemId();
-        final String permissionId = getId();
-        Validate.notBlank(driveItemId, "driveItemId must not be blank");
-        Validate.notBlank(permissionId, "permissionId must not be blank");
-
         connection.execute(
                 connection.newSignedForRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(driveItemId)
                                 .append("/permissions/")
-                                .append(permissionId)
+                                .append(getId())
                                 .toString())
                         .delete()
                         .build());

@@ -57,8 +57,10 @@ public class SpecialDriveItemTest {
     public void setUp() {
         lenient().when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
         lenient().when(mockConnection.newSignedForApiRequestBuilder()).thenReturn(new Request.Builder());
-        itemUnderTest = new SpecialDriveItem(mockConnection);
-        itemUnderTest.setSpecialFolderType(TYPE);
+        itemUnderTest = SpecialDriveItem.builder()
+                .connection(mockConnection)
+                .specialFolderType(TYPE)
+                .build();
     }
 
     @Test
@@ -91,12 +93,7 @@ public class SpecialDriveItemTest {
                 () -> assertTrue(thisItem.equals(thisItem)),
                 () -> assertTrue(thisItem.equals(thatItem)),
                 () -> assertFalse(thisItem.equals(null)),
-                () -> assertFalse(thisItem.equals(new DriveItemVersion(mockConnection))),
-                () -> {
-                    thatItem.setId("DifferentId");
-                    assertFalse(thisItem.equals(thatItem));
-                    thatItem.setId(thisItem.getId());
-                },
+                () -> assertFalse(thisItem.equals(DriveItemVersion.builder().connection(mockConnection).build())),
                 () -> {
                     thatItem.setSpecialFolderType(TYPE);
                     assertFalse(thisItem.equals(thatItem));

@@ -66,21 +66,6 @@ public class DriveItemCrudTest extends DriveItemTestBase {
     }
 
     @Test
-    public void create_withInvalidParameters_shouldThrowException() {
-        final DriveItem mockItem = mock(DriveItem.class);
-        assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.create(mockItem));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.create(mockItem));
-                },
-                () -> assertThrows(NullPointerException.class, () -> driveItemUnderTest.create(null)));
-    }
-
-    @Test
     public void update_shouldReturnDriveItem() {
         doReturn("JsonDriveItemChanges").when(driveItemUnderTest).toJson();
         final DriveItem expected = mock(DriveItem.class);
@@ -99,28 +84,13 @@ public class DriveItemCrudTest extends DriveItemTestBase {
     }
 
     @Test
-    public void update_withInvalidDriveItemId_shouldThrowException() {
-        assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.update());
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.update());
-                });
-    }
-
-    @Test
     public void move_withBlankDestinationParentIdAndName_shouldThrowException() {
         assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.move(StringUtils.EMPTY, null));
     }
 
     @Test
     public void move_withNoNewDestinationParentIdAndName_shouldThrowException() {
-        final ItemReference existingParentReference = new ItemReference();
-        existingParentReference.setId("ParentIdValue");
-        driveItemUnderTest.setParentReference(existingParentReference);
+        driveItemUnderTest.setParentReference(ItemReference.builder().id("ParentIdValue").build());
         driveItemUnderTest.setName("ItemName");
 
         assertThrows(IllegalArgumentException.class,
@@ -141,10 +111,7 @@ public class DriveItemCrudTest extends DriveItemTestBase {
 
     @Test
     public void move_withNewDestinationParentIdAndExitingParentDefined_shouldReturnUpdatedDriveItem() {
-        final ItemReference existingParentReference = new ItemReference();
-        existingParentReference.setId("OldParentIdValue");
-        driveItemUnderTest.setParentReference(existingParentReference);
-
+        driveItemUnderTest.setParentReference(ItemReference.builder().id("NewParentIdValue").build());
         doReturn(driveItemUnderTest).when(driveItemUnderTest).update();
 
         final DriveItem actual = driveItemUnderTest.move("NewParentIdValue", null);
@@ -170,9 +137,7 @@ public class DriveItemCrudTest extends DriveItemTestBase {
     @Test
     public void move_withNewNameAndSameDestinationParentId_shouldReturnUpdatedDriveItem() {
         doReturn(driveItemUnderTest).when(driveItemUnderTest).update();
-        final ItemReference existingParentReference = new ItemReference();
-        existingParentReference.setId("ParentIdValue");
-        driveItemUnderTest.setParentReference(existingParentReference);
+        driveItemUnderTest.setParentReference(ItemReference.builder().id("ParentIdValue").build());
 
         final DriveItem actual = driveItemUnderTest.move("ParentIdValue", "NewName");
 
@@ -196,27 +161,13 @@ public class DriveItemCrudTest extends DriveItemTestBase {
     }
 
     @Test
-    public void copy_withInvalidParameters_shouldThrowException() {
-        assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class,
-                            () -> driveItemUnderTest.copy("NewParentIdValue", "NewName"));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> driveItemUnderTest.copy("NewParentIdValue", "NewName"));
-                },
-                () -> assertThrows(IllegalArgumentException.class,
-                        () -> driveItemUnderTest.copy(null, null)));
+    public void copy_withNullParameters_shouldThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.copy(null, null));
     }
 
     @Test
     public void copy_withNoNewParentIdAndName_shouldThrowException() {
-        final ItemReference existingParentReference = new ItemReference();
-        existingParentReference.setId("ParentIdValue");
-        driveItemUnderTest.setParentReference(existingParentReference);
+        driveItemUnderTest.setParentReference(ItemReference.builder().id("ParentIdValue").build());
         driveItemUnderTest.setName("ItemName");
 
         assertThrows(IllegalArgumentException.class,
@@ -230,10 +181,7 @@ public class DriveItemCrudTest extends DriveItemTestBase {
 
     @Test
     public void copyWithDestinationParentIdAndExistingDefined_shouldReturnAsyncJob() {
-        final ItemReference existingParentReference = new ItemReference();
-        existingParentReference.setId("OldParentIdValue");
-        driveItemUnderTest.setParentReference(existingParentReference);
-
+        driveItemUnderTest.setParentReference(ItemReference.builder().id("OldParentIdValue").build());
         copy_withAttributes_shouldReturnAsyncJob("NewDestinationParentId", null);
     }
 
@@ -244,10 +192,7 @@ public class DriveItemCrudTest extends DriveItemTestBase {
 
     @Test
     public void copy_withNewNameAndNoChangeInDestinationParentId_shouldReturnAsyncJob() {
-        final ItemReference existingParentReference = new ItemReference();
-        existingParentReference.setId("ParentIdValue");
-        driveItemUnderTest.setParentReference(existingParentReference);
-
+        driveItemUnderTest.setParentReference(ItemReference.builder().id("ParentIdValue").build());
         copy_withAttributes_shouldReturnAsyncJob("ParentIdValue", "NewName");
     }
 
@@ -289,19 +234,6 @@ public class DriveItemCrudTest extends DriveItemTestBase {
     }
 
     @Test
-    public void delete_withInvalidDriveItemId_shouldThrowException() {
-        assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.delete());
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.delete());
-                });
-    }
-
-    @Test
     public void equals_withNonEqualMembers_shouldReturnFalse() {
         final DriveItem thisItem = newDriveItem(mockConnection, 1);
         final DriveItem thatItem = newDriveItem(mockConnection, 1);
@@ -309,21 +241,19 @@ public class DriveItemCrudTest extends DriveItemTestBase {
                 () -> assertTrue(thisItem.equals(thisItem)),
                 () -> assertTrue(thisItem.equals(thatItem)),
                 () -> assertFalse(thisItem.equals(null)),
-                () -> assertFalse(thisItem.equals(new DriveItemVersion(mockConnection))),
+                () -> assertFalse(thisItem.equals(DriveItemVersion.builder().connection(mockConnection).build())),
                 () -> {
                     thatItem.setName("DifferentName");
                     assertFalse(thisItem.equals(thatItem));
                     thatItem.setName(thisItem.getName());
                 },
                 () -> {
-                    thatItem.setMalware(null);
-                    assertFalse(thisItem.equals(thatItem));
-                    thatItem.setMalware(thisItem.getMalware());
+                    final DriveItem differentItem = newDriveItem(mockConnection, 1, null, new Object());
+                    assertFalse(thisItem.equals(differentItem));
                 },
                 () -> {
-                    thatItem.setRoot(null);
-                    assertFalse(thisItem.equals(thatItem));
-                    thatItem.setRoot(thisItem.getRoot());
+                    final DriveItem differentItem = newDriveItem(mockConnection, 1, new Object(), null);
+                    assertFalse(thisItem.equals(differentItem));
                 });
     }
 

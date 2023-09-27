@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.connection.file;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Builder;
 import lombok.NonNull;
 import okhttp3.MediaType;
@@ -88,6 +89,7 @@ public class ProgressReportingFileRequestBody extends RequestBody {
      * @param outputBufferedSink the sink to stream the file contents to
      * @throws IOException if an error occurred while reading the configured file
      */
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE")
     @Override
     public void writeTo(@NonNull BufferedSink outputBufferedSink) throws IOException {
         final long totalBytes = contentLength();

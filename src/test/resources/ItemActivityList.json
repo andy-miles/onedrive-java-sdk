@@ -167,7 +167,39 @@
           "newVersion": "NewVersion"
         }
       },
-      "actor": {},
+      "actor": {
+        "user": {
+          "displayName": "IdentityName",
+          "id": "IdentityId",
+          "thumbnails": {
+            "id": "ThumbnailId",
+            "large": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "LargeThumbnailUrlValue",
+              "width": 100
+            },
+            "medium": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "MediumThumbnailUrlValue",
+              "width": 100
+            },
+            "small": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SmallThumbnailUrlValue",
+              "width": 100
+            },
+            "source": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SourceThumbnailUrlValue",
+              "width": 100
+            }
+          }
+        }
+      },
       "times": {
         "observedDateTime": "ObservedTimeStampValue",
         "recordedDateTime": "RecordedTimeStampValue"
@@ -340,7 +372,39 @@
           "newVersion": "NewVersion"
         }
       },
-      "actor": {},
+      "actor": {
+        "user": {
+          "displayName": "IdentityName",
+          "id": "IdentityId",
+          "thumbnails": {
+            "id": "ThumbnailId",
+            "large": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "LargeThumbnailUrlValue",
+              "width": 100
+            },
+            "medium": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "MediumThumbnailUrlValue",
+              "width": 100
+            },
+            "small": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SmallThumbnailUrlValue",
+              "width": 100
+            },
+            "source": {
+              "height": 100,
+              "sourceItemId": "SourceItemIdValue",
+              "url": "SourceThumbnailUrlValue",
+              "width": 100
+            }
+          }
+        }
+      },
       "times": {
         "observedDateTime": "ObservedTimeStampValue",
         "recordedDateTime": "RecordedTimeStampValue"

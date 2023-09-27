@@ -29,6 +29,7 @@ public enum SerializedResource {
     DRIVE_ITEM("/DriveItem.json"),
     DRIVE_ITEM_FOLDER("/DriveItemFolder.json"),
     DRIVE_ITEM_LIST("/DriveItemList.json"),
+    DRIVE_ITEM_PACKAGE("/DriveItemPackage.json"),
     DRIVE_ITEM_PAGE("/DriveItemPage.json"),
     DRIVE_ITEM_ROOT_FOLDER("/DriveItemRootFolder.json"),
     DRIVE_ITEM_VERSION_LIST("/DriveItemVersionList.json"),

@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.resource.item.type;
 
 import com.amilesend.onedrive.resource.identity.Identity;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,10 +27,11 @@ import lombok.Data;
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/sharinglink">
  * API Documentation</a>.
  */
+@Builder
 @Data
 public class SharingLink {
     /** The associated application identity. */
-    private Identity application;
+    private final Identity application;
     /**
      * The type of link. Valid values include:
      * <ul>
@@ -38,7 +40,7 @@ public class SharingLink {
      *     <li>{@literal embed}</li>
      * </ul>
      */
-    private String type;
+    private final String type;
     /**
      * Describes the visibility scope of the shared link. Valid values include:
      * <ul>
@@ -46,9 +48,9 @@ public class SharingLink {
      *     <li>{@literal organization}</li>
      * </ul>
      */
-    private String scope;
+    private final String scope;
     /** The embedded HTML for an {@literal <iframe>} to include in a webpage. */
-    private String webHtml;
+    private final String webHtml;
     /** URL for the resource shown in a browser. */
-    private String webUrl;
+    private final String webUrl;
 }

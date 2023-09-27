@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.resource.item;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Collections;
@@ -29,14 +30,16 @@ import java.util.List;
  * Example: <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/specialfolder">
  * API Documentation</a>.
  */
+@Builder
 @Data
 public class DriveItemPage {
     /** The list of drive items for the current page. */
-    private List<DriveItem> value = Collections.emptyList();
+    @Builder.Default
+    private final List<DriveItem> value = Collections.emptyList();
     /** The URL for the next page. */
     @SerializedName("@odata.nextLink")
-    private String nextLink;
+    private final String nextLink;
     /** The URL for the delta link. */
     @SerializedName("@odata.deltaLink")
-    private String deltaLink;
+    private final String deltaLink;
 }

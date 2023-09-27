@@ -25,6 +25,7 @@ import com.amilesend.onedrive.parse.GsonParser;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -70,6 +71,7 @@ public class OneDriveConnection {
 
     private final OkHttpClient httpClient;
     /** The authorization manager used to manage auth tokens. */
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     @Getter
     private final AuthManager authManager;
     /** The configured GSON instance used for marshalling request and responses to/from JSON. */

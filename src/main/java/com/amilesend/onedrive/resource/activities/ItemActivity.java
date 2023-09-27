@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.resource.activities;
 
 import com.amilesend.onedrive.resource.identity.IdentitySet;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -27,14 +28,15 @@ import lombok.Data;
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/itemactivity">
  * API Documentation.</a>
  */
+@Builder
 @Data
 public class ItemActivity {
     /** The activity identifier. */
-    private String id;
+    private final String id;
     /** Action details that took place. */
-    private ItemActionSet action;
+    private final ItemActionSet action;
     /** Who performed the action. */
-    private IdentitySet actor;
+    private final IdentitySet actor;
     /** Describes when the activity took place. */
-    private ItemActivityTimeSet times;
+    private final ItemActivityTimeSet times;
 }

@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,38 +27,39 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class Audio {
     /** The album title. */
-    private String album;
+    private final String album;
     /** The album artist. */
-    private String albumArtist;
+    private final  String albumArtist;
     /** The performing artist. */
-    private String artist;
+    private final  String artist;
     /** The bitrate in kbps. */
-    private long bitrate;
+    private final  long bitrate;
     /** The composer. */
-    private String composers;
+    private final  String composers;
     /** The copyright information. */
-    private String copyright;
+    private final  String copyright;
     /** The disc number associated with the track. */
-    private short disc;
+    private final  short disc;
     /** The total number of discs associated with the album. */
-    private short discCount;
+    private final  short discCount;
     /** The duration in milliseconds. */
-    private long duration;
+    private final  long duration;
     /** The music genre. */
-    private String genre;
+    private final  String genre;
     /** Indicates if the audio file is protected with digital rights management. */
-    private boolean hasDrm;
+    private final  boolean hasDrm;
     /** indicates if the file isencoded with a variable bitrate. */
-    private boolean isVariableBitrate;
+    private final  boolean isVariableBitrate;
     /** The song title. */
-    private String title;
+    private final  String title;
     /** The track number for the associated album. */
-    private int track;
+    private final  int track;
     /** The total number of tracks for the associated album. */
-    private int trackCount;
+    private final  int trackCount;
     /** The year the track was recorded. */
-    private int year;
+    private final  int year;
 }

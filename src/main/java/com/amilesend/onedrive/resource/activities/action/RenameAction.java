@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.activities.action;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,10 +27,11 @@ import lombok.Data;
  * API Documentation.</a>
  * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
+@Builder
 @Data
 public class RenameAction {
     /** The old name of the item. */
-    private String oldName;
+    private final String oldName;
     /** The new name of the item. */
-    private String newName;
+    private final String newName;
 }

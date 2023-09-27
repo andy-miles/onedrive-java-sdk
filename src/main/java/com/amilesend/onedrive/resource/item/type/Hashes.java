@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,12 +27,13 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class Hashes {
     /** The SHA1 hash for the file contents. */
-    private String sha1Hash;
+    private final String sha1Hash;
     /** The CRC32 in little endian for the file contents. */
-    private String crc32Hash;
+    private final String crc32Hash;
     /** A base64-encoded hash that can be used to determine if the file contents have changed. */
-    private String quickXorHash;
+    private final String quickXorHash;
 }

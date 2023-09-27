@@ -74,38 +74,12 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
     }
 
     @Test
-    public void getActivities_withInvalidDriveItemId_shouldThrowException() {
-        assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.getActivities());
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.getActivities());
-                });
-    }
-
-    @Test
     public void getChildren_shouldReturnDriveItemList() {
         setUpPaginatedDriveItemResponseBehavior();
 
         final List<DriveItem> actual = driveItemUnderTest.getChildren();
 
         validatePaginatedDriveItemResponseBehavior(actual, "http://localhost/me/drive/items/DriveItemId/children");
-    }
-
-    @Test
-    public void getChildren_withInvalidDriveItemId_shouldThrowException() {
-        assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.getChildren());
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.getChildren());
-                });
     }
 
     @Test
@@ -125,19 +99,6 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
     }
 
     @Test
-    public void getVersions_withInvalidDriveItemId_shouldThrowException() {
-        assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.getVersions());
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.getVersions());
-                });
-    }
-
-    @Test
     public void getPermissions_shouldReturnDriveItemVersionList() {
         final List<Permission> expected = List.of(mock(Permission.class), mock(Permission.class));
         when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(expected);
@@ -151,19 +112,6 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
                 () -> assertEquals("http://localhost/me/drive/items/DriveItemId/permissions",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
-    }
-
-    @Test
-    public void getPermissions_withInvalidDriveItemId_shouldThrowException() {
-        assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.getPermissions());
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.getPermissions());
-                });
     }
 
     @Test
@@ -187,18 +135,8 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
     }
 
     @Test
-    public void addPermission_withInvalidParameters_shouldThrowException() {
-        final AddPermissionRequest mockRequest = mock(AddPermissionRequest.class);
-        assertAll(
-                () -> assertThrows(NullPointerException.class, () -> driveItemUnderTest.addPermission(null)),
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.addPermission(mockRequest));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.addPermission(mockRequest));
-                });
+    public void addPermission_withNullRequest_shouldThrowException() {
+        assertThrows(NullPointerException.class, () -> driveItemUnderTest.addPermission(null));
     }
 
     @Test
@@ -222,20 +160,8 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
     }
 
     @Test
-    public void createSharingLink_withInvalidParameters_shouldThrowException() {
-        final CreateSharingLinkRequest mockRequest = mock(CreateSharingLinkRequest.class);
-        assertAll(
-                () -> assertThrows(NullPointerException.class,
-                        () -> driveItemUnderTest.createSharingLink(null)),
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.createSharingLink(mockRequest));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> driveItemUnderTest.createSharingLink(mockRequest));
-                });
+    public void createSharingLink_withNullRequest_shouldThrowException() {
+        assertThrows(NullPointerException.class, () -> driveItemUnderTest.createSharingLink(null));
     }
 
     @Test
@@ -259,20 +185,8 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
     }
 
     @Test
-    public void previewItem_withInvalidParameters_shouldThrowException() {
-        final PreviewRequest mockRequest = mock(PreviewRequest.class);
-        assertAll(
-                () -> assertThrows(NullPointerException.class,
-                        () -> driveItemUnderTest.previewItem(null)),
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.previewItem(mockRequest));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> driveItemUnderTest.previewItem(mockRequest));
-                });
+    public void previewItem_withNullRequest_shouldThrowException() {
+        assertThrows(NullPointerException.class, () -> driveItemUnderTest.previewItem(null));
     }
 
     @Test
@@ -292,19 +206,6 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
     }
 
     @Test
-    public void getThumbnails_withInvalidDriveItemId_shouldThrowException() {
-        assertAll(
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.getThumbnails());
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.getThumbnails());
-                });
-    }
-
-    @Test
     public void search_shouldReturnDriveItemList() {
         setUpPaginatedDriveItemResponseBehavior();
 
@@ -318,15 +219,7 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
     public void search_withInvalidParameters_shouldThrowException() {
         assertAll(
                 () -> assertThrows(NullPointerException.class, () -> driveItemUnderTest.search(null)),
-                () -> assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.search(StringUtils.EMPTY)),
-                () -> {
-                    driveItemUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> driveItemUnderTest.search("SearchQuery"));
-                },
-                () -> {
-                    driveItemUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.search("SearchQuery"));
-                });
+                () -> assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.search(StringUtils.EMPTY)));
     }
 
     private void setUpPaginatedDriveItemResponseBehavior() {

@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class SpecialFolder {
     /**
@@ -41,7 +43,7 @@ public class SpecialFolder {
      *     <li>Photos (ID: {@literal photos}</li>
      * </ul>
      */
-    private String name;
+    private final String name;
 
     /** Describes the special folder types. */
     @RequiredArgsConstructor

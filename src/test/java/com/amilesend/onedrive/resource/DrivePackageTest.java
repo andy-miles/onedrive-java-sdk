@@ -33,7 +33,6 @@ import com.amilesend.onedrive.resource.item.type.ItemReference;
 import com.amilesend.onedrive.resource.item.type.Package;
 import com.amilesend.onedrive.resource.item.type.Permission;
 import com.amilesend.onedrive.resource.item.type.RemoteItem;
-import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import com.amilesend.onedrive.resource.item.type.ThumbnailSet;
 import com.amilesend.onedrive.resource.request.AddPermissionRequest;
 import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
@@ -70,11 +69,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class DriveFolderTest {
+public class DrivePackageTest {
     @Mock
     private DriveItem mockDelegate;
     @InjectMocks
-    private DriveFolder driveFolderUnderTest;
+    private DrivePackage drivePackageUnderTest;
 
     ////////////////////
     // DriveItemType
@@ -84,123 +83,123 @@ public class DriveFolderTest {
     public void getCreatedBy_shouldReturnIdentifySet() {
         final IdentitySet expected = mock(IdentitySet.class);
         when(mockDelegate.getCreatedBy()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getCreatedBy());
+        assertEquals(expected, drivePackageUnderTest.getCreatedBy());
     }
 
     @Test
     public void getCreatedDateTime_shouldReturnTimestamp() {
         final String expected = "CreatedTimestampValue";
         when(mockDelegate.getCreatedDateTime()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getCreatedDateTime());
+        assertEquals(expected, drivePackageUnderTest.getCreatedDateTime());
     }
 
     @Test
     public void getETag_shouldReturnETag() {
         final String expected = "ETagValue";
         when(mockDelegate.getETag()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getETag());
+        assertEquals(expected, drivePackageUnderTest.getETag());
     }
 
     @Test
     public void getId_shouldReturnId() {
         final String expected = "DriveItemId";
         when(mockDelegate.getId()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getId());
+        assertEquals(expected, drivePackageUnderTest.getId());
     }
 
     @Test
     public void getLastModifiedBy_shouldReturnIdentitySet() {
         final IdentitySet expected = mock(IdentitySet.class);
         when(mockDelegate.getLastModifiedBy()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getLastModifiedBy());
+        assertEquals(expected, drivePackageUnderTest.getLastModifiedBy());
     }
 
     @Test
     public void getLastModifiedDateTime_shouldReturnTimestamp() {
         final String expected = "LastModifiedTimestampValue";
         when(mockDelegate.getLastModifiedDateTime()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getLastModifiedDateTime());
+        assertEquals(expected, drivePackageUnderTest.getLastModifiedDateTime());
     }
 
     @Test
     public void getName_shouldReturnName() {
         final String expected = "NameValue";
         when(mockDelegate.getName()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getName());
+        assertEquals(expected, drivePackageUnderTest.getName());
     }
 
     @Test
     public void getParentReference_shouldReturnItemReference() {
         final ItemReference expected = mock(ItemReference.class);
         when(mockDelegate.getParentReference()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getParentReference());
+        assertEquals(expected, drivePackageUnderTest.getParentReference());
     }
 
     @Test
     public void isDeleted_whenDeletedDefined_shouldReturnTrue() {
         when(mockDelegate.getDeleted()).thenReturn(mock(Deleted.class));
-        assertTrue(driveFolderUnderTest.isDeleted());
+        assertTrue(drivePackageUnderTest.isDeleted());
     }
 
     @Test
     public void isDeleted_whenDeletedNotDefined_shouldReturnFalse() {
         when(mockDelegate.getDeleted()).thenReturn(null);
-        assertFalse(driveFolderUnderTest.isDeleted());
+        assertFalse(drivePackageUnderTest.isDeleted());
     }
 
     @Test
     public void isRemote_whenRemoteItemDefined_shouldReturnTrue() {
         when(mockDelegate.getRemoteItem()).thenReturn(mock(RemoteItem.class));
-        assertTrue(driveFolderUnderTest.isRemote());
+        assertTrue(drivePackageUnderTest.isRemote());
     }
 
     @Test
     public void isRemote_whenRemoteItemNotDefined_shouldReturnFalse() {
         when(mockDelegate.getRemoteItem()).thenReturn(null);
-        assertFalse(driveFolderUnderTest.isRemote());
+        assertFalse(drivePackageUnderTest.isRemote());
     }
 
     @Test
     public void getRemoteItem_shouldReturnRemoteItem() {
         final RemoteItem expected = mock(RemoteItem.class);
         when(mockDelegate.getRemoteItem()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getRemoteItem());
+        assertEquals(expected, drivePackageUnderTest.getRemoteItem());
     }
 
     @Test
     public void getActivities_shouldReturnItemActivityList() {
         final List<ItemActivity> expected = List.of(mock(ItemActivity.class), mock(ItemActivity.class));
         when(mockDelegate.getActivities()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getActivities());
+        assertEquals(expected, drivePackageUnderTest.getActivities());
     }
 
     @Test
     public void getPermissions_shouldReturnPermissionList() {
         final List<Permission> expected = List.of(mock(Permission.class), mock(Permission.class));
         when(mockDelegate.getPermissions()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getPermissions());
+        assertEquals(expected, drivePackageUnderTest.getPermissions());
     }
 
     @Test
     public void getThumbnails_shouldReturnThumbnailSetList() {
         final List<ThumbnailSet> expected = List.of(mock(ThumbnailSet.class), mock(ThumbnailSet.class));
         when(mockDelegate.getThumbnails()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getThumbnails());
+        assertEquals(expected, drivePackageUnderTest.getThumbnails());
     }
 
     @Test
     public void getVersions_shouldReturnDriveItemVersionList() {
         final List<DriveItemVersion> expected = List.of(mock(DriveItemVersion.class), mock(DriveItemVersion.class));
         when(mockDelegate.getVersions()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getVersions());
+        assertEquals(expected, drivePackageUnderTest.getVersions());
     }
 
     @Test
     public void isFile_withFolderSet_shouldReturnTrue() {
         when(mockDelegate.getFolder()).thenReturn(mock(Folder.class));
         assertAll(
-                () -> assertTrue(driveFolderUnderTest.isFolder()),
-                () -> assertFalse(driveFolderUnderTest.isFile()));
+                () -> assertTrue(drivePackageUnderTest.isFolder()),
+                () -> assertFalse(drivePackageUnderTest.isFile()));
     }
 
     @Test
@@ -208,7 +207,7 @@ public class DriveFolderTest {
         final FileSystemInfo expected = mock(FileSystemInfo.class);
         when(mockDelegate.getFileSystemInfo()).thenReturn(expected);
 
-        final FileSystemInfo actual = driveFolderUnderTest.getFileSystemInfo();
+        final FileSystemInfo actual = drivePackageUnderTest.getFileSystemInfo();
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -220,14 +219,14 @@ public class DriveFolderTest {
         doNothing().when(mockDelegate).setFileSystemInfo(any(FileSystemInfo.class));
         final FileSystemInfo expected = mock(FileSystemInfo.class);
 
-        driveFolderUnderTest.setFileSystemInfo(expected);
+        drivePackageUnderTest.setFileSystemInfo(expected);
 
         verify(mockDelegate).setFileSystemInfo(eq(expected));
     }
 
     @Test
     public void setFileSystemInfo_withNullValue_shouldThrowException() {
-        assertThrows(NullPointerException.class, () -> driveFolderUnderTest.setFileSystemInfo(null));
+        assertThrows(NullPointerException.class, () -> drivePackageUnderTest.setFileSystemInfo(null));
     }
 
     ////////////////////
@@ -235,50 +234,12 @@ public class DriveFolderTest {
     ////////////////////
 
     @Test
-    public void isRoot_whenRootDefined_shouldReturnTrue() {
-        when(mockDelegate.getRoot()).thenReturn(new Object());
-        assertTrue(driveFolderUnderTest.isRoot());
-    }
-
-    @Test
-    public void isRoot_whenNoRootDefined_shouldReturnFalse() {
-        assertFalse(driveFolderUnderTest.isRoot());
-    }
-
-    @Test
-    public void getFolderAttributes_shouldReturnFolder() {
-        final Folder expected = mock(Folder.class);
-        when(mockDelegate.getFolder()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getFolderAttributes());
-    }
-
-    @Test
-    public void isSpecialFolder_whenSpecialFolderDefined_shouldReturnTrue() {
-        when(mockDelegate.getSpecialFolder()).thenReturn(mock(SpecialFolder.class));
-        assertTrue(driveFolderUnderTest.isSpecialFolder());
-    }
-
-    @Test
-    public void isSpecialFolder_whenNoSpecialFolderDefined_shouldReturnFalse() {
-        assertFalse(driveFolderUnderTest.isSpecialFolder());
-    }
-
-    @Test
-    public void getSpecialFolder_shouldReturnSpecialFolder() {
-        final SpecialFolder expected = mock(SpecialFolder.class);
-        when(mockDelegate.getSpecialFolder()).thenReturn(expected);
-        assertEquals(expected, driveFolderUnderTest.getSpecialFolder());
-    }
-
-    @Test
     public void toString_shouldReturnStringValue() {
-        when(mockDelegate.getName()).thenReturn("FolderName");
-        when(mockDelegate.getId()).thenReturn("FolderId");
-        when(mockDelegate.getRoot()).thenReturn(new Object());
+        when(mockDelegate.getName()).thenReturn("PackageName");
+        when(mockDelegate.getId()).thenReturn("PackageId");
 
-        assertEquals("DriveFolder(name=FolderName, id=FolderId, isRoot=true, " +
-                        "isSpecialFolder=false, isDeleted=false, isRemote=false)",
-                driveFolderUnderTest.toString());
+        assertEquals("DrivePackage(name=PackageName, id=PackageId, isDeleted=false, isRemote=false)",
+                drivePackageUnderTest.toString());
     }
 
     //////////////////////
@@ -293,7 +254,7 @@ public class DriveFolderTest {
         when(mockDelegate.uploadNew(any(File.class), any(TransferProgressCallback.class))).thenReturn(uploadedItem);
         final File mockFile = mock(File.class);
 
-        final DriveFile actual = driveFolderUnderTest.upload(mockFile);
+        final DriveFile actual = drivePackageUnderTest.upload(mockFile);
 
         assertAll(
                 () -> assertEquals("UploadedFileId", actual.getId()),
@@ -309,7 +270,7 @@ public class DriveFolderTest {
         final File mockFile = mock(File.class);
         final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
 
-        final DriveFile actual = driveFolderUnderTest.upload(mockFile, mockCallback);
+        final DriveFile actual = drivePackageUnderTest.upload(mockFile, mockCallback);
 
         assertAll(
                 () -> assertEquals("UploadedFileId", actual.getId()),
@@ -324,9 +285,9 @@ public class DriveFolderTest {
         final File mockFile = mock(File.class);
 
         assertAll(
-                () -> assertThrows(IOException.class, () -> driveFolderUnderTest.upload(mockFile)),
+                () -> assertThrows(IOException.class, () -> drivePackageUnderTest.upload(mockFile)),
                 () -> assertThrows(IOException.class,
-                        () -> driveFolderUnderTest.upload(mockFile, mock(TransferProgressCallback.class))));
+                        () -> drivePackageUnderTest.upload(mockFile, mock(TransferProgressCallback.class))));
     }
 
     @SneakyThrows
@@ -339,7 +300,7 @@ public class DriveFolderTest {
         when(mockDelegate.uploadNewAsync(any(File.class), any(TransferProgressCallback.class))).thenReturn(mockFuture);
         final File mockFile = mock(File.class);
 
-        final DriveFileUploadExecution actual = driveFolderUnderTest.uploadAsync(mockFile);
+        final DriveFileUploadExecution actual = drivePackageUnderTest.uploadAsync(mockFile);
 
         assertAll(
                 () -> assertEquals("UploadedDriveItemId", actual.get().getId()),
@@ -357,7 +318,7 @@ public class DriveFolderTest {
         final File mockFile = mock(File.class);
         final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
 
-        final DriveFileUploadExecution actual = driveFolderUnderTest.uploadAsync(mockFile, mockCallback);
+        final DriveFileUploadExecution actual = drivePackageUnderTest.uploadAsync(mockFile, mockCallback);
 
         assertAll(
                 () -> assertEquals("UploadedDriveItemId", actual.get().getId()),
@@ -372,9 +333,9 @@ public class DriveFolderTest {
         final File mockFile = mock(File.class);
 
         assertAll(
-                () -> assertThrows(IOException.class, () -> driveFolderUnderTest.uploadAsync(mockFile)),
+                () -> assertThrows(IOException.class, () -> drivePackageUnderTest.uploadAsync(mockFile)),
                 () -> assertThrows(IOException.class,
-                        () -> driveFolderUnderTest.uploadAsync(mockFile, mock(TransferProgressCallback.class))));
+                        () -> drivePackageUnderTest.uploadAsync(mockFile, mock(TransferProgressCallback.class))));
     }
 
     //////////////////////
@@ -387,7 +348,7 @@ public class DriveFolderTest {
         when(mockDelegate.addPermission(any(AddPermissionRequest.class))).thenReturn(expected);
         final AddPermissionRequest request = mock(AddPermissionRequest.class);
 
-        final List<Permission> actual = driveFolderUnderTest.addPermission(request);
+        final List<Permission> actual = drivePackageUnderTest.addPermission(request);
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -400,7 +361,7 @@ public class DriveFolderTest {
         when(mockDelegate.createSharingLink(any(CreateSharingLinkRequest.class))).thenReturn(expected);
         final CreateSharingLinkRequest request = mock (CreateSharingLinkRequest.class);
 
-        final Permission actual = driveFolderUnderTest.createSharingLink(request);
+        final Permission actual = drivePackageUnderTest.createSharingLink(request);
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -414,7 +375,7 @@ public class DriveFolderTest {
         when(mockDelegate.create(any(DriveItem.class))).thenReturn(createdDriveItem);
         when(mockDelegate.getConnection()).thenReturn(mock(OneDriveConnection.class));
 
-        final DriveFolder actual = driveFolderUnderTest.createFolder("NewFolderName");
+        final DriveFolder actual = drivePackageUnderTest.createFolder("NewFolderName");
 
         final ArgumentCaptor<DriveItem> attributesCaptor = ArgumentCaptor.forClass(DriveItem.class);
         assertAll(
@@ -427,16 +388,16 @@ public class DriveFolderTest {
     @Test
     public void createFolder_withInvalidName_shouldThrowException() {
         assertAll(
-                () -> assertThrows(NullPointerException.class, () -> driveFolderUnderTest.createFolder(null)),
+                () -> assertThrows(NullPointerException.class, () -> drivePackageUnderTest.createFolder(null)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> driveFolderUnderTest.createFolder(StringUtils.EMPTY)));
+                        () -> drivePackageUnderTest.createFolder(StringUtils.EMPTY)));
     }
 
     @Test
     public void getChildPackages_shouldReturnDrivePackageList() {
         setUpChildren();
 
-        final List<DrivePackage> actual = driveFolderUnderTest.getChildPackages();
+        final List<DrivePackage> actual = drivePackageUnderTest.getChildPackages();
 
         assertAll(
                 () -> assertEquals(1, actual.size()),
@@ -447,7 +408,7 @@ public class DriveFolderTest {
     public void getChildFolders_shouldReturnDriveFolderList() {
         setUpChildren();
 
-        final List<DriveFolder> actual = driveFolderUnderTest.getChildFolders();
+        final List<DriveFolder> actual = drivePackageUnderTest.getChildFolders();
 
         assertAll(
                 () -> assertEquals(1, actual.size()),
@@ -458,7 +419,7 @@ public class DriveFolderTest {
     public void getChildFiles_shouldReturnDriveFileList() {
         setUpChildren();
 
-        final List<DriveFile> actual = driveFolderUnderTest.getChildFiles();
+        final List<DriveFile> actual = drivePackageUnderTest.getChildFiles();
 
         assertAll(
                 () -> assertEquals(1, actual.size()),
@@ -469,7 +430,7 @@ public class DriveFolderTest {
     public void getChildren_shouldReturnDriveItemTypeList() {
         setUpChildren();
 
-        final List<? extends DriveItemType> actual = driveFolderUnderTest.getChildren();
+        final List<? extends DriveItemType> actual = drivePackageUnderTest.getChildren();
 
         assertAll(
                 () -> assertEquals(3, actual.size()),
@@ -482,7 +443,7 @@ public class DriveFolderTest {
     public void search_withQuery_shouldReturnDriveItemTypeList() {
         setUpSearch();
 
-        final List<? extends DriveItemType> actual = driveFolderUnderTest.search("Query");
+        final List<? extends DriveItemType> actual = drivePackageUnderTest.search("Query");
 
         assertAll(
                 () -> assertEquals(3, actual.size()),
@@ -501,7 +462,7 @@ public class DriveFolderTest {
         when(expected.getStatus()).thenReturn(mockStatus);
         when(mockDelegate.copy(anyString(), anyString())).thenReturn(expected);
 
-        final AsyncJob actual = driveFolderUnderTest.copy(mockFolder, newName);
+        final AsyncJob actual = drivePackageUnderTest.copy(mockFolder, newName);
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -511,7 +472,7 @@ public class DriveFolderTest {
 
     @Test
     public void copy_withNullFolderAndName_shouldThrowException() {
-        assertThrows(NullPointerException.class, () -> driveFolderUnderTest.copy((DriveFolder) null, "NewName"));
+        assertThrows(NullPointerException.class, () -> drivePackageUnderTest.copy((DriveFolder) null, "NewName"));
     }
 
     @Test
@@ -523,7 +484,7 @@ public class DriveFolderTest {
         when(expected.getStatus()).thenReturn(mockStatus);
         doReturn(expected).when(mockDelegate).copy(anyString(), anyString());
 
-        final AsyncJob actual = driveFolderUnderTest.copy(mockFolder);
+        final AsyncJob actual = drivePackageUnderTest.copy(mockFolder);
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -533,7 +494,7 @@ public class DriveFolderTest {
 
     @Test
     public void copy_withNullFolderOnly_shouldThrowException() {
-        assertThrows(NullPointerException.class, () -> driveFolderUnderTest.copy((DriveFolder) null));
+        assertThrows(NullPointerException.class, () -> drivePackageUnderTest.copy((DriveFolder) null));
     }
 
     @Test
@@ -543,7 +504,7 @@ public class DriveFolderTest {
         when(expected.getStatus()).thenReturn(mockStatus);
         doReturn(expected).when(mockDelegate).copy(anyString(), anyString());
 
-        final AsyncJob actual = driveFolderUnderTest.copy("NewNameValue");
+        final AsyncJob actual = drivePackageUnderTest.copy("NewNameValue");
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -558,7 +519,7 @@ public class DriveFolderTest {
         when(updatedDriveItem.getFileSystemInfo()).thenReturn(updatedFileSystemInfo);
         when(mockDelegate.update()).thenReturn(updatedDriveItem);
 
-        final DriveFolder actual = driveFolderUnderTest.update();
+        final DriveFolder actual = drivePackageUnderTest.update();
 
         assertAll(
                 () -> assertEquals(updatedFileSystemInfo, actual.getFileSystemInfo()),
@@ -573,7 +534,7 @@ public class DriveFolderTest {
         final DriveFolder mockFolder = mock(DriveFolder.class);
         when(mockFolder.getId()).thenReturn("DestinationId");
 
-        final DriveFolder actual = driveFolderUnderTest.move(mockFolder, "NewName");
+        final DriveFolder actual = drivePackageUnderTest.move(mockFolder, "NewName");
 
         assertAll(
                 () -> assertEquals("ItemId", actual.getId()),
@@ -582,7 +543,7 @@ public class DriveFolderTest {
 
     @Test
     public void move_withNullFolderAndName_shouldThrowException() {
-        assertThrows(NullPointerException.class, () -> driveFolderUnderTest.move((DriveFolder) null, "Name"));
+        assertThrows(NullPointerException.class, () -> drivePackageUnderTest.move((DriveFolder) null, "Name"));
     }
 
     @Test
@@ -593,7 +554,7 @@ public class DriveFolderTest {
         final DriveFolder mockFolder = mock(DriveFolder.class);
         when(mockFolder.getId()).thenReturn("DestinationId");
 
-        final DriveFolder actual = driveFolderUnderTest.move(mockFolder);
+        final DriveFolder actual = drivePackageUnderTest.move(mockFolder);
 
         assertAll(
                 () -> assertEquals("ItemId", actual.getId()),
@@ -602,12 +563,12 @@ public class DriveFolderTest {
 
     @Test
     public void move_withNullFolderOnly_shouldThrowException() {
-        assertThrows(NullPointerException.class, () ->driveFolderUnderTest.move(null));
+        assertThrows(NullPointerException.class, () -> drivePackageUnderTest.move(null));
     }
 
     @Test
     public void delete_shouldInvokeDelegate() {
-        driveFolderUnderTest.delete();
+        drivePackageUnderTest.delete();
         verify(mockDelegate).delete();
     }
 
@@ -644,8 +605,8 @@ public class DriveFolderTest {
     @Test
     public void equalsAndHashCode_withSameDriveFile_shouldReturnTrue() {
         assertAll(
-                () -> assertTrue(driveFolderUnderTest.equals(driveFolderUnderTest)),
-                () -> assertEquals(driveFolderUnderTest.hashCode(), driveFolderUnderTest.hashCode()));
+                () -> assertTrue(drivePackageUnderTest.equals(drivePackageUnderTest)),
+                () -> assertEquals(drivePackageUnderTest.hashCode(), drivePackageUnderTest.hashCode()));
     }
 
     @Test
@@ -654,8 +615,8 @@ public class DriveFolderTest {
         final DriveFile file = new DriveFile(driveItemFile);
 
         assertAll(
-                () -> assertFalse(driveFolderUnderTest.equals(file)),
-                () -> assertNotEquals(driveFolderUnderTest.hashCode(), file.hashCode()));
+                () -> assertFalse(drivePackageUnderTest.equals(file)),
+                () -> assertNotEquals(drivePackageUnderTest.hashCode(), file.hashCode()));
     }
 
     @Test
@@ -664,7 +625,7 @@ public class DriveFolderTest {
         final DriveFolder differentFolder = new DriveFolder(differentFolderDelegate);
 
         assertAll(
-                () -> assertFalse(driveFolderUnderTest.equals(differentFolder)),
-                () -> assertNotEquals(driveFolderUnderTest.hashCode(), differentFolder.hashCode()));
+                () -> assertFalse(drivePackageUnderTest.equals(differentFolder)),
+                () -> assertNotEquals(drivePackageUnderTest.hashCode(), differentFolder.hashCode()));
     }
 }

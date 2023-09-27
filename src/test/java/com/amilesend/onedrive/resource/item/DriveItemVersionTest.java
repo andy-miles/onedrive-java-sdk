@@ -21,7 +21,6 @@ import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.file.LogProgressCallback;
 import com.amilesend.onedrive.connection.file.TransferProgressCallback;
 import okhttp3.Request;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,11 +62,13 @@ public class DriveItemVersionTest {
     public void setUp() {
         lenient().when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
         lenient().when(mockConnection.newSignedForRequestBuilder()).thenReturn(new Request.Builder());
-        versionUnderTest = new DriveItemVersion(mockConnection);
-        versionUnderTest.setDriveItemId(DRIVE_ITEM_ID);
-        versionUnderTest.setName(NAME);
-        versionUnderTest.setSize(SIZE);
-        versionUnderTest.setId(VERSION_ID);
+        versionUnderTest = DriveItemVersion.builder()
+                .connection(mockConnection)
+                .driveItemId(DRIVE_ITEM_ID)
+                .id(VERSION_ID)
+                .name(NAME)
+                .size(SIZE)
+                .build();
     }
 
     @Test
@@ -132,40 +133,7 @@ public class DriveItemVersionTest {
                 () -> assertThrows(NullPointerException.class,
                         () -> versionUnderTest.download(null, mockCallback)),
                 () -> assertThrows(NullPointerException.class,
-                        () -> versionUnderTest.download(mockPath, null)),
-                () -> {
-                    versionUnderTest.setId(null);
-                    assertThrows(NullPointerException.class,
-                            () -> versionUnderTest.download(mockPath, mockCallback));
-                },
-                () -> {
-                    versionUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> versionUnderTest.download(mockPath, mockCallback));
-                    versionUnderTest.setId(VERSION_ID);
-                },
-                () -> {
-                    versionUnderTest.setName(null);
-                    assertThrows(NullPointerException.class,
-                            () -> versionUnderTest.download(mockPath, mockCallback));
-                },
-                () -> {
-                    versionUnderTest.setName(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> versionUnderTest.download(mockPath, mockCallback));
-                    versionUnderTest.setName(NAME);
-                },
-                () -> {
-                    versionUnderTest.setDriveItemId(null);
-                    assertThrows(NullPointerException.class,
-                            () -> versionUnderTest.download(mockPath, mockCallback));
-                },
-                () -> {
-                    versionUnderTest.setDriveItemId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class,
-                            () -> versionUnderTest.download(mockPath, mockCallback));
-                    versionUnderTest.setDriveItemId(DRIVE_ITEM_ID);
-                });
+                        () -> versionUnderTest.download(mockPath, null)));
     }
 
     @Test
@@ -196,28 +164,5 @@ public class DriveItemVersionTest {
                 () -> assertEquals("http://localhost/me/drive/items/DriveItemId/versions/VersionId/restore",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
-    }
-
-    @Test
-    public void restore_withInvalidParameters_shouldThrowExecption() {
-        assertAll(
-                () -> {
-                    versionUnderTest.setDriveItemId(null);
-                    assertThrows(NullPointerException.class, () -> versionUnderTest.restore());
-                },
-                () -> {
-                    versionUnderTest.setDriveItemId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> versionUnderTest.restore());
-                    versionUnderTest.setDriveItemId(DRIVE_ITEM_ID);
-                },
-                () -> {
-                    versionUnderTest.setId(null);
-                    assertThrows(NullPointerException.class, () -> versionUnderTest.restore());
-                },
-                () -> {
-                    versionUnderTest.setId(StringUtils.EMPTY);
-                    assertThrows(IllegalArgumentException.class, () -> versionUnderTest.restore());
-                    versionUnderTest.setId(VERSION_ID);
-                });
     }
 }

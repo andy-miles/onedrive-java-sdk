@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,12 +27,13 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class File {
     /** The hashes of the binary file content. */
-    private Hashes hashes;
+    private final Hashes hashes;
     /** The MIME type for the file content. */
-    private String mimeType;
+    private final String mimeType;
     /** Indicates if the item is being processed to extract metadata. */
-    private boolean processingMetadata;
+    private final boolean processingMetadata;
 }

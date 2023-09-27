@@ -36,6 +36,6 @@ public class PermissionInstanceCreator implements InstanceCreator<Permission> {
     /** Creates a new {@code DriveItemVersionInstanceCreator} with the current client connection instance. */
     @Override
     public Permission createInstance(final Type type) {
-        return new Permission(connection);
+        return Permission.builder().connection(connection).build();
     }
 }

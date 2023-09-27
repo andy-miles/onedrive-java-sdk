@@ -92,10 +92,17 @@ public class DriveItemVersionListParser implements GsonParser<List<DriveItemVers
                 .stream()
                 .filter(Objects::nonNull)
                 .map(div -> {
-                    // Inject the associated drive item id and name
-                    div.setDriveItemId(driveItemId);
-                    div.setName(name);
-                    return div;
+                    // Copy and inject the associated drive item id and name
+                    return DriveItemVersion.builder()
+                            .connection(div.getConnection())
+                            .driveItemId(driveItemId)
+                            .id(div.getId())
+                            .lastModifiedBy(div.getLastModifiedBy())
+                            .lastModifiedDateTime(div.getLastModifiedDateTime())
+                            .name(name)
+                            .publication(div.getPublication())
+                            .size(div.getSize())
+                            .build();
                 })
                 .collect(Collectors.toList());
     }

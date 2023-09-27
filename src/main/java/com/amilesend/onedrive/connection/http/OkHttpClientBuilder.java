@@ -203,7 +203,7 @@ public class OkHttpClientBuilder {
         }
 
         try {
-            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            final SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, new TrustManager[]{ trustManager }, new SecureRandom());
             builder = builder.sslSocketFactory(sslContext.getSocketFactory(), trustManager);
         } catch (final KeyManagementException | NoSuchAlgorithmException ex) {

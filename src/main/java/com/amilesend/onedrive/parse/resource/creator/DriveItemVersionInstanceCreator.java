@@ -36,6 +36,6 @@ public class DriveItemVersionInstanceCreator implements InstanceCreator<DriveIte
     /** Creates a new {@code DriveItemVersionInstanceCreator} with the current client connection instance. */
     @Override
     public DriveItemVersion createInstance(final Type type) {
-        return new DriveItemVersion(connection);
+        return DriveItemVersion.builder().connection(connection).build();
     }
 }

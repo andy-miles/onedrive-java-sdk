@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.resource.activities.action;
 
 import com.amilesend.onedrive.resource.identity.IdentitySet;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -29,8 +30,9 @@ import java.util.List;
  * API Documentation.</a>
  * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
+@Builder
 @Data
 public class MentionAction {
     /** The list of mentioned users. */
-    private List<IdentitySet> mentionees;
+    private final List<IdentitySet> mentionees;
 }

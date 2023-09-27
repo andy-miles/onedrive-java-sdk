@@ -115,7 +115,8 @@ The primary classes used to interact with a OneDrive account is modeled as a tre
 1. [OneDrive](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/OneDrive.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/OneDrive.html)) to obtain user accessible drives
 2. [Drive](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/Drive.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/resource/Drive.html)) to access folders
 3. [DriveFolder](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/DriveFolder.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/resource/DriveFolder.html)) to manage folders, access subfolders, and upload new files
-4. [DriveFile](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/DriveFile.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/resource/DriveFile.html)) to manage, upload (as a new version), and download a file
+4. [DrivePackage](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/DrivePackage.java) to manage folders, access subfolders, and upload new files for packages (OneNote)
+5. [DriveFile](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/DriveFile.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/resource/DriveFile.html)) to manage, upload (as a new version), and download a file
 
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
 

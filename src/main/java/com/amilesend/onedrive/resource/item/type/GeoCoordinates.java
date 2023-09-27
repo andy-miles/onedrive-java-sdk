@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -27,12 +28,13 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class GeoCoordinates {
     /** The elevation in feet above sea level for the item. */
-    private double altitude;
+    private final double altitude;
     /** The latitude for the item. */
-    private double latitude;
+    private final double latitude;
     /** The longitude for the item. */
-    private double longitude;
+    private final double longitude;
 }

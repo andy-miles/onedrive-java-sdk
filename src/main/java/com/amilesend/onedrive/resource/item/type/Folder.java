@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,10 +27,11 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class Folder {
     /** The number of child items associated with the drive item. */
-    private int childCount;
+    private final int childCount;
     /** The properties that describe the recommended view for the folder. */
     private FolderView folderView;
 }

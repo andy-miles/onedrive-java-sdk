@@ -24,6 +24,7 @@ import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.Validate;
 
 import java.util.List;
@@ -40,22 +41,15 @@ import static com.amilesend.onedrive.resource.drive.Drive.USER_DRIVE_BASE_URL_PA
  * instead of "App+Root" in the path).</p>
  * @see DriveItem
  */
+
+@SuperBuilder
 @ToString(callSuper = true)
 public class SpecialDriveItem extends DriveItem {
     /** The special folder type. */
-    @GsonExclude
     @Getter
+    @GsonExclude
     @Setter
     private SpecialFolder.Type specialFolderType;
-
-    /**
-     * Creates a new {@code Drive}.
-     *
-     * @param connection the connection
-     */
-    public SpecialDriveItem(final OneDriveConnection connection) {
-        super(connection);
-    }
 
     @Override
     public List<DriveItem> getChildren() {

@@ -12,7 +12,8 @@
       },
       "fileSystemInfo": {
         "createdDateTime": "CreatedTimeStampValue",
-        "lastAccessedDateTime": "LastAccessedTimeStampValue"
+        "lastAccessedDateTime": "LastAccessedTimeStampValue",
+        "lastModifiedDateTime": "LastModifiedTimeStampValue"
       },
       "size": 4096,
       "id": "ZipFileIdValue1",

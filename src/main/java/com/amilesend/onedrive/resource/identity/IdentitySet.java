@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.identity;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,14 +27,15 @@ import lombok.Data;
  * API Documentation.</a>
  * @see Identity
  */
+@Builder
 @Data
 public class IdentitySet {
     /** The application associated with the action. */
-    private Identity application;
+    private final Identity application;
     /** The drive associated with the action. */
-    private Identity device;
+    private final Identity device;
     /** The group associated with the action. */
-    private Identity group;
+    private final Identity group;
     /** The user associated with the action. */
-    private Identity user;
+    private final Identity user;
 }

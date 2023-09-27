@@ -33,8 +33,8 @@ import com.amilesend.onedrive.resource.item.type.SharePointIds;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.Validate;
 
 import java.net.URLEncoder;
@@ -51,7 +51,7 @@ import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals
  * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/drive">API Documentation.</a>
  */
 @Getter
-@Setter
+@SuperBuilder
 @ToString(callSuper = true)
 public class Drive extends BaseItem {
     //TODO: Allow for Business and Sharepoint based paths and not just user-based drives (i.e., "/me/").
@@ -71,24 +71,17 @@ public class Drive extends BaseItem {
      *     <li>{@literal documentLibrary} - Sharepoint document library</li>
      * </ul>
      */
-    private String driveType;
+    private final String driveType;
     /** The user account that owns the drive. */
-    private IdentitySet owner;
+    private final IdentitySet owner;
     /** Drive storage space quota information. */
-    private Quota quota;
+    private final Quota quota;
     /** Identifiers used for SharePoint. */
-    private SharePointIds sharepointIds;
+    private final SharePointIds sharepointIds;
     /** Indicates that this is a system-managed drive:  Note: Either {@code null} or defined as empty. */
-    private Object system;
-
+    private final Object system;
     @GsonExclude
     private final OneDriveConnection connection;
-
-    /** Creates a new {@code Drive} */
-    public Drive(@NonNull final OneDriveConnection connection) {
-        super();
-        this.connection = connection;
-    }
 
     /**
      * Queries and fetches the activities associated with this {@code Drive}.

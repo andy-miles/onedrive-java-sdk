@@ -24,8 +24,8 @@ import com.amilesend.onedrive.resource.activities.action.MoveAction;
 import com.amilesend.onedrive.resource.activities.action.RenameAction;
 import com.amilesend.onedrive.resource.activities.action.ShareAction;
 import com.amilesend.onedrive.resource.activities.action.VersionAction;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Objects;
@@ -39,30 +39,30 @@ import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals
  * API Documentation.</a>
  * @see com.amilesend.onedrive.resource.activities.ItemActivity
  */
+@Builder
 @Getter
-@Setter
 @ToString
 public class ItemActionSet {
     /** The comment that was added to the item. */
-    private CommentAction comment;
+    private final CommentAction comment;
     /** An item was created. {@code create} is either an empty object or {@code null}. */
-    private Object create;
+    private final Object create;
     /** An item was deleted. */
-    private DeleteAction delete;
+    private final DeleteAction delete;
     /** An item was edited.  {@code edit} is either an empty object or {@code null}. */
-    private Object edit;
+    private final Object edit;
     /** A user was mentioned in the item. */
-    private MentionAction mention;
+    private final MentionAction mention;
     /** The item was moved. */
-    private MoveAction move;
+    private final MoveAction move;
     /** The item was renamed. */
-    private RenameAction rename;
+    private final RenameAction rename;
     /** The item was restored. {@code restore} is either an empty object or {@code null}. */
-    private Object restore;
+    private final Object restore;
     /** The item was shared. */
-    private ShareAction share;
+    private final ShareAction share;
     /** The item was versioned. */
-    private VersionAction version;
+    private final VersionAction version;
 
     @Override
     public boolean equals(final Object obj) {

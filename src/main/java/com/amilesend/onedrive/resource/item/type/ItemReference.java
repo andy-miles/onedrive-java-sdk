@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -26,10 +27,11 @@ import lombok.Data;
  * API Documentation</a>.
  * @see com.amilesend.onedrive.resource.item.DriveItem
  */
+@Builder
 @Data
 public class ItemReference {
     /** The drive identifier. */
-    private String driveId;
+    private final String driveId;
     /**
      * The drive type descriptor.  Valid types are:
      * <ul>
@@ -38,19 +40,19 @@ public class ItemReference {
      *     <li>{@literal documentLibrary} - Sharepoint document library</li>
      * </ul>
      */
-    private String driveType;
+    private final String driveType;
     /** The drive item identifier. */
-    private String id;
+    private final String id;
     /** The list identifier. */
-    private String listId;
+    private final String listId;
     /** The name of the referenced item. */
-    private String name;
+    private final String name;
     /** The path of the referenced item. */
-    private String path;
+    private final String path;
     /** The shared resource identifier of the referenced item. */
-    private String shareId;
+    private final String shareId;
     /** The SharePoint identifiers of the referenced item. */
-    private SharePointIds sharepointIds;
+    private final SharePointIds sharepointIds;
     /** The site identifier of the referenced item. */
-    private String siteId;
+    private final String siteId;
 }

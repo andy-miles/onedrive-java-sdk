@@ -226,9 +226,7 @@ public class Drive {
     public List<? extends DriveItemType> search(final String query) {
         return delegate.search(query)
                 .stream()
-                .map(di -> di.getFolder() != null
-                        ? new DriveFolder(di)
-                        : new DriveFile(di))
+                .map(DriveItemType::wrapDriveItemToType)
                 .collect(Collectors.toList());
     }
 
@@ -243,9 +241,7 @@ public class Drive {
     public List<? extends DriveItemType> getChanges() {
         return delegate.getChanges()
                 .stream()
-                .map(di -> di.getFolder() != null
-                        ? new DriveFolder(di)
-                        : new DriveFile(di))
+                .map(DriveItemType::wrapDriveItemToType)
                 .collect(Collectors.toList());
     }
 
