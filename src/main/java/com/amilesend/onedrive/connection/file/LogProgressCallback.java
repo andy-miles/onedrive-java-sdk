@@ -17,9 +17,12 @@
  */
 package com.amilesend.onedrive.connection.file;
 
+import com.google.common.annotations.VisibleForTesting;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.event.Level;
 
@@ -44,7 +47,11 @@ public class LogProgressCallback implements TransferProgressCallback {
     /** Duration between logging updates. */
     private final Duration updateFrequency;
     // Used to limit unnecessarily entries to the log.
-    private volatile long lastUpdateProgressValue = 0L;
+    @VisibleForTesting
+    @Setter(AccessLevel.PACKAGE)
+    volatile long lastUpdateProgressValue = 0L;
+    @VisibleForTesting
+    @Setter(AccessLevel.PACKAGE)
     private volatile Instant lastUpdateTimestamp = Instant.now();
 
     @Builder

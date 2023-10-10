@@ -25,6 +25,7 @@ import java.util.zip.GZIPOutputStream;
 
 public enum SerializedResource {
     ASYNC_JOB_STATUS("/AsyncJobStatus.json"),
+    DISCOVER_SERVICE_RESPONSE("/DiscoverServiceResponse.json"),
     DRIVE("/Drive.json"),
     DRIVE_ITEM("/DriveItem.json"),
     DRIVE_ITEM_FOLDER("/DriveItemFolder.json"),
@@ -35,11 +36,19 @@ public enum SerializedResource {
     DRIVE_ITEM_VERSION_LIST("/DriveItemVersionList.json"),
     DRIVE_ITEM_ZIP_FILE("/DriveItemZipFile.json"),
     DRIVE_LIST("/DriveList.json"),
+    FIELD_VALUE_SET("/FieldValueSet.json"),
+    GET_COLUMN_VALUES_RESPONSE("/GetColumnValuesResponse.json"),
     ITEM_ACTIVITY_LIST("/ItemActivityList.json"),
+    LIST_ITEM("/ListItem.json"),
+    LIST_ITEM_VERSION("/ListItemVersion.json"),
+    LIST_ITEM_VERSION_LIST("/ListItemVersionList.json"),
+    LIST_OF_LIST("/ListOfList.json"),
     PERMISSION("/Permission.json"),
     PERMISSION_LIST("/PermissionList.json"),
     PREVIEW("/Preview.json"),
     SINGLE_DRIVE_ITEM_PAGE("/SingleDriveItemPage.json"),
+    SITE("/Site.json"),
+    SITE_LIST("/SiteList.json"),
     SPECIAL_DRIVE_ITEM("/SpecialDriveItem.json"),
     THUMBNAIL_SET_LIST("/ThumbnailSetList.json"),
     UPDATED_DRIVE_ITEM_ZIP_FILE("/UpdatedDriveItemZipFile.json");

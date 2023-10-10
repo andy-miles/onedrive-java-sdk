@@ -18,7 +18,6 @@
 package com.amilesend.onedrive.connection.auth;
 
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
-import com.amilesend.onedrive.parse.GsonFactory;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 import okhttp3.mockwebserver.MockResponse;
@@ -33,7 +32,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AuthManagerFunctionalTest {
+public class PersonalAccountAuthManagerFunctionalTest {
     public static final long EXPIRES_TIME_MILLIS = System.currentTimeMillis() + Duration.ofDays(2L).toMillis();
     public static final String TOKEN_JSON_RESPONSE =
             "{" +
@@ -42,7 +41,7 @@ public class AuthManagerFunctionalTest {
                     "\"ext_expires_in\": " + EXPIRES_TIME_MILLIS + "," +
                     "\"refresh_token\": \"RefreshToken\"," +
                     "\"scope\": \"Scope1 Scope2 Scope3\"," +
-                    "\"token_type\": \"bearer\"" +
+                    "\"token_type\": \"Bearer\"" +
             "}";
     public static final String TOKEN_URL_PATH = "/common/oauth2/v2.0/token";
     public static final String AUTH_CODE = "TestAuthCode";
@@ -77,12 +76,11 @@ public class AuthManagerFunctionalTest {
     @SneakyThrows
     @Test
     public void builderWithAuthCode_withValidParameters_shouldRedeemToken() {
-        final AuthManager authManager = AuthManager.builderWithAuthCode()
+        final PersonalAccountAuthManager authManager = PersonalAccountAuthManager.builderWithAuthCode()
                 .authCode(AUTH_CODE)
                 .clientId(CLIENT_ID)
                 .clientSecret(CLIENT_SECRET)
-                .gson(GsonFactory.getInstance().getInstanceForAuthManager())
-                .httpClient(newHttpClient())
+                .httpClient(httpClient)
                 .redirectUrl(REDIRECT_URL)
                 .baseTokenUrl(baseUrl)
                 .buildWithAuthCode();
@@ -92,7 +90,7 @@ public class AuthManagerFunctionalTest {
 
     @Test
     public void builderWithAuthInfo_withValidParameters_shouldRefreshToken() {
-        final AuthManager authManager =  AuthManager.builderWithAuthInfo()
+        final PersonalAccountAuthManager authManager = PersonalAccountAuthManager.builderWithAuthInfo()
                 .authInfo(AuthInfo.builder()
                         .accessToken("StaleAccessToken")
                         .expiresIn(EXPIRES_TIME_MILLIS)
@@ -102,8 +100,7 @@ public class AuthManagerFunctionalTest {
                         .build())
                 .clientId(CLIENT_ID)
                 .clientSecret(CLIENT_SECRET)
-                .gson(GsonFactory.getInstance().getInstanceForAuthManager())
-                .httpClient(newHttpClient())
+                .httpClient(httpClient)
                 .redirectUrl(REDIRECT_URL)
                 .baseTokenUrl(baseUrl)
                 .buildWithAuthInfo();
@@ -116,13 +113,9 @@ public class AuthManagerFunctionalTest {
                 () -> assertEquals("AccessToken", actual.getAccessToken()),
                 () -> assertEquals(EXPIRES_TIME_MILLIS, actual.getExpiresIn()),
                 () -> assertEquals(EXPIRES_TIME_MILLIS, actual.getExtExpiresIn()),
-                () -> assertEquals("bearer AccessToken", actual.getFullToken()),
+                () -> assertEquals("Bearer AccessToken", actual.getFullToken()),
                 () -> assertEquals("RefreshToken", actual.getRefreshToken()),
                 () -> assertEquals(List.of("Scope1", "Scope2", "Scope3"), actual.getScopes()),
-                () -> assertEquals("bearer", actual.getTokenType()));
-    }
-
-    private OkHttpClient newHttpClient() {
-        return new OkHttpClientBuilder().isForTest(true).build();
+                () -> assertEquals("Bearer", actual.getTokenType()));
     }
 }

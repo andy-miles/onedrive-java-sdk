@@ -30,7 +30,7 @@ import org.apache.commons.lang3.Validate;
 import java.util.List;
 import java.util.Objects;
 
-import static com.amilesend.onedrive.resource.drive.Drive.USER_DRIVE_BASE_URL_PATH;
+import static com.amilesend.onedrive.resource.drive.Drive.DRIVE_BASE_URL_PATH;
 
 /**
  * Represent a special drive folder.
@@ -59,7 +59,7 @@ public class SpecialDriveItem extends DriveItem {
         return connection.execute(
                 connection.newSignedForApiRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
-                                .append(USER_DRIVE_BASE_URL_PATH)
+                                .append(DRIVE_BASE_URL_PATH)
                                 .append("special/")
                                 .append(specialFolderType.getId())
                                 .append("/children")

@@ -18,7 +18,7 @@
 package com.amilesend.onedrive.connection;
 
 import com.amilesend.onedrive.connection.auth.AuthInfo;
-import com.amilesend.onedrive.connection.auth.AuthManager;
+import com.amilesend.onedrive.connection.auth.PersonalAccountAuthManager;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
@@ -55,7 +55,7 @@ public class OneDriveConnectionBuilderTest {
     @Mock
     private GsonFactory mockGsonFactory;
     @Mock
-    private AuthManager mockAuthManager;
+    private PersonalAccountAuthManager mockAuthManager;
     private OneDriveConnectionBuilder builderUnderTest;
 
     @BeforeEach
@@ -67,9 +67,12 @@ public class OneDriveConnectionBuilderTest {
 
     @Test
     public void builder_withAuthCode_shouldReturnConnection() {
-        final AuthManager.BuilderWithAuthCode mockBuilder = setUpAuthManagerBuilderWithAuthCode(mockAuthManager);
-        try (final MockedStatic<AuthManager> authManagerMockedStatic = mockStatic(AuthManager.class)) {
-            authManagerMockedStatic.when(() -> AuthManager.builderWithAuthCode()).thenReturn(mockBuilder);
+        final PersonalAccountAuthManager.BuilderWithAuthCode mockBuilder =
+                setUpAuthManagerBuilderWithAuthCode(mockAuthManager);
+        try (final MockedStatic<PersonalAccountAuthManager> authManagerMockedStatic =
+                     mockStatic(PersonalAccountAuthManager.class)) {
+            authManagerMockedStatic.when(
+                    () -> PersonalAccountAuthManager.builderWithAuthCode()).thenReturn(mockBuilder);
             final OneDriveConnection actual = builderUnderTest
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
@@ -86,9 +89,12 @@ public class OneDriveConnectionBuilderTest {
     @Test
     public void builder_withDefaultGsonFactoryAndAuthCode_shouldReturnConnection() {
         builderUnderTest = OneDriveConnectionBuilder.newInstance();
-        final AuthManager.BuilderWithAuthCode mockBuilder = setUpAuthManagerBuilderWithAuthCode(mockAuthManager);
-        try (final MockedStatic<AuthManager> authManagerMockedStatic = mockStatic(AuthManager.class)) {
-            authManagerMockedStatic.when(() -> AuthManager.builderWithAuthCode()).thenReturn(mockBuilder);
+        final PersonalAccountAuthManager.BuilderWithAuthCode mockBuilder =
+                setUpAuthManagerBuilderWithAuthCode(mockAuthManager);
+        try (final MockedStatic<PersonalAccountAuthManager> authManagerMockedStatic =
+                     mockStatic(PersonalAccountAuthManager.class)) {
+            authManagerMockedStatic.when(
+                    () -> PersonalAccountAuthManager.builderWithAuthCode()).thenReturn(mockBuilder);
             final OneDriveConnection actual = builderUnderTest
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
@@ -105,9 +111,12 @@ public class OneDriveConnectionBuilderTest {
     @Test
     public void builder_withAuthInfo_shouldReturnConnection() {
         final AuthInfo mockAuthInfo = mock(AuthInfo.class);
-        final AuthManager.BuilderWithAuthInfo mockBuilder = setUpAuthManagerbuilderWithAuthInfo(mockAuthManager);
-        try (final MockedStatic<AuthManager> authManagerMockedStatic = mockStatic(AuthManager.class)) {
-            authManagerMockedStatic.when(() -> AuthManager.builderWithAuthInfo()).thenReturn(mockBuilder);
+        final PersonalAccountAuthManager.BuilderWithAuthInfo mockBuilder =
+                setUpAuthManagerbuilderWithAuthInfo(mockAuthManager);
+        try (final MockedStatic<PersonalAccountAuthManager> authManagerMockedStatic =
+                     mockStatic(PersonalAccountAuthManager.class)) {
+            authManagerMockedStatic.when(
+                    () -> PersonalAccountAuthManager.builderWithAuthInfo()).thenReturn(mockBuilder);
 
             final OneDriveConnection actual = builderUnderTest
                     .clientId(CLIENT_ID)
@@ -124,9 +133,12 @@ public class OneDriveConnectionBuilderTest {
 
     @Test
     public void builder_withNoHttpClientDefined_shouldReturnConnection() {
-        final AuthManager.BuilderWithAuthCode mockBuilder = setUpAuthManagerBuilderWithAuthCode(mockAuthManager);
-        try (final MockedStatic<AuthManager> authManagerMockedStatic = mockStatic(AuthManager.class)) {
-            authManagerMockedStatic.when(() -> AuthManager.builderWithAuthCode()).thenReturn(mockBuilder);
+        final PersonalAccountAuthManager.BuilderWithAuthCode mockBuilder =
+                setUpAuthManagerBuilderWithAuthCode(mockAuthManager);
+        try (final MockedStatic<PersonalAccountAuthManager> authManagerMockedStatic =
+                     mockStatic(PersonalAccountAuthManager.class)) {
+            authManagerMockedStatic.when(
+                    () -> PersonalAccountAuthManager.builderWithAuthCode()).thenReturn(mockBuilder);
 
             final OneDriveConnection actual = builderUnderTest
                     .clientId(CLIENT_ID)
@@ -190,11 +202,11 @@ public class OneDriveConnectionBuilderTest {
 
     }
 
-    private static AuthManager.BuilderWithAuthCode setUpAuthManagerBuilderWithAuthCode(
-            final AuthManager managerToReturn) {
-        final AuthManager.BuilderWithAuthCode mockBuilder = mock(AuthManager.BuilderWithAuthCode.class);
+    private static PersonalAccountAuthManager.BuilderWithAuthCode setUpAuthManagerBuilderWithAuthCode(
+            final PersonalAccountAuthManager managerToReturn) {
+        final PersonalAccountAuthManager.BuilderWithAuthCode mockBuilder =
+                mock(PersonalAccountAuthManager.BuilderWithAuthCode.class);
         when(mockBuilder.httpClient(any(OkHttpClient.class))).thenReturn(mockBuilder);
-        when(mockBuilder.gson(any(Gson.class))).thenReturn(mockBuilder);
         when(mockBuilder.clientId(anyString())).thenReturn(mockBuilder);
         when(mockBuilder.clientSecret(anyString())).thenReturn(mockBuilder);
         when(mockBuilder.redirectUrl(anyString())).thenReturn(mockBuilder);
@@ -203,11 +215,11 @@ public class OneDriveConnectionBuilderTest {
         return mockBuilder;
     }
 
-    private static AuthManager.BuilderWithAuthInfo setUpAuthManagerbuilderWithAuthInfo(
-            final AuthManager managerToReturn) {
-        final AuthManager.BuilderWithAuthInfo mockBuilder = mock(AuthManager.BuilderWithAuthInfo.class);
+    private static PersonalAccountAuthManager.BuilderWithAuthInfo setUpAuthManagerbuilderWithAuthInfo(
+            final PersonalAccountAuthManager managerToReturn) {
+        final PersonalAccountAuthManager.BuilderWithAuthInfo mockBuilder =
+                mock(PersonalAccountAuthManager.BuilderWithAuthInfo.class);
         when(mockBuilder.httpClient(any(OkHttpClient.class))).thenReturn(mockBuilder);
-        when(mockBuilder.gson(any(Gson.class))).thenReturn(mockBuilder);
         when(mockBuilder.clientId(anyString())).thenReturn(mockBuilder);
         when(mockBuilder.clientSecret(anyString())).thenReturn(mockBuilder);
         when(mockBuilder.redirectUrl(anyString())).thenReturn(mockBuilder);

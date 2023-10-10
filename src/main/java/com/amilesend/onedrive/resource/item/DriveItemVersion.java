@@ -28,10 +28,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import org.apache.commons.lang3.Validate;
+import okhttp3.RequestBody;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
 
+import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
 import static com.amilesend.onedrive.resource.item.DriveItem.DRIVE_ITEM_BASE_URL_PATH;
 
 /**
@@ -49,7 +51,7 @@ public class DriveItemVersion {
 
     private static final String VERSIONS_URL_SPECIFIER = "/versions/";
     private static final String CONTENT_URL_SUFFIX = "/content";
-    private static final String RESTORE_URL_SUFFIX = "/restore";
+    private static final String RESTORE_URL_SUFFIX = "/restoreVersion";
 
     /** The version identifier. */
     private final String id;
@@ -61,7 +63,6 @@ public class DriveItemVersion {
     private final PublicationFacet publication;
     /** The size in bytes of the version. */
     private final long size;
-
     /** The name of the item associated with the version. */
     // Used to structure the name of the download.
     @GsonExclude
@@ -69,13 +70,15 @@ public class DriveItemVersion {
     /** The associated item identifier for the version. */
     @GsonExclude
     private final String driveItemId;
-
     @GsonExclude
     @EqualsAndHashCode.Exclude
     private final OneDriveConnection connection;
 
     /**
      * Downloads a specific drive item version.
+     * <p>
+     * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitemversion_get_contents">
+     * API Documentation</a>.
      *
      * @param folderPath the path of the folder to download the drive item version content to
      */
@@ -88,6 +91,9 @@ public class DriveItemVersion {
     /**
      * Downloads a specific drive item version and reports transfer progress to the specified
      * {@link TransferProgressCallback}.
+     * <p>
+     * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitemversion_get_contents">
+     * API Documentation</a>.
      *
      * @param folderPath the path of the folder to download the drive item version content to
      * @param callback the callback be notified of transfer progress
@@ -95,7 +101,7 @@ public class DriveItemVersion {
     public void download(@NonNull final Path folderPath, @NonNull TransferProgressCallback callback) {
         connection.download(
                 connection.newSignedForRequestBuilder()
-                        .url(getContentsUrl(getDriveItemId(), getId()))
+                        .url(getContentUrl(getDriveItemId(), getId()))
                         .build(),
                 folderPath,
                 getName(),
@@ -103,19 +109,23 @@ public class DriveItemVersion {
                 callback);
     }
 
+    /**
+     * Restores this version as the primary drive item version.
+     * <p>
+     * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitemversion_restore">
+     * API Documentation</a>.
+     *
+     * @return {@code true} if successful; else, {@code false}
+     */
     public boolean restore() {
-        final String versionId = getId();
-        final String driveItemId = getDriveItemId();
-        Validate.notBlank(versionId, "id must not be blank");
-        Validate.notBlank(driveItemId, "driveItemId must not be blank");
-
         final int responseCode = connection.execute(connection.newSignedForRequestBuilder()
-                .url(getRestoreUrl(driveItemId, versionId))
+                .url(getRestoreUrl(getDriveItemId(), getId()))
+                .post(RequestBody.create(StringUtils.EMPTY, JSON_MEDIA_TYPE))
                 .build());
         return responseCode == NO_CONTENT_RESPONSE_HTTP_CODE;
     }
 
-    private String getContentsUrl(final String driveItemId, final String versionId) {
+    private String getContentUrl(final String driveItemId, final String versionId) {
         return getVersionBasedUrl(driveItemId, versionId, CONTENT_URL_SUFFIX);
     }
 

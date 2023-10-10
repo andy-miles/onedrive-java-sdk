@@ -25,7 +25,7 @@ import com.amilesend.onedrive.resource.item.type.AsyncJobStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newAsyncJobStatus;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newAsyncJobStatus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

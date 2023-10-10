@@ -21,13 +21,19 @@ import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.parse.resource.creator.DriveInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.DriveItemInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.DriveItemVersionInstanceCreator;
+import com.amilesend.onedrive.parse.resource.creator.ListItemInstanceCreator;
+import com.amilesend.onedrive.parse.resource.creator.ListItemVersionInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.PermissionInstanceCreator;
+import com.amilesend.onedrive.parse.resource.creator.SiteInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.SpecialDriveItemInstanceCreator;
 import com.amilesend.onedrive.resource.drive.Drive;
 import com.amilesend.onedrive.resource.item.DriveItem;
 import com.amilesend.onedrive.resource.item.DriveItemVersion;
 import com.amilesend.onedrive.resource.item.SpecialDriveItem;
 import com.amilesend.onedrive.resource.item.type.Permission;
+import com.amilesend.onedrive.resource.site.ListItem;
+import com.amilesend.onedrive.resource.site.ListItemVersion;
+import com.amilesend.onedrive.resource.site.Site;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -74,8 +80,35 @@ public class InstanceCreatorTest {
     }
 
     @Test
+    public void newListItemInstanceCreator_withCreateInstance_shouldReturnListItem() {
+        final ListItem actual = new ListItemInstanceCreator(mockConnection).createInstance(mockType);
+
+        assertAll(
+                () -> assertNotNull(actual),
+                () -> assertEquals(mockConnection, actual.getConnection()));
+    }
+
+    @Test
+    public void newListItemVersionInstanceCreator_withCreateInstance_shouldReturnListItemVersion() {
+        final ListItemVersion actual = new ListItemVersionInstanceCreator(mockConnection).createInstance(mockType);
+
+        assertAll(
+                () -> assertNotNull(actual),
+                () -> assertEquals(mockConnection, actual.getConnection()));
+    }
+
+    @Test
     public void newPermissionInstanceCreator_withCreateInstance_shouldReturnPermission() {
         final Permission actual = new PermissionInstanceCreator(mockConnection).createInstance(mockType);
+
+        assertAll(
+                () -> assertNotNull(actual),
+                () -> assertEquals(mockConnection, actual.getConnection()));
+    }
+
+    @Test
+    public void newSiteInstanceCreator_withCreateInstance_shouldReturnSite() {
+        final Site actual = new SiteInstanceCreator(mockConnection).createInstance(mockType);
 
         assertAll(
                 () -> assertNotNull(actual),

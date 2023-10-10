@@ -69,6 +69,7 @@ public abstract class OneDriveConnectionTestBase {
     @BeforeEach
     public void setUp() {
         lenient().when(mockAuthManager.refreshIfExpiredAndFetchFullToken()).thenReturn("FullAuthToken");
+        lenient().when(mockAuthManager.getAuthenticatedEndpoint()).thenReturn("https://graph.microsoft.com/v1.0/me");
         when(mockGsonFactory.newInstanceForConnection(any(OneDriveConnection.class))).thenReturn(mockGson);
         connectionUnderTest =
                 spy(new OneDriveConnection(mockHttpClient, mockAuthManager, mockGsonFactory, StringUtils.EMPTY));

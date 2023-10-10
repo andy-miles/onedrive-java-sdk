@@ -54,20 +54,23 @@ import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals
 @SuperBuilder
 @ToString(callSuper = true)
 public class Drive extends BaseItem {
-    //TODO: Allow for Business and Sharepoint based paths and not just user-based drives (i.e., "/me/").
-    public static final String USER_DRIVE_BASE_URL_PATH = "/me/drive/";
+    public static final String DRIVE_BASE_URL_PATH = "/drive/";
+    public static final String DRIVES_BASE_URL_PATH = "/drives/";
+    public static final String DRIVE_URL_PATH_SUFFIX = "/drive";
+    public static final String DRIVES_URL_PATH_SUFFIX = "/drives";
 
     private static final String ACTIVITIES_URL_SUFFIX = "/activities";
-    private static final String ROOT_FOLDER_URL_PATH = USER_DRIVE_BASE_URL_PATH + "root";
+    private static final String ROOT_FOLDER_URL_PATH = DRIVE_BASE_URL_PATH + "root";
     private static final String CHANGES_URL_PATH = ROOT_FOLDER_URL_PATH + "/delta";
     private static final String SEARCH_URL_PATH = ROOT_FOLDER_URL_PATH + "/search";
-    private static final String SPECIAL_FOLDER_URL_PATH = USER_DRIVE_BASE_URL_PATH + "special/";
+    private static final String SPECIAL_FOLDER_URL_PATH = DRIVE_BASE_URL_PATH + "special/";
+    private static final int MAX_QUERY_LENGTH = 1000;
 
     /**
      * The drive type descriptor.  Valid types are:
      * <ul>
      *     <li>{@literal personal} - Personal drive</li>
-     *     <li>{@literal business} - Busieness drive</li>
+     *     <li>{@literal business} - Business drive</li>
      *     <li>{@literal documentLibrary} - Sharepoint document library</li>
      * </ul>
      */
@@ -92,13 +95,9 @@ public class Drive extends BaseItem {
      * @return the list of activities
      */
     public List<ItemActivity> getActivities() {
-        // Members are mutable; validate
-        final String driveId = getId();
-        Validate.notBlank(driveId, "id must not be blank");
-
         return connection.execute(
                 connection.newSignedForApiRequestBuilder()
-                        .url(getActivitiesUrl(driveId))
+                        .url(getActivitiesUrl(getId()))
                         .build(),
                 new ItemActivityListParser());
     }
@@ -153,6 +152,8 @@ public class Drive extends BaseItem {
      */
     public List<DriveItem> search(final String query) {
         Validate.notBlank(query, "query must not be blank");
+        Validate.isTrue(query.length() < MAX_QUERY_LENGTH,
+                "query length must be less than " + MAX_QUERY_LENGTH);
 
         final String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
         final List<DriveItem> results = new ArrayList<>();
@@ -204,8 +205,7 @@ public class Drive extends BaseItem {
                 && Objects.equals(getOwner(), drive.getOwner())
                 && Objects.equals(getQuota(), drive.getQuota())
                 && Objects.equals(getSharepointIds(), drive.getSharepointIds())
-                && objectDefinedEquals(getSystem(), drive.getSystem())
-                && Objects.equals(getConnection(), drive.getConnection());
+                && objectDefinedEquals(getSystem(), drive.getSystem());
     }
 
     @Override
@@ -216,13 +216,12 @@ public class Drive extends BaseItem {
                 getOwner(),
                 getQuota(),
                 getSharepointIds(),
-                Objects.nonNull(getSystem()),
-                getConnection());
+                Objects.nonNull(getSystem()));
     }
 
     private String getActivitiesUrl(final String driveId) {
         return new StringBuilder(connection.getBaseUrl())
-                .append(USER_DRIVE_BASE_URL_PATH)
+                .append(DRIVE_BASE_URL_PATH)
                 .append(URLEncoder.encode(driveId, StandardCharsets.UTF_8))
                 .append(ACTIVITIES_URL_SUFFIX)
                 .toString();

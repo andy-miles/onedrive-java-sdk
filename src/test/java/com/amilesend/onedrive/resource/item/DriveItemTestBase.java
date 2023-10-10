@@ -29,7 +29,7 @@ import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 public abstract class DriveItemTestBase {
-    protected static final String BASE_URL = "http://localhost";
+    protected static final String BASE_URL = "http://localhost/me";
     protected static final String DRIVE_ITEM_ID = "DriveItemId";
     protected static final String DRIVE_ITEM_NAME = "DriveItemName";
     protected static final long DRIVE_ITEM_SIZE = 1024L;

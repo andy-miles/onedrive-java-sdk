@@ -25,8 +25,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.amilesend.onedrive.connection.auth.AuthManagerFunctionalTest.EXPIRES_TIME_MILLIS;
-import static com.amilesend.onedrive.connection.auth.AuthManagerFunctionalTest.TOKEN_JSON_RESPONSE;
+import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.EXPIRES_TIME_MILLIS;
+import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.TOKEN_JSON_RESPONSE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +38,7 @@ public class AuthInfoTest {
             "\"expires_in\": " + EXPIRES_TIME_MILLIS + "," +
             "\"ext_expires_in\": " + EXPIRES_TIME_MILLIS + "," +
             "\"refresh_token\": \"RefreshToken\"," +
-            "\"token_type\": \"bearer\"" +
+            "\"token_type\": \"Bearer\"" +
             "}";
 
     final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
@@ -51,10 +51,10 @@ public class AuthInfoTest {
                 () -> assertEquals("AccessToken", actual.getAccessToken()),
                 () -> assertEquals(EXPIRES_TIME_MILLIS, actual.getExpiresIn()),
                 () -> assertEquals(EXPIRES_TIME_MILLIS, actual.getExtExpiresIn()),
-                () -> assertEquals("bearer AccessToken", actual.getFullToken()),
+                () -> assertEquals("Bearer AccessToken", actual.getFullToken()),
                 () -> assertEquals("RefreshToken", actual.getRefreshToken()),
                 () -> assertEquals(List.of("Scope1", "Scope2", "Scope3"), actual.getScopes()),
-                () -> assertEquals("bearer", actual.getTokenType()));
+                () -> assertEquals("Bearer", actual.getTokenType()));
     }
 
     @Test
@@ -65,10 +65,10 @@ public class AuthInfoTest {
                 () -> assertEquals("AccessToken", actual.getAccessToken()),
                 () -> assertEquals(EXPIRES_TIME_MILLIS, actual.getExpiresIn()),
                 () -> assertEquals(EXPIRES_TIME_MILLIS, actual.getExtExpiresIn()),
-                () -> assertEquals("bearer AccessToken", actual.getFullToken()),
+                () -> assertEquals("Bearer AccessToken", actual.getFullToken()),
                 () -> assertEquals("RefreshToken", actual.getRefreshToken()),
                 () -> assertTrue(CollectionUtils.isEmpty(actual.getScopes())),
-                () -> assertEquals("bearer", actual.getTokenType()));
+                () -> assertEquals("Bearer", actual.getTokenType()));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class AuthInfoTest {
 
         assertAll(
                 () -> assertTrue(actual.startsWith("{")),
-                () -> assertTrue(StringUtils.contains(actual, "\"token_type\":\"bearer\"")),
+                () -> assertTrue(StringUtils.contains(actual, "\"token_type\":\"Bearer\"")),
                 () -> assertTrue(StringUtils.contains(actual, "\"scope\":\"Scope1%20Scope2%20Scope3\"")),
                 () -> assertTrue(StringUtils.contains(actual, "\"expires_in\":" + EXPIRES_TIME_MILLIS)),
                 () -> assertTrue(StringUtils.contains(actual, "\"ext_expires_in\":"+ EXPIRES_TIME_MILLIS)),
@@ -105,7 +105,7 @@ public class AuthInfoTest {
 
         assertAll(
                 () -> assertTrue(actual.startsWith("{")),
-                () -> assertTrue(StringUtils.contains(actual, "\"token_type\":\"bearer\"")),
+                () -> assertTrue(StringUtils.contains(actual, "\"token_type\":\"Bearer\"")),
                 () -> assertTrue(StringUtils.contains(actual, "\"expires_in\":" + EXPIRES_TIME_MILLIS)),
                 () -> assertTrue(StringUtils.contains(actual, "\"ext_expires_in\":"+ EXPIRES_TIME_MILLIS)),
                 () -> assertTrue(StringUtils.contains(actual, "\"access_token\":\"AccessToken\"")),

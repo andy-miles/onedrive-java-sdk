@@ -56,6 +56,7 @@ import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
 import com.amilesend.onedrive.resource.request.PreviewRequest;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.annotations.SerializedName;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -97,10 +98,11 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 @SuperBuilder
 @ToString(callSuper = true)
 public class DriveItem extends BaseItem {
-    public static final String DRIVE_ITEM_BASE_URL_PATH = "/me/drive/items/";
+    public static final String DRIVE_ITEM_BASE_URL_PATH = "/drive/items/";
 
     private static final DriveItemParser DRIVE_ITEM_PARSER = new DriveItemParser();
     private static final String CONTENT_URL_SUFFIX = "/content";
+    private static final int MAX_QUERY_LENGTH = 1000;
 
     /** The audio file attributes (read-only). */
     private final Audio audio;
@@ -166,6 +168,7 @@ public class DriveItem extends BaseItem {
     @Setter
     private String conflictBehavior;
     /** The source URL for remote uploading of file contents (write-only). Currently not tested nor supported. */
+    @EqualsAndHashCode.Exclude
     @GsonSerializeExclude
     @SerializedName("@microsoft.graph.sourceUrl")
     @Setter
@@ -198,6 +201,9 @@ public class DriveItem extends BaseItem {
     /**
      * Downloads the drive item asynchronously that reports transfer progress and completion to the specified
      * {@link TransferProgressCallback}.
+     * <p>
+     * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_get_content">
+     * API Documentation</a>.
      *
      * @param folderPath the path of the folder to download the drive item content to
      * @param callback the callback to inform of transfer progress
@@ -621,6 +627,9 @@ public class DriveItem extends BaseItem {
      */
     public List<DriveItem> search(final String query) {
         Validate.notBlank(query, "query must not be blank");
+        Validate.isTrue(query.length() < MAX_QUERY_LENGTH,
+                "query length must be less than " + MAX_QUERY_LENGTH);
+
         final List<DriveItem> results = new ArrayList<>();
 
         DriveItemPage currentPage = null;
@@ -671,9 +680,7 @@ public class DriveItem extends BaseItem {
                 && Objects.equals(getSharepointIds(), driveItem.getSharepointIds())
                 && Objects.equals(getSpecialFolder(), driveItem.getSpecialFolder())
                 && Objects.equals(getVideo(), driveItem.getVideo())
-                && Objects.equals(getConflictBehavior(), driveItem.getConflictBehavior())
-                && Objects.equals(getDownloadUrl(), driveItem.getDownloadUrl())
-                && Objects.equals(getSourceUrl(), driveItem.getSourceUrl());
+                && Objects.equals(getConflictBehavior(), driveItem.getConflictBehavior());
     }
 
     @Override
@@ -700,9 +707,7 @@ public class DriveItem extends BaseItem {
                 getSize(),
                 getSpecialFolder(),
                 getVideo(),
-                getConflictBehavior(),
-                getDownloadUrl(),
-                getSourceUrl());
+                getConflictBehavior());
     }
 
     @VisibleForTesting

@@ -22,7 +22,10 @@ import com.amilesend.onedrive.parse.GsonParser;
 import com.amilesend.onedrive.parse.resource.creator.DriveInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.DriveItemInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.DriveItemVersionInstanceCreator;
+import com.amilesend.onedrive.parse.resource.creator.ListItemInstanceCreator;
+import com.amilesend.onedrive.parse.resource.creator.ListItemVersionInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.PermissionInstanceCreator;
+import com.amilesend.onedrive.parse.resource.creator.SiteInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.SpecialDriveItemInstanceCreator;
 import com.amilesend.onedrive.parse.resource.parser.AsyncJobStatusParser;
 import com.amilesend.onedrive.parse.resource.parser.DriveItemListParser;
@@ -31,10 +34,18 @@ import com.amilesend.onedrive.parse.resource.parser.DriveItemParser;
 import com.amilesend.onedrive.parse.resource.parser.DriveItemVersionListParser;
 import com.amilesend.onedrive.parse.resource.parser.DriveListParser;
 import com.amilesend.onedrive.parse.resource.parser.DriveParser;
+import com.amilesend.onedrive.parse.resource.parser.FieldValueSetParser;
+import com.amilesend.onedrive.parse.resource.parser.GetColumnValuesResponseParser;
 import com.amilesend.onedrive.parse.resource.parser.ItemActivityListParser;
+import com.amilesend.onedrive.parse.resource.parser.ListItemParser;
+import com.amilesend.onedrive.parse.resource.parser.ListItemVersionListParser;
+import com.amilesend.onedrive.parse.resource.parser.ListItemVersionParser;
+import com.amilesend.onedrive.parse.resource.parser.ListListParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionListParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionParser;
 import com.amilesend.onedrive.parse.resource.parser.PreviewParser;
+import com.amilesend.onedrive.parse.resource.parser.SiteListParser;
+import com.amilesend.onedrive.parse.resource.parser.SiteParser;
 import com.amilesend.onedrive.parse.resource.parser.SpecialDriveItemParser;
 import com.amilesend.onedrive.parse.resource.parser.ThumbnailSetListParser;
 import com.amilesend.onedrive.parse.strategy.AnnotationBasedExclusionStrategy;
@@ -50,24 +61,35 @@ import com.amilesend.onedrive.resource.item.type.Permission;
 import com.amilesend.onedrive.resource.item.type.Preview;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import com.amilesend.onedrive.resource.item.type.ThumbnailSet;
+import com.amilesend.onedrive.resource.site.ListItem;
+import com.amilesend.onedrive.resource.site.ListItemVersion;
+import com.amilesend.onedrive.resource.site.Site;
+import com.amilesend.onedrive.resource.site.response.GetColumnValuesResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newAsyncJobStatus;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newDrive;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newDriveItem;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newDriveItemFolder;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newDriveItemPage;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newDriveItemVersion;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newDriveItemZipFile;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newItemActivity;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newPermission;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newPreview;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newSpecialDriveItem;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newThumbnailSet;
+import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDrive;
+import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDriveItem;
+import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDriveItemFolder;
+import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDriveItemPage;
+import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDriveItemVersion;
+import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDriveItemZipFile;
+import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newSpecialDriveItem;
+import static com.amilesend.onedrive.connection.parse.resource.parser.SiteTestDataHelper.newFieldValueSet;
+import static com.amilesend.onedrive.connection.parse.resource.parser.SiteTestDataHelper.newGetColumnValuesResponse;
+import static com.amilesend.onedrive.connection.parse.resource.parser.SiteTestDataHelper.newList;
+import static com.amilesend.onedrive.connection.parse.resource.parser.SiteTestDataHelper.newListItem;
+import static com.amilesend.onedrive.connection.parse.resource.parser.SiteTestDataHelper.newListItemVersion;
+import static com.amilesend.onedrive.connection.parse.resource.parser.SiteTestDataHelper.newSite;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newAsyncJobStatus;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newItemActivity;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newPermission;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newPreview;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newThumbnailSet;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -217,6 +239,45 @@ public class GsonParserTest {
     }
 
     ///////////////////////////////
+    // FieldValueSetParser
+    ///////////////////////////////
+
+    @Test
+    public void fieldValueSetParser_withValidInputStream_shouldReturnDriveItemVersionList() {
+        final Map<String, Object> expected = newFieldValueSet();
+        final Map<String, Object> actual =
+                new FieldValueSetParser().parse(gson, SerializedResource.FIELD_VALUE_SET.getResource());
+        assertAll(
+                () -> assertEquals(expected, actual),
+                () -> assertEquals(expected.hashCode(), actual.hashCode()));
+    }
+
+    @Test
+    public void fieldValueSetParser_withInvalidParameters_shouldThrowException() {
+        parse_withInvalidParameters_shouldThrowException(new FieldValueSetParser());
+    }
+
+    //////////////////////////////////
+    // GetColumnValuesResponseParser
+    //////////////////////////////////
+
+    @Test
+    public void getColumnValuesResponseParser_withValidInputStream_shouldReturnResponse() {
+        final GetColumnValuesResponse expected = newGetColumnValuesResponse();
+        final GetColumnValuesResponse actual = new GetColumnValuesResponseParser()
+                .parse(gson, SerializedResource.GET_COLUMN_VALUES_RESPONSE.getResource());
+
+        assertAll(
+                () -> assertEquals(expected, actual),
+                () -> assertEquals(expected.hashCode(), actual.hashCode()));
+    }
+
+    @Test
+    public void getColumnValuesResponseParser_withInvalidParameters_shouldThrowException() {
+        parse_withInvalidParameters_shouldThrowException(new GetColumnValuesResponseParser());
+    }
+
+    ///////////////////////////////
     // ItemActivityListParser
     ///////////////////////////////
 
@@ -236,6 +297,120 @@ public class GsonParserTest {
     }
 
     ///////////////////////////////
+    // ListItemParser
+    ///////////////////////////////
+
+    @Test
+    public void listItemParser_withValidInputStream_shouldReturnListItem() {
+        final String siteId = "SiteIdValue";
+        final String listId = "ListIdValue";
+        final ListItem expected = newListItem(connection, siteId, listId);
+        final ListItem actual =
+                new ListItemParser(siteId, listId).parse(gson, SerializedResource.LIST_ITEM.getResource());
+
+        assertAll(
+                () -> assertEquals(expected, actual),
+                () -> assertEquals(expected.hashCode(), actual.hashCode()));
+    }
+
+    @Test
+    public void listItemParser_withInvalidParameters_shouldThrowException() {
+        parse_withInvalidParameters_shouldThrowException(new ListItemParser("SiteIdValue", "ListIdValue"));
+    }
+
+    ///////////////////////////////
+    // ListItemVersionListParser
+    ///////////////////////////////
+
+    @Test
+    public void listItemVersionListParser_withValidInputStream_shouldReturnListItemVersionList() {
+        final String siteId = "SiteIdValue";
+        final String listId = "ListIdValue";
+        final String listItemId = "ListItemIdValue";
+        final List<ListItemVersion> expected = List.of(
+                newListItemVersion(connection, siteId, listId, listItemId),
+                newListItemVersion(connection, siteId, listId, listItemId));
+        final List<ListItemVersion> actual =
+                new ListItemVersionListParser(siteId, listId, listItemId)
+                        .parse(gson, SerializedResource.LIST_ITEM_VERSION_LIST.getResource());
+
+        assertAll(
+                () -> assertEquals(expected, actual),
+                () -> assertEquals(expected.hashCode(), actual.hashCode()));
+    }
+
+    @Test
+    public void listItemVersionListParser_withInvalidParameters_shouldThrowException() {
+        parse_withInvalidParameters_shouldThrowException(
+                new ListItemVersionListParser("SiteIdValue", "ListIdValue", "ListItemIdValue"));
+    }
+
+    ///////////////////////////////
+    // ListItemVersionParser
+    ///////////////////////////////
+
+    @Test
+    public void listItemVersionParser_withValidInputStream_shouldReturnListItemVersion() {
+        final String siteId = "SiteIdValue";
+        final String listId = "ListIdValue";
+        final String listItemId = "ListItemIdValue";
+        final ListItemVersion expected = newListItemVersion(connection, siteId, listId, listItemId);
+        final ListItemVersion actual =
+                new ListItemVersionParser(siteId, listId, listItemId)
+                        .parse(gson, SerializedResource.LIST_ITEM_VERSION.getResource());
+
+        assertAll(
+                () -> assertEquals(expected, actual),
+                () -> assertEquals(expected.hashCode(), actual.hashCode()));
+    }
+
+    @Test
+    public void listItemVersionParser_withInvalidParameters_shouldThrowException() {
+        parse_withInvalidParameters_shouldThrowException(
+                new ListItemVersionParser("SiteIdValue", "ListIdValue", "ListItemIdValue"));
+    }
+
+    ///////////////////////////////
+    // ListListParser
+    ///////////////////////////////
+
+    @Test
+    public void listListParser_withValidInputStream_shouldReturnListOfLists() {
+        final String siteId = "SiteIdValue";
+        final List<com.amilesend.onedrive.resource.site.List> expected = List.of(newList(connection, siteId));
+        final List<com.amilesend.onedrive.resource.site.List> actual =
+                new ListListParser(siteId).parse(gson, SerializedResource.LIST_OF_LIST.getResource());
+
+        assertAll(
+                () -> assertEquals(expected, actual),
+                () -> assertEquals(expected.hashCode(), actual.hashCode()));
+    }
+
+    @Test
+    public void listListParser_withInvalidParameters_shouldThrowException() {
+        parse_withInvalidParameters_shouldThrowException(new ListListParser("SiteIdValue"));
+    }
+
+
+    public Gson newInstanceForConnection(final OneDriveConnection oneDriveConnection) {
+        return new GsonBuilder()
+                .setPrettyPrinting()
+                .setExclusionStrategies(new AnnotationBasedExclusionStrategy())
+                .addSerializationExclusionStrategy(new AnnotationBasedSerializationExclusionStrategy())
+                // Resource types with methods that interact with the API
+                .registerTypeAdapter(Drive.class, new DriveInstanceCreator(oneDriveConnection))
+                .registerTypeAdapter(DriveItem.class, new DriveItemInstanceCreator(oneDriveConnection))
+                .registerTypeAdapter(SpecialDriveItem.class, new SpecialDriveItemInstanceCreator(oneDriveConnection))
+                .registerTypeAdapter(DriveItemVersion.class, new DriveItemVersionInstanceCreator(oneDriveConnection))
+                .registerTypeAdapter(Permission.class, new PermissionInstanceCreator(oneDriveConnection))
+                .registerTypeAdapter(Site.class, new SiteInstanceCreator(oneDriveConnection))
+                .registerTypeAdapter(ListItem.class, new ListItemInstanceCreator(oneDriveConnection))
+                .registerTypeAdapter(ListItemVersion.class, new ListItemVersionInstanceCreator(oneDriveConnection))
+                .create();
+    }
+
+
+    ///////////////////////////////
     // PermissionParser
     ///////////////////////////////
 
@@ -244,6 +419,7 @@ public class GsonParserTest {
         final Permission expected = newPermission(connection, "driveItemIdValue");
         final Permission actual = new PermissionParser("driveItemIdValue")
                 .parse(gson, SerializedResource.PERMISSION.getResource());
+
         assertAll(
                 () -> assertEquals(expected, actual),
                 () -> assertEquals(expected.hashCode(), actual.hashCode()));
@@ -265,6 +441,7 @@ public class GsonParserTest {
                 newPermission(connection, "driveItemIdValue"));
         final List<Permission> actual = new PermissionListParser("driveItemIdValue")
                 .parse(gson, SerializedResource.PERMISSION_LIST.getResource());
+
         assertAll(
                 () -> assertEquals(expected, actual),
                 () -> assertEquals(expected.hashCode(), actual.hashCode()));
@@ -292,6 +469,45 @@ public class GsonParserTest {
     @Test
     public void previewParser_withInvalidParameters_shouldThrowException() {
         parse_withInvalidParameters_shouldThrowException(new PreviewParser("driveItemIdValue"));
+    }
+
+    ///////////////////////////////
+    // SiteParser
+    ///////////////////////////////
+
+    @Test
+    public void siteParser_withValidInputStream_shouldReturnSite() {
+        final Site expected = newSite(connection);
+        final Site actual = new SiteParser().parse(gson, SerializedResource.SITE.getResource());
+
+        assertAll(
+                () -> assertEquals(expected, actual),
+                () -> assertEquals(expected.hashCode(), actual.hashCode()));
+    }
+
+    @Test
+    public void siteParser_withInvalidParameters_shouldThrowException() {
+        parse_withInvalidParameters_shouldThrowException(new SiteParser());
+    }
+
+    ///////////////////////////////
+    // SiteListParser
+    ///////////////////////////////
+
+    @Test
+    public void setListParser_withValidInputStream_shouldReturnSiteList() {
+        final java.util.List<Site> expected = List.of(newSite(connection), newSite(connection));
+        final java.util.List<Site> actual =
+                new SiteListParser().parse(gson, SerializedResource.SITE_LIST.getResource());
+
+        assertAll(
+                () -> assertEquals(expected, actual),
+                () -> assertEquals(expected.hashCode(), actual.hashCode()));
+    }
+
+    @Test
+    public void siteListParser_withInvalidParameters_shouldThrowException() {
+        parse_withInvalidParameters_shouldThrowException(new SiteListParser());
     }
 
     ///////////////////////////////

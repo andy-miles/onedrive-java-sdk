@@ -76,13 +76,14 @@ documented APIs are implemented.
    1. Or you can roll your own OAuth solution to obtain the auth code and persist tokens for server-to-server use-cases
 2. Automatic credential token refresh support
 3. Synchronous and asynchronous file transfer operations with a customizable transfer progress callback interface for extensibility
+4. Business account support to access group resources as well as SharePoint document libraries
+   1. Note: This is currently untested with a real business account.  Please file a <a href="https://github.com/andy-miles/onedrive-java-sdk/issues">bug report</a> if any issues are encountered.
 
 <a name="unsupported-features"></a>
 ## Current Unsupported Features
-1. User drive access is the only supported configuration with this release, but plans to support group and site-based access is on the roadmap.
-2. [Upload sessions](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession) for uploading larges files in segments
-3. [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
-4. [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)
+1. [Upload sessions](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession) for uploading larges files in segments
+2. [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
+3. [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)
 
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
 
@@ -96,6 +97,7 @@ needs to be registered via the [Azure Apps Registration Page](https://aka.ms/App
 
 Key configuration  to note:
 1. The following <strong>delegated</strong> API permissions are recommended: <code>Files.ReadWrite.All</code> <code>User.Read</code> <code>offline_access</code>
+   1. The following <strong>delegated</strong> API permission are recommended for business accounts access SharePoint sites: <code>Sites.ReadWrite.All</code> <code>Sites.Manage.All</code> <code>Sites.FullControl.All</code>
 2. If using the default OAuth receiver to handle the redirect for auth code grants, then set the redirect URL to <code>http://localhost:8890/Callback </code>
 3. Generate your own client secret, and record your application's client ID and client secret value.
    1. You can save this as a JAR bundled resource within your project named <code>/ms-onedrive-credentials.json</code> and should be formatted as:
@@ -272,6 +274,40 @@ authInfo = oneDrive.getAuthInfo(); // Gets the updated tokens after refresh
 
 </details>
 
+### Obtaining a <code>BusinessOneDrive</code> instance
+
+<details>
+<summary>BusinessOneDrive initialization</summary>
+
+```java
+OkHttpClient httpClient = new OkHttpClientBuilder().build();
+
+BusinessAccountAuthManager authManager = BusinessAccountAuthManager.builderWithAuthCode()
+        .authCode(myAuthCode) // Auth code from your OAuth handshake
+        .clientId(myClientId) // Your application's client identifier
+        .clientSecret(myClientSecret) // Your application's client secret
+        .httpClient(httpClient)
+        .redirectUrl(myRedirectUrl) // The redirect URL associated with your OAuth flow
+        .buildWithAuthCode();
+
+// Discover and authenticate with a registered service
+List<Service> services = authManager.getServices();
+authManager.authenticateService(services.get(0));
+
+// Create a new BusinessOneDrive instance
+BusinessOneDrive oneDrive = new BusinessOneDrive(
+    OneDriveConnectionBuilder.newInstance()
+        .httpClient(httpClient)
+        .authManager(authManager)
+        .build(authManager.getAuthInfo()));
+
+// Access business related resources
+Site rootSite = oneDrive.getRootSite();
+```
+
+
+</details>
+
 ### Obtaining list of contents of a user's default drive
 ```java
 DriveFolder rootFolder = oneDrive.getUserDrive().getRootFolder();
@@ -357,7 +393,7 @@ DriveFileDownloadExecution downloadExec = myFile.downloadAsync(Paths.get("./"), 
 ## Roadmap
 - [x] ~~Add functional test coverage (use of a MockWebServer)~~
 - [ ] Add integration test coverage
-- [ ] Group and Site based access for non-personal accounts
+- [x] ~~Group and Site based access for non-personal accounts~~
 - [X] ~~Add an interface to access and persist tokens for the OneDriveFactoryStateManager (e.g., tokens stored via a database or service)~~ (v0.1.1)
 - [X] ~~Obtaining [embeddable file previews](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview)~~ (v0.1.2)
 - [ ] [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)

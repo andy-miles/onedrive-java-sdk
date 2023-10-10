@@ -25,7 +25,6 @@ import com.amilesend.onedrive.parse.GsonParser;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -63,15 +62,12 @@ import static com.google.common.net.MediaType.JSON_UTF_8;
 public class OneDriveConnection {
     public static final String JSON_CONTENT_TYPE = JSON_UTF_8.toString();
     public static final MediaType JSON_MEDIA_TYPE = MediaType.parse(JSON_CONTENT_TYPE);
-
-    private static final String BASE_URL = "https://graph.microsoft.com/v1.0";
     private static final String GZIP_ENCODING = "gzip";
     private static final String THROTTLED_RETRY_AFTER_HEADER = "Retry-After";
     private static int THROTTLED_RESPONSE_CODE = 429;
 
     private final OkHttpClient httpClient;
     /** The authorization manager used to manage auth tokens. */
-    @SuppressFBWarnings("EI_EXPOSE_REP")
     @Getter
     private final AuthManager authManager;
     /** The configured GSON instance used for marshalling request and responses to/from JSON. */
@@ -98,16 +94,7 @@ public class OneDriveConnection {
         this.httpClient = httpClient;
         this.authManager = authManager;
         this.gson = gsonFactory.newInstanceForConnection(this);
-        this.baseUrl = StringUtils.isBlank(baseUrl) ? BASE_URL : baseUrl;
-    }
-
-    /**
-     * Refreshes the current authentication token if expired.
-     *
-     * @return the full authentication token
-     */
-    public String refreshIfExpired() {
-        return authManager.refreshIfExpiredAndFetchFullToken();
+        this.baseUrl = StringUtils.isBlank(baseUrl) ? authManager.getAuthenticatedEndpoint() : baseUrl;
     }
 
     /**
@@ -118,7 +105,7 @@ public class OneDriveConnection {
      */
     public Request.Builder newSignedForRequestBuilder() {
         return new Request.Builder()
-                .addHeader(AUTHORIZATION, refreshIfExpired());
+                .addHeader(AUTHORIZATION, authManager.refreshIfExpiredAndFetchFullToken());
     }
 
     /**

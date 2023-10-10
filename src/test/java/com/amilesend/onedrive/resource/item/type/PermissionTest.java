@@ -26,7 +26,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newPermission;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newPermission;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PermissionTest {
-    private static final String BASE_URL = "http://localhost";
+    private static final String BASE_URL = "http://localhost/me";
     private static final int SUCCESS_RESPONSE_CODE = 200;
 
     @Mock
@@ -59,7 +59,7 @@ public class PermissionTest {
         assertAll(
                 () -> verify(mockConnection).execute(requestCaptor.capture()),
                 () -> assertEquals(
-                        BASE_URL + "/me/drive/items/DriveItemId/permissions/PermissionId-DriveItemId",
+                        BASE_URL + "/drive/items/DriveItemId/permissions/PermissionId-DriveItemId",
                         requestCaptor.getValue().url().toString()));
     }
 }

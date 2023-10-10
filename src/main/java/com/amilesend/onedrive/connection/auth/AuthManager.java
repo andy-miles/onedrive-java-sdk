@@ -17,150 +17,48 @@
  */
 package com.amilesend.onedrive.connection.auth;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.gson.Gson;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.Setter;
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 
-import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static com.google.common.net.MediaType.FORM_DATA;
 
 /**
- * Manager that is responsible for obtaining and refreshing tokens to interact with a
- * OneDrive account.  Note: This does not manage the initial stages of the OAUTH request
- * flow and instead relies on a provided auth code or a pre-existing refresh token.
- * <p>Example initializing with an auth code:</p>
- * <pre>
- * AuthManager authManager = AuthManager.builderWithAuthCode()
- *         .httpClient(client) // the OKHttpClient instance
- *         .gsonFactory(gsonFactory) // preconfigured Gson instances
- *         .clientId(clientId) // the client ID of your application
- *         .clientSecret(clientSecret) // the client secret of your application
- *         .redirectUrl(redirectUrl) // the redirect URL for OAUTH flow
- *         .authCode(authCode) // The obtained auth code from initial OAUTH handshake
- *         .buildWithAuthCode();
- * </pre>
- * <p>Example initializing with an AuthInfo (pre-existing refresh token):</p>
- * <pre>
- * AuthManager.builderWithAuthInfo()
- *         .httpClient(client)
- *         .gsonFactory(gsonFactory)
- *         .clientId(clientId)
- *         .clientSecret(clientSecret)
- *         .redirectUrl(redirectUrl)
- *         .authInfo(authInfo) // Instead of an auth code, an AuthInfo object is used to obtain the refresh token
- *         .buildWithAuthInfo();
- * </pre>
- *
- * @see AuthInfo
+ *  The interface that defines the manager that is responsible for obtaining and refreshing tokens
+ *  to interact with a OneDrive account. Note: This does not manage the initial stages of the OAUTH request
+ *  flow and instead relies on a provided auth code or a pre-existing refresh token.
  */
-public class AuthManager {
-    private static final String AUTH_TOKEN_URL =
-            "https://login.microsoftonline.com/common/oauth2/v2.0/token";
-    private static final String FORM_DATA_CONTENT_TYPE = FORM_DATA.toString();
-
-    /** The client identifier. */
-    private final String clientId;
-    /** The client secret. */
-    private final String clientSecret;
-    /** The redirect URL. */
-    private final String redirectUrl;
-    /** The underlying HTTP client. */
-    private final OkHttpClient httpClient;
-    /** The GSON instance used for JSON serialization. */
-    private final Gson gson;
-    /** The base URL used to authenticate and refresh authorization tokens. */
-    private final String baseTokenUrl;
-    /** The current authentication information. */
-    @Setter(AccessLevel.PACKAGE)
-    @VisibleForTesting
-    private volatile AuthInfo authInfo;
-
-    /** Used to initialize and manage authentication for a given auth code. */
-    @Builder(builderClassName = "BuilderWithAuthCode",
-             buildMethodName = "buildWithAuthCode",
-             builderMethodName = "builderWithAuthCode")
-    private AuthManager(@NonNull final OkHttpClient httpClient,
-                        @NonNull final Gson gson,
-                        final String baseTokenUrl,
-                        final String clientId,
-                        final String clientSecret,
-                        final String redirectUrl,
-                        final String authCode) {
-        Validate.notBlank(authCode, "authCode must not be blank");
-        Validate.notBlank(clientId, "clientId must not be blank");
-        Validate.notBlank(clientSecret, "clientSecret must not be blank");
-        Validate.notBlank(redirectUrl, "redirectUrl must not be blank");
-
-        this.baseTokenUrl = StringUtils.isNotBlank(baseTokenUrl) ? baseTokenUrl : AUTH_TOKEN_URL;
-        this.httpClient = httpClient;
-        this.gson = gson;
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.redirectUrl = redirectUrl;
-        this.authInfo = redeemToken(authCode);
-    }
-
-    /** Used to manage authentication for an existing AuthInfo that contains a refresh token. */
-    @Builder(builderClassName = "BuilderWithAuthInfo",
-             builderMethodName = "builderWithAuthInfo",
-             buildMethodName = "buildWithAuthInfo")
-    private AuthManager(@NonNull final OkHttpClient httpClient,
-                        @NonNull final Gson gson,
-                        final String baseTokenUrl,
-                        final String clientId,
-                        final String clientSecret,
-                        final String redirectUrl,
-                        @NonNull final AuthInfo authInfo) {
-        Validate.notBlank(clientId, "clientId must not be blank");
-        Validate.notBlank(clientSecret, "clientSecret must not be blank");
-        Validate.notBlank(redirectUrl, "redirectUrl must not be blank");
-
-        this.baseTokenUrl = StringUtils.isNotBlank(baseTokenUrl) ? baseTokenUrl : AUTH_TOKEN_URL;
-        this.httpClient = httpClient;
-        this.gson = gson;
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.redirectUrl = redirectUrl;
-        this.authInfo = authInfo;
-        refreshToken();
-    }
+public interface AuthManager {
+    String AUTH_TOKEN_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
+    String FORM_DATA_CONTENT_TYPE = FORM_DATA.toString();
+    String CLIENT_ID_BODY_PARAM = "client_id";
+    String CLIENT_SECRET_BODY_PARAM = "client_secret";
+    String REDIRECT_URI_BODY_PARAM = "redirect_uri";
+    String AUTH_CODE_BODY_ARAM = "code";
+    String REFRESH_TOKEN_BODY_PARAM = "refresh_token";
+    String GRANT_TYPE_BODY_PARAM = "grant_type";
+    String AUTH_CODE_GRANT_TYPE_BODY_PARAM_VALUE = "authorization_code";
+    String REFRESH_TOKEN_GRANT_TYPE_BODY_PARAM_VALUE = REFRESH_TOKEN_BODY_PARAM;
 
     /**
      * Determines if the current authentication information is up-to-date.
      *
      * @return {@code true} if authenticated; else, {@code false}
      */
-    public boolean isAuthenticated() {
-        return authInfo != null;
-    }
+    boolean isAuthenticated();
 
     /**
      * Determines if the current authentication information is expired.
      *
      * @return {@code true} if expired; else, {@code false}
      */
-    public boolean isExpired() {
-        if (!isAuthenticated()) {
-            throw new AuthManagerException("Not authenticated");
-        }
-
-        return System.currentTimeMillis() >= authInfo.getExpiresIn();
-    }
+    boolean isExpired();
 
     /**
      * Checks to see if the current authentication info is expired and refreshes the tokens
      * accordingly.
      */
-    public void refreshIfExpired() {
+    default void refreshIfExpired() {
         if (isExpired()) {
             refreshToken();
         }
@@ -171,7 +69,7 @@ public class AuthManager {
      *
      * @return the full auth token
      */
-    public String refreshIfExpiredAndFetchFullToken() {
+    default String refreshIfExpiredAndFetchFullToken() {
         refreshIfExpired();
         return getAuthInfo().getFullToken();
     }
@@ -182,40 +80,37 @@ public class AuthManager {
      * @return the authentication info
      * @see AuthInfo
      */
-    public AuthInfo getAuthInfo() {
-        refreshIfExpired();
-        return authInfo;
-    }
+    AuthInfo getAuthInfo();
 
-    private AuthInfo redeemToken(final String authCode) {
-        return fetchAuthInfo(new Request.Builder()
-                .url(baseTokenUrl)
-                .header(CONTENT_TYPE, FORM_DATA.toString())
-                .post(new FormBody.Builder()
-                        .add("client_id", clientId)
-                        .add("client_secret", clientSecret)
-                        .add("redirect_uri", redirectUrl)
-                        .add("code", authCode)
-                        .add("grant_type", "authorization_code")
-                        .build())
-                .build());
-    }
+    /** Retrieves the associated endpoint to use for OneDrive operations. */
+    String getAuthenticatedEndpoint();
 
-    private AuthInfo refreshToken() {
-       return fetchAuthInfo(new Request.Builder()
-                .url(baseTokenUrl)
-                .header(CONTENT_TYPE, FORM_DATA_CONTENT_TYPE)
-                .post(new FormBody.Builder()
-                        .add("client_id", clientId)
-                        .add("client_secret", clientSecret)
-                        .add("redirect_uri", redirectUrl)
-                        .add("refresh_token", authInfo.getRefreshToken())
-                        .add("grant_type", "refresh_token")
-                        .build())
-                .build());
-    }
+    /**
+     * Issues a request to redeem the given {@code authCode} in order to retrieve access and refresh tokens as a
+     * {@link AuthInfo}.
+     *
+     * @param authCode the authorization code
+     * @return the authorization information
+     * @see AuthInfo
+     */
+    AuthInfo redeemToken(String authCode);
 
-    private AuthInfo fetchAuthInfo(final Request request) {
+    /**
+     * Issues a request to refresh the auth tokens and returns the refreshed tokens as a {@link AuthInfo}.
+     *
+     * @return the authorization information
+     * @see AuthInfo
+     */
+    AuthInfo refreshToken();
+
+    /**
+     * Helper method to dispatch the request to redeem or refresh authorization tokens.
+     *
+     * @param httpClient the http client
+     * @param request the request
+     * @return the authorization information
+     */
+    static AuthInfo fetchAuthInfo(final OkHttpClient httpClient, final Request request) {
         try {
             try (final Response response = httpClient.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
@@ -223,8 +118,7 @@ public class AuthManager {
                 }
 
                 final String json = response.body().string();
-                authInfo = AuthInfo.fromJson(json);
-                return authInfo;
+                return AuthInfo.fromJson(json);
             }
         } catch (final AuthManagerException ex) {
             throw ex;

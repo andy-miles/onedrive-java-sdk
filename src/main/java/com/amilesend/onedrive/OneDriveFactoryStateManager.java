@@ -75,7 +75,7 @@ import static com.amilesend.onedrive.connection.auth.oauth.OAuthReceiver.browse;
  * with the provided {@link OkHttpClientBuilder}, or alternatively with OkHttp's builder: {@link OkHttpClient.Builder}.
  */
 @Slf4j
-public class OneDriveFactoryStateManager implements AutoCloseable {
+public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoCloseable {
     private static final int DEFAULT_RECEIVER_PORT = 8890;
     private static final String DEFAULT_CALLBACK_PATH = "/Callback";
     private static final String DEFAULT_REDIRECT_URL = "http://localhost:8890" + DEFAULT_CALLBACK_PATH;
@@ -104,11 +104,13 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
     private String callbackPath;
     @Setter(AccessLevel.PACKAGE)
     @VisibleForTesting
-    private OneDrive onedrive;
+    private T onedrive;
+    private Class<T> onedriveType;
 
     /**
      * Builds a new {@code OneDriveFactoryStateManager}.
      *
+     * @param onedriveType the class type of the OneDrive instance that is to be created
      * @param httpClient the http client
      * @param receiverPort the port for the OAUTH redirect receiver to listen on
      * @param redirectUrl the redirect URL for the OAUTH redirect receiver
@@ -120,7 +122,8 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
      * @param authInfoStore the store used to persist and retrieve the auth state
      */
     @Builder
-    private OneDriveFactoryStateManager(final OkHttpClient httpClient,
+    private OneDriveFactoryStateManager(final Class<T> onedriveType,
+                                        final OkHttpClient httpClient,
                                         final Integer receiverPort,
                                         final String redirectUrl,
                                         final String callbackPath,
@@ -129,6 +132,7 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
                                         final CredentialConfig credentialConfig,
                                         final Path stateFile,
                                         final AuthInfoStore authInfoStore) {
+        this.onedriveType = onedriveType == null ? (Class<T>) OneDrive.class : onedriveType;
         this.httpClient = httpClient == null ? new OkHttpClientBuilder().build() : httpClient;
         this.stateGson = stateGson == null ? GsonFactory.getInstance().getInstanceForStateManager() : stateGson;
         this.redirectUrl = StringUtils.isBlank(redirectUrl) ? DEFAULT_REDIRECT_URL : redirectUrl;
@@ -153,9 +157,9 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
      * @return the authenticated OneDrive instance
      * @throws OneDriveException if unable to authenticate while creating a new OneDrive instance
      */
-    public OneDrive getInstance() throws OneDriveException {
+    public T getInstance() throws OneDriveException {
         try {
-            final OneDrive oneDrive = fetchOneDrive();
+            final T oneDrive = fetchOneDrive();
             log.info("OneDrive logged in user: {}", oneDrive.getUserDisplayName());
             return oneDrive;
         } catch (final OAuthReceiverException ex) {
@@ -181,7 +185,7 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
     }
 
     @VisibleForTesting
-    OneDrive fetchOneDrive() throws OAuthReceiverException, OneDriveException {
+    T fetchOneDrive() throws OAuthReceiverException, OneDriveException {
         if (onedrive != null) {
             return onedrive;
         }
@@ -203,10 +207,11 @@ public class OneDriveFactoryStateManager implements AutoCloseable {
                 log.debug("No state found. Authenticating application for user");
                 connection = connectionBuilder.build(authenticate(config));
             }
-            onedrive = new OneDrive(connection);
+
+            onedrive = onedriveType.getDeclaredConstructor(OneDriveConnection.class).newInstance(connection);
             saveState();
             return onedrive;
-        } catch (final IOException ex) {
+        } catch (final IOException | ReflectiveOperationException ex) {
             throw new OneDriveException(
                     "An error occurred while fetching credential or auth state: " + ex.getMessage(), ex);
         }

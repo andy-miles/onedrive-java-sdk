@@ -19,6 +19,7 @@ package com.amilesend.onedrive;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.auth.AuthManager;
+import com.amilesend.onedrive.connection.auth.PersonalAccountAuthManager;
 import com.amilesend.onedrive.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import com.amilesend.onedrive.connection.parse.resource.parser.SerializedResource;
@@ -37,12 +38,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static com.amilesend.onedrive.connection.auth.AuthManagerFunctionalTest.AUTH_CODE;
-import static com.amilesend.onedrive.connection.auth.AuthManagerFunctionalTest.CLIENT_ID;
-import static com.amilesend.onedrive.connection.auth.AuthManagerFunctionalTest.CLIENT_SECRET;
-import static com.amilesend.onedrive.connection.auth.AuthManagerFunctionalTest.REDIRECT_URL;
-import static com.amilesend.onedrive.connection.auth.AuthManagerFunctionalTest.TOKEN_JSON_RESPONSE;
-import static com.amilesend.onedrive.connection.auth.AuthManagerFunctionalTest.TOKEN_URL_PATH;
+import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.TOKEN_JSON_RESPONSE;
+import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.TOKEN_URL_PATH;
+import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerTest.AUTH_CODE;
+import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerTest.CLIENT_ID;
+import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerTest.CLIENT_SECRET;
+import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerTest.REDIRECT_URL;
 
 public class FunctionalTestBase {
     protected static final int SUCCESS_STATUS_CODE = 200;
@@ -124,11 +125,10 @@ public class FunctionalTestBase {
                 .setBody(TOKEN_JSON_RESPONSE));
         final String authUrl = mockWebServer.url(TOKEN_URL_PATH).toString();
 
-        authManager = AuthManager.builderWithAuthCode()
+        authManager = PersonalAccountAuthManager.builderWithAuthCode()
                 .authCode(AUTH_CODE)
                 .clientId(CLIENT_ID)
                 .clientSecret(CLIENT_SECRET)
-                .gson(GsonFactory.getInstance().getInstanceForAuthManager())
                 .httpClient(httpClient)
                 .redirectUrl(REDIRECT_URL)
                 .baseTokenUrl(authUrl)

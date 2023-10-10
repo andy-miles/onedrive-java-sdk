@@ -1,0 +1,47 @@
+{
+  "fields": {
+    "column1": "SomeString",
+    "column4": 100.5,
+    "column3": 1000.0,
+    "column2": false
+  },
+  "id": "ListItemVersionIdValue",
+  "lastModifiedBy": {
+    "user": {
+      "displayName": "IdentityName",
+      "id": "IdentityId",
+      "thumbnails": {
+        "id": "ThumbnailId",
+        "large": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "LargeThumbnailUrlValue",
+          "width": 100
+        },
+        "medium": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "MediumThumbnailUrlValue",
+          "width": 100
+        },
+        "small": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SmallThumbnailUrlValue",
+          "width": 100
+        },
+        "source": {
+          "height": 100,
+          "sourceItemId": "SourceItemIdValue",
+          "url": "SourceThumbnailUrlValue",
+          "width": 100
+        }
+      }
+    }
+  },
+  "lastModifiedDateTime": "LastModifiedDateTimestampValue",
+  "published": {
+    "level": "published",
+    "versionId": "ListItemVersionIdValue"
+  }
+}

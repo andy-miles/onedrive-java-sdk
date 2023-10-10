@@ -44,12 +44,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newDriveItemVersion;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newDriveItemZipFile;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newItemActivity;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newPermission;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newPreview;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newThumbnailSet;
+import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDriveItemVersion;
+import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDriveItemZipFile;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newItemActivity;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newPermission;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newPreview;
+import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newThumbnailSet;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

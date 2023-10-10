@@ -1,0 +1,13 @@
+{
+  "@odata.context": "ContextValue",
+  "value": [
+    {
+      "@odata.type": "ServiceInfo",
+      "capability": "ServiceCapability",
+      "serviceName": "MyFiles",
+      "serviceApiVersion": "v1",
+      "serviceEndpointUri": "http://mysite",
+      "serviceResourceId": "http://mysite"
+    }
+  ]
+}

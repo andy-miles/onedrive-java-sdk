@@ -27,8 +27,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.amilesend.onedrive.connection.auth.AuthManagerFunctionalTest.validateAuthInfo;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newDrive;
+import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.validateAuthInfo;
+import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDrive;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -86,6 +86,32 @@ public class OneDriveFunctionalTest extends FunctionalTestBase {
     public void getAvailableDrives_withServiceErrorResponse_shouldThrowException() {
         setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
         assertThrows(ResponseException.class, () -> getOneDriveUnderTest().getAvailableDrives());
+    }
+
+    ////////////////////////
+    // getDrive
+    ////////////////////////
+
+    @Test
+    public void getDrive_withValidDriveId_shouldReturnDrive() {
+        setUpMockResponse(SUCCESS_STATUS_CODE, SerializedResource.DRIVE);
+        final Drive expected = new Drive(newDrive(getOneDriveConnection(), 1));
+
+        final Drive actual = getOneDriveUnderTest().getDrive(expected.getId());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getDrive_withErrorResponse_shouldThrowException() {
+        setUpMockResponse(ERROR_STATUS_CODE);
+        assertThrows(RequestException.class, () -> getOneDriveUnderTest().getDrive("SomeDriveId"));
+    }
+
+    @Test
+    public void getDrive_withServiceErrorResponse_shouldThrowException() {
+        setUpMockResponse(SERVICE_ERROR_STATUS_CODE);
+        assertThrows(ResponseException.class, () -> getOneDriveUnderTest().getDrive("SomeDriveId"));
     }
 
     ////////////////////////

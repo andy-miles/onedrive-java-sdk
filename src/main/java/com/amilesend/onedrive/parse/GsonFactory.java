@@ -21,7 +21,10 @@ import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.parse.resource.creator.DriveInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.DriveItemInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.DriveItemVersionInstanceCreator;
+import com.amilesend.onedrive.parse.resource.creator.ListItemInstanceCreator;
+import com.amilesend.onedrive.parse.resource.creator.ListItemVersionInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.PermissionInstanceCreator;
+import com.amilesend.onedrive.parse.resource.creator.SiteInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.SpecialDriveItemInstanceCreator;
 import com.amilesend.onedrive.parse.strategy.AnnotationBasedExclusionStrategy;
 import com.amilesend.onedrive.parse.strategy.AnnotationBasedSerializationExclusionStrategy;
@@ -30,6 +33,9 @@ import com.amilesend.onedrive.resource.item.DriveItem;
 import com.amilesend.onedrive.resource.item.DriveItemVersion;
 import com.amilesend.onedrive.resource.item.SpecialDriveItem;
 import com.amilesend.onedrive.resource.item.type.Permission;
+import com.amilesend.onedrive.resource.site.ListItem;
+import com.amilesend.onedrive.resource.site.ListItemVersion;
+import com.amilesend.onedrive.resource.site.Site;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.AccessLevel;
@@ -44,6 +50,7 @@ public class GsonFactory {
     private static final Gson AUTH_MANAGER_GSON_INSTANCE = new GsonBuilder()
             .setFieldNamingPolicy(LOWER_CASE_WITH_UNDERSCORES)
             .create();
+    private static final Gson DISCOVERY_GSON_INSTANCE = new GsonBuilder().create();
     private static final Gson STATE_MANAGER_GSON_INSTANCE = new GsonBuilder().setPrettyPrinting().create();
 
 
@@ -77,6 +84,16 @@ public class GsonFactory {
     }
 
     /**
+     * Gets the {@link Gson} instance that is configured for use by
+     * {@link com.amilesend.onedrive.connection.auth.BusinessAccountAuthManager}.
+     *
+     * @return the pre-configured Gson instance
+     */
+    public Gson getInstanceForServiceDiscovery() {
+        return DISCOVERY_GSON_INSTANCE;
+    }
+
+    /**
      * Gets a new {@link Gson} instance that is configured for use by {@link OneDriveConnection}.
      *
      * @return the pre-configured Gson instance
@@ -91,6 +108,9 @@ public class GsonFactory {
                 .registerTypeAdapter(SpecialDriveItem.class, new SpecialDriveItemInstanceCreator(oneDriveConnection))
                 .registerTypeAdapter(DriveItemVersion.class, new DriveItemVersionInstanceCreator(oneDriveConnection))
                 .registerTypeAdapter(Permission.class, new PermissionInstanceCreator(oneDriveConnection))
+                .registerTypeAdapter(Site.class, new SiteInstanceCreator(oneDriveConnection))
+                .registerTypeAdapter(ListItem.class, new ListItemInstanceCreator(oneDriveConnection))
+                .registerTypeAdapter(ListItemVersion.class, new ListItemVersionInstanceCreator((oneDriveConnection)))
                 .create();
     }
 }

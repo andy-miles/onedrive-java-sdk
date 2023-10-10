@@ -17,7 +17,6 @@
  */
 package com.amilesend.onedrive.connection.auth;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.SneakyThrows;
 import okhttp3.Call;
@@ -51,19 +50,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthManagerTest {
-    private static final String AUTH_CODE = "TestAuthCode";
-    private static final String CLIENT_ID = "TestClientId";
-    private static final String CLIENT_SECRET = "TestClientSecret";
-    private static final String REDIRECT_URL = "http://TestRedirectUrl";
+public class PersonalAccountAuthManagerTest {
+    public static final String AUTH_CODE = "TestAuthCode";
+    public static final String CLIENT_ID = "TestClientId";
+    public static final String CLIENT_SECRET = "TestClientSecret";
+    public static final String REDIRECT_URL = "http://TestRedirectUrl";
     private static final List<String> SCOPES = List.of("Permission1", "Permission2");
-    private static final String BASE_AUTH_URL = "http://TestBaseUrl/token";
 
     @Mock
     private OkHttpClient mockHttpClient;
-    @Mock
-    private Gson mockGson;
-    private AuthManager authManagerUnderTest;
+    private PersonalAccountAuthManager authManagerUnderTest;
 
 
     //////////////////////////
@@ -73,19 +69,17 @@ public class AuthManagerTest {
     @Test
     public void builderWithAuthCode_withValidParameters_shouldRedeemToken() {
         final AuthInfo expected = newAuthInfo();
-        setUpCall(newResponse(true));
+        setUpCall(mockHttpClient, newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
             authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
 
-            authManagerUnderTest = AuthManager.builderWithAuthCode()
+            authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
-                    .baseTokenUrl(BASE_AUTH_URL)
                     .buildWithAuthCode();
 
             assertAll(
@@ -96,37 +90,33 @@ public class AuthManagerTest {
 
     @Test
     public void builderWithAuthCode_withUnsuccessfulResponse_shouldThrowException() {
-        setUpCall(newResponse(false));
+        setUpCall(mockHttpClient, newResponse(false));
 
         assertThrows(AuthManagerException.class,
-                () -> authManagerUnderTest = AuthManager.builderWithAuthCode()
+                () -> authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                         .authCode(AUTH_CODE)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .buildWithAuthCode());
     }
 
     @Test
     public void builderWithAuthCode_withJsonSyntaxException_shouldThrowException() {
-        setUpCall(newResponse(true));
+        setUpCall(mockHttpClient, newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
             authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString()))
                     .thenThrow(new JsonSyntaxException("Exception"));
 
             final Throwable thrown = assertThrows(AuthManagerException.class,
-                    () -> authManagerUnderTest = AuthManager.builderWithAuthCode()
+                    () -> authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                             .authCode(AUTH_CODE)
                             .clientId(CLIENT_ID)
                             .clientSecret(CLIENT_SECRET)
-                            .gson(mockGson)
                             .httpClient(mockHttpClient)
                             .redirectUrl(REDIRECT_URL)
-                            .baseTokenUrl(BASE_AUTH_URL)
                             .buildWithAuthCode());
 
             assertInstanceOf(JsonSyntaxException.class, thrown.getCause());
@@ -136,93 +126,69 @@ public class AuthManagerTest {
     @Test
     public void builderWithAuthCode_withInvalidParameters_shouldThrowException() {
         assertAll(
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthCode()
+                () -> assertThrows(NullPointerException.class, () -> PersonalAccountAuthManager.builderWithAuthCode()
                         .authCode(null) // Null authCode
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
-                () -> assertThrows(IllegalArgumentException.class, () ->AuthManager.builderWithAuthCode()
-                        .authCode(StringUtils.EMPTY) // Blank authCode
-                        .baseTokenUrl(BASE_AUTH_URL)
-                        .clientId(CLIENT_ID)
-                        .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
-                        .httpClient(mockHttpClient)
-                        .redirectUrl(REDIRECT_URL)
-                        .buildWithAuthCode()),
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthCode()
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> PersonalAccountAuthManager.builderWithAuthCode()
+                                .authCode(StringUtils.EMPTY) // Blank authCode
+                                .clientId(CLIENT_ID)
+                                .clientSecret(CLIENT_SECRET)
+                                .httpClient(mockHttpClient)
+                                .redirectUrl(REDIRECT_URL)
+                                .buildWithAuthCode()),
+                () -> assertThrows(NullPointerException.class, () -> PersonalAccountAuthManager.builderWithAuthCode()
                         .authCode(AUTH_CODE)
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(null) // Null clientId
                         .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
-                () -> assertThrows(IllegalArgumentException.class, () ->AuthManager.builderWithAuthCode()
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> PersonalAccountAuthManager.builderWithAuthCode()
+                                .authCode(AUTH_CODE)
+                                .clientId(StringUtils.EMPTY) // Blank clientId
+                                .clientSecret(CLIENT_SECRET)
+                                .httpClient(mockHttpClient)
+                                .redirectUrl(REDIRECT_URL)
+                                .buildWithAuthCode()),
+                () -> assertThrows(NullPointerException.class, () -> PersonalAccountAuthManager.builderWithAuthCode()
                         .authCode(AUTH_CODE)
-                        .baseTokenUrl(BASE_AUTH_URL)
-                        .clientId(StringUtils.EMPTY) // Blank clientId
-                        .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
-                        .httpClient(mockHttpClient)
-                        .redirectUrl(REDIRECT_URL)
-                        .buildWithAuthCode()),
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthCode()
-                        .authCode(AUTH_CODE)
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(null) // Null clientSecret
-                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
-                () -> assertThrows(IllegalArgumentException.class, () ->AuthManager.builderWithAuthCode()
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> PersonalAccountAuthManager.builderWithAuthCode()
+                                .authCode(AUTH_CODE)
+                                .clientId(CLIENT_ID)
+                                .clientSecret(StringUtils.EMPTY) // Blank clientSecret
+                                .httpClient(mockHttpClient)
+                                .redirectUrl(REDIRECT_URL)
+                                .buildWithAuthCode()),
+                () -> assertThrows(NullPointerException.class, () -> PersonalAccountAuthManager.builderWithAuthCode()
                         .authCode(AUTH_CODE)
-                        .baseTokenUrl(BASE_AUTH_URL)
-                        .clientId(CLIENT_ID)
-                        .clientSecret(StringUtils.EMPTY) // Blank clientSecret
-                        .gson(mockGson)
-                        .httpClient(mockHttpClient)
-                        .redirectUrl(REDIRECT_URL)
-                        .buildWithAuthCode()),
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthCode()
-                        .authCode(AUTH_CODE)
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gson(null) // Null gson
-                        .httpClient(mockHttpClient)
-                        .redirectUrl(REDIRECT_URL)
-                        .buildWithAuthCode()),
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthCode()
-                        .authCode(AUTH_CODE)
-                        .baseTokenUrl(BASE_AUTH_URL)
-                        .clientId(CLIENT_ID)
-                        .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
                         .httpClient(null) // Null httpClient
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthCode()),
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthCode()
+                () -> assertThrows(NullPointerException.class, () -> PersonalAccountAuthManager.builderWithAuthCode()
                         .authCode(AUTH_CODE)
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(null) // Null redirectUrl
                         .buildWithAuthCode()),
-                () -> assertThrows(IllegalArgumentException.class, () ->AuthManager.builderWithAuthCode()
+                () -> assertThrows(IllegalArgumentException.class, () -> PersonalAccountAuthManager.builderWithAuthCode()
                         .authCode(AUTH_CODE)
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(StringUtils.EMPTY) // Blank redirectUrl
                         .buildWithAuthCode()));
@@ -235,19 +201,17 @@ public class AuthManagerTest {
     @Test
     public void builderWithAuthInfo_withValidParameters_shouldRefreshToken() {
         final AuthInfo expected = newAuthInfo();
-        setUpCall(newResponse(true));
+        setUpCall(mockHttpClient, newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
             authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
 
-            authManagerUnderTest = AuthManager.builderWithAuthInfo()
+            authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthInfo()
                     .authInfo(expected)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
-                    .baseTokenUrl(BASE_AUTH_URL)
                     .buildWithAuthInfo();
 
             assertAll(
@@ -258,17 +222,15 @@ public class AuthManagerTest {
 
     @Test
     public void builderWithAuthInfo_withUnsuccessfulResponse_shouldThrowException() {
-        setUpCall(newResponse(false));
+        setUpCall(mockHttpClient, newResponse(false));
 
         assertThrows(AuthManagerException.class,
-                () -> authManagerUnderTest = AuthManager.builderWithAuthInfo()
+                () -> authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthInfo()
                         .authInfo(newAuthInfo())
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .buildWithAuthInfo());
     }
 
@@ -276,87 +238,65 @@ public class AuthManagerTest {
     public void builderWithAuthInfo_withInvalidParameters_shouldThrowException() {
         final AuthInfo authInfo = newAuthInfo();
         assertAll(
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthInfo()
+                () -> assertThrows(NullPointerException.class, () -> PersonalAccountAuthManager.builderWithAuthInfo()
                         .authInfo(null) // Null authInfo
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthInfo()),
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthInfo()
+                () -> assertThrows(NullPointerException.class, () -> PersonalAccountAuthManager.builderWithAuthInfo()
                         .authInfo(authInfo)
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(null) // Null clientId
                         .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthInfo()),
-                () -> assertThrows(IllegalArgumentException.class, () ->AuthManager.builderWithAuthInfo()
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> PersonalAccountAuthManager.builderWithAuthInfo()
+                                .authInfo(authInfo)
+                                .clientId(StringUtils.EMPTY) // Blank clientId
+                                .clientSecret(CLIENT_SECRET)
+                                .httpClient(mockHttpClient)
+                                .redirectUrl(REDIRECT_URL)
+                                .buildWithAuthInfo()),
+                () -> assertThrows(NullPointerException.class, () -> PersonalAccountAuthManager.builderWithAuthInfo()
                         .authInfo(authInfo)
-                        .baseTokenUrl(BASE_AUTH_URL)
-                        .clientId(StringUtils.EMPTY) // Blank clientId
-                        .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
-                        .httpClient(mockHttpClient)
-                        .redirectUrl(REDIRECT_URL)
-                        .buildWithAuthInfo()),
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthInfo()
-                        .authInfo(authInfo)
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(null) // Null clientSecret
-                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthInfo()),
-                () -> assertThrows(IllegalArgumentException.class, () ->AuthManager.builderWithAuthInfo()
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> PersonalAccountAuthManager.builderWithAuthInfo()
+                                .authInfo(authInfo)
+                                .clientId(CLIENT_ID)
+                                .clientSecret(StringUtils.EMPTY) // Blank clientSecret
+                                .httpClient(mockHttpClient)
+                                .redirectUrl(REDIRECT_URL)
+                                .buildWithAuthInfo()),
+                () -> assertThrows(NullPointerException.class, () -> PersonalAccountAuthManager.builderWithAuthInfo()
                         .authInfo(authInfo)
-                        .baseTokenUrl(BASE_AUTH_URL)
-                        .clientId(CLIENT_ID)
-                        .clientSecret(StringUtils.EMPTY) // Blank clientSecret
-                        .gson(mockGson)
-                        .httpClient(mockHttpClient)
-                        .redirectUrl(REDIRECT_URL)
-                        .buildWithAuthInfo()),
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthInfo()
-                        .authInfo(authInfo)
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gson(null) // Null gson
-                        .httpClient(mockHttpClient)
-                        .redirectUrl(REDIRECT_URL)
-                        .buildWithAuthInfo()),
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthInfo()
-                        .authInfo(authInfo)
-                        .baseTokenUrl(BASE_AUTH_URL)
-                        .clientId(CLIENT_ID)
-                        .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
                         .httpClient(null) // Null httpClient
                         .redirectUrl(REDIRECT_URL)
                         .buildWithAuthInfo()),
-                () -> assertThrows(NullPointerException.class, () ->AuthManager.builderWithAuthInfo()
+                () -> assertThrows(NullPointerException.class, () -> PersonalAccountAuthManager.builderWithAuthInfo()
                         .authInfo(authInfo)
-                        .baseTokenUrl(BASE_AUTH_URL)
                         .clientId(CLIENT_ID)
                         .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
                         .httpClient(mockHttpClient)
                         .redirectUrl(null) // Null redirectUrl
                         .buildWithAuthInfo()),
-                () -> assertThrows(IllegalArgumentException.class, () ->AuthManager.builderWithAuthInfo()
-                        .authInfo(authInfo)
-                        .baseTokenUrl(BASE_AUTH_URL)
-                        .clientId(CLIENT_ID)
-                        .clientSecret(CLIENT_SECRET)
-                        .gson(mockGson)
-                        .httpClient(mockHttpClient)
-                        .redirectUrl(StringUtils.EMPTY) // Blank redirectUrl
-                        .buildWithAuthInfo()));
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> PersonalAccountAuthManager.builderWithAuthInfo()
+                                .authInfo(authInfo)
+                                .clientId(CLIENT_ID)
+                                .clientSecret(CLIENT_SECRET)
+                                .httpClient(mockHttpClient)
+                                .redirectUrl(StringUtils.EMPTY) // Blank redirectUrl
+                                .buildWithAuthInfo()));
     }
 
     //////////////////////////
@@ -375,18 +315,16 @@ public class AuthManagerTest {
 
     private void isAuthenticated_shouldReturn(final boolean isAuthenticated) {
         final AuthInfo expected = newAuthInfo();
-        setUpCall(newResponse(true));
+        setUpCall(mockHttpClient, newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
             authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authManagerUnderTest = AuthManager.builderWithAuthCode()
+            authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
-                    .baseTokenUrl(BASE_AUTH_URL)
                     .buildWithAuthCode();
 
             if (isAuthenticated) {
@@ -419,18 +357,16 @@ public class AuthManagerTest {
 
     private void isExpired_shouldReturn(final boolean isExpired, final boolean isAuthenticated) {
         final AuthInfo expected = newAuthInfo(isExpired);
-        setUpCall(newResponse(true));
+        setUpCall(mockHttpClient, newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
             authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authManagerUnderTest = AuthManager.builderWithAuthCode()
+            authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
-                    .baseTokenUrl(BASE_AUTH_URL)
                     .buildWithAuthCode();
 
             if (!isAuthenticated) {
@@ -463,18 +399,16 @@ public class AuthManagerTest {
 
     private void refreshIfExpired_shouldRefresh(final boolean isExpired) {
         final AuthInfo expected = newAuthInfo(isExpired);
-        setUpCall(newResponse(true));
+        setUpCall(mockHttpClient, newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
             authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authManagerUnderTest = AuthManager.builderWithAuthCode()
+            authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
-                    .baseTokenUrl(BASE_AUTH_URL)
                     .buildWithAuthCode();
 
             authManagerUnderTest.refreshIfExpired();
@@ -494,21 +428,19 @@ public class AuthManagerTest {
     @Test
     public void refreshIfExpiredAndFetchFullToken_withValidAuth_shouldReturnFullToken() {
         final AuthInfo expected = newAuthInfo();
-        setUpCall(newResponse(true));
+        setUpCall(mockHttpClient, newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
             authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authManagerUnderTest = AuthManager.builderWithAuthCode()
+            authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
-                    .baseTokenUrl(BASE_AUTH_URL)
                     .buildWithAuthCode();
 
-            assertEquals("bearer accessTokenValue", authManagerUnderTest.refreshIfExpiredAndFetchFullToken());
+            assertEquals("Bearer accessTokenValue", authManagerUnderTest.refreshIfExpiredAndFetchFullToken());
         }
     }
 
@@ -519,26 +451,55 @@ public class AuthManagerTest {
     @Test
     public void getAuthInfo_withValidAuth_shouldReturnAuthInfo() {
         final AuthInfo expected = newAuthInfo();
-        setUpCall(newResponse(true));
+        setUpCall(mockHttpClient, newResponse(true));
 
         try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
             authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authManagerUnderTest = AuthManager.builderWithAuthCode()
+            authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .gson(mockGson)
                     .httpClient(mockHttpClient)
                     .redirectUrl(REDIRECT_URL)
-                    .baseTokenUrl(BASE_AUTH_URL)
                     .buildWithAuthCode();
 
             assertEquals(expected, authManagerUnderTest.getAuthInfo());
         }
     }
 
+    //////////////////////////////
+    // getAuthenticatedEndpoint
+    //////////////////////////////
+
+    @Test
+    public void getAuthenticatedEndpoint_shouldReturnPersonalEndpointUrl() {
+        final AuthInfo expected = newAuthInfo();
+        setUpCall(mockHttpClient, newResponse(true));
+
+        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
+            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
+            authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
+                    .authCode(AUTH_CODE)
+                    .clientId(CLIENT_ID)
+                    .clientSecret(CLIENT_SECRET)
+                    .httpClient(mockHttpClient)
+                    .redirectUrl(REDIRECT_URL)
+                    .buildWithAuthCode();
+
+            assertEquals("https://graph.microsoft.com/v1.0/me", authManagerUnderTest.getAuthenticatedEndpoint());
+        }
+    }
+
     @SneakyThrows
-    private Response newResponse(final boolean isSuccessful) {
+    static void setUpCall(final OkHttpClient httpClient, final Response responseToReturn) {
+        final Call mockCall = mock(Call.class);
+        when(mockCall.execute()).thenReturn(responseToReturn);
+        when(httpClient.newCall(any(Request.class))).thenReturn(mockCall);
+    }
+
+
+    @SneakyThrows
+    static Response newResponse(final boolean isSuccessful) {
         final ResponseBody mockResponseBody = mock(ResponseBody.class);
         if (isSuccessful) {
             when(mockResponseBody.string()).thenReturn("JsonBody");
@@ -553,26 +514,20 @@ public class AuthManagerTest {
         return mockResponse;
     }
 
-    @SneakyThrows
-    private void setUpCall(final Response responseToReturn) {
-        final Call mockCall = mock(Call.class);
-        when(mockCall.execute()).thenReturn(responseToReturn);
-        when(mockHttpClient.newCall(any(Request.class))).thenReturn(mockCall);
-    }
-
-    private AuthInfo newAuthInfo() {
+    static AuthInfo newAuthInfo() {
         return newAuthInfo(false);
     }
 
-    private AuthInfo newAuthInfo(final boolean isExpired) {
+    static AuthInfo newAuthInfo(final boolean isExpired) {
         final long expires = isExpired
                 ? System.currentTimeMillis() - Duration.ofHours(2L).toMillis()
                 : System.currentTimeMillis() + Duration.ofHours(2L).toMillis();
         return AuthInfo.builder()
                 .accessToken("accessTokenValue")
-                .refreshToken("refreshTokenValue")
                 .expiresIn(expires)
                 .extExpiresIn(expires)
+                .refreshToken("refreshTokenValue")
+                .resourceId("https://api.office.com/discovery/")
                 .scopes(SCOPES)
                 .build();
 

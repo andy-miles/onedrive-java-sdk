@@ -60,7 +60,7 @@ public class OneDriveConnectionTest extends OneDriveConnectionTestBase {
                 mockAuthManager,
                 mockGsonFactory,
                 null);
-        assertEquals("https://graph.microsoft.com/v1.0", connection.getBaseUrl());
+        assertEquals("https://graph.microsoft.com/v1.0/me", connection.getBaseUrl());
     }
 
     @Test
@@ -71,13 +71,6 @@ public class OneDriveConnectionTest extends OneDriveConnectionTestBase {
                 mockGsonFactory,
                 "http://localhost");
         assertEquals("http://localhost", connection.getBaseUrl());
-    }
-
-    @Test
-    public void refreshIfExpired_shouldReturnFullToken() {
-        assertAll(
-                () -> assertEquals("FullAuthToken", connectionUnderTest.refreshIfExpired()),
-                () -> verify(mockAuthManager).refreshIfExpiredAndFetchFullToken());
     }
 
     @Test

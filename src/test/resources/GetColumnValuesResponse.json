@@ -1,0 +1,9 @@
+{
+  "id": "ListItemIdValue",
+  "fields": {
+    "column1": "SomeString",
+    "column2": false,
+    "column3": 1000.0,
+    "column4": 100.5
+  }
+}

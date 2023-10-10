@@ -39,6 +39,10 @@ import java.util.stream.Collectors;
  * Represents the authentication information for OAuth (OBO) access to a user's MS OneDrive account.
  * This is returned in response when making calls to acquire the initial token or when refreshing the token.
  * <p>
+ * Note: For business accounts, the auth tokens are only valid with a single resource. If
+ * the user is to access a different resource (different service/site), then new access tokens are required.
+ * See {@link BusinessAccountAuthManager} for more information.
+ * <p>
  * <a href="https://learn.microsoft.com/en-us/graph/auth-v2-user?tabs=http">Official documentation</a>
  */
 @Slf4j
@@ -49,9 +53,9 @@ public class AuthInfo {
     private static final String STANDARD_SPACE = " ";
     private static final String URL_ENCODED_SPACE = "%20";
 
-    /** The auth token type. Default is {@code bearer}. */
+    /** The auth token type. Default is {@code Bearer}. */
     @Builder.Default
-    private final String tokenType = "bearer";
+    private final String tokenType = "Bearer";
     /** The list of scopes, or permissions to access the Graph API. */
     @Builder.Default
     private final List<String> scopes = Collections.emptyList();
@@ -65,6 +69,9 @@ public class AuthInfo {
     /** The current refresh token used to refresh access tokens. */
     @NonNull
     private final String refreshToken;
+    /** The associated resource identifier associated with the access tokens (business accounts only). */
+    @Builder.Default
+    private final String resourceId = StringUtils.EMPTY;
 
     /**
      * Deserializes the given {@code authInfoJson} string to a new {@code AuthInfo} object.
@@ -77,12 +84,13 @@ public class AuthInfo {
         final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
         final AuthInfoInternal internalAuthInfo = gson.fromJson(authInfoJson, AuthInfoInternal.class);
         return AuthInfo.builder()
-                .tokenType(internalAuthInfo.getTokenType())
-                .scopes(fromScope(internalAuthInfo.getScope()))
-                .expiresIn(internalAuthInfo.getExtExpiresIn())
-                .extExpiresIn(internalAuthInfo.getExtExpiresIn())
                 .accessToken(internalAuthInfo.getAccessToken())
+                .expiresIn(internalAuthInfo.getExpiresIn())
+                .extExpiresIn(internalAuthInfo.getExtExpiresIn())
                 .refreshToken(internalAuthInfo.getRefreshToken())
+                .resourceId(internalAuthInfo.getResourceId())
+                .scopes(fromScope(internalAuthInfo.getScope()))
+                .tokenType(internalAuthInfo.getTokenType())
                 .build();
     }
 
@@ -107,14 +115,33 @@ public class AuthInfo {
     public String toJson() {
         final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
         final AuthInfoInternal internalAuthInfo = AuthInfoInternal.builder()
-                .tokenType(tokenType)
-                .scope(toScope(scopes))
+                .accessToken(accessToken)
                 .expiresIn(expiresIn)
                 .extExpiresIn(extExpiresIn)
-                .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .resourceId(resourceId)
+                .scope(toScope(scopes))
+                .tokenType(tokenType)
                 .build();
         return gson.toJson(internalAuthInfo);
+    }
+
+    /**
+     * Creates a copy of this object while injecting the given {@code resourceId}.
+     *
+     * @param resourceId the resource identifier associated with the auth tokens
+     * @return the copy
+     */
+    public AuthInfo copyWithResourceId(final String resourceId) {
+        return AuthInfo.builder()
+                .accessToken(getAccessToken())
+                .expiresIn(getExpiresIn())
+                .extExpiresIn(getExtExpiresIn())
+                .refreshToken(getRefreshToken())
+                .resourceId(resourceId)
+                .scopes(getScopes())
+                .tokenType(getTokenType())
+                .build();
     }
 
     private static String toScope(final List<String> scopes) {
@@ -122,9 +149,7 @@ public class AuthInfo {
             return StringUtils.EMPTY;
         }
 
-        final StringJoiner sj = new StringJoiner(URL_ENCODED_SPACE);
-        scopes.forEach(scope -> sj.add(scope.trim()));
-        return sj.toString();
+        return String.join(URL_ENCODED_SPACE, scopes);
     }
 
     private static List<String> fromScope(final String scope) {
@@ -157,5 +182,7 @@ public class AuthInfo {
         private final String accessToken;
         /** the current refresh token. */
         private final String refreshToken;
+        /** The associated resource identifier associated with the access tokens (business accounts only). */
+        private final String resourceId;
     }
 }

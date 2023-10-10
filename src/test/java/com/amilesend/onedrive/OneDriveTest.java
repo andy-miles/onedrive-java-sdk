@@ -27,6 +27,8 @@ import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.identity.Identity;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import okhttp3.Request;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +42,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
@@ -50,7 +53,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class OneDriveTest {
-    private static final String BASE_URL = "http://localhost";
+    static final String BASE_URL = "http://localhost/me";
 
     @Mock
     private OneDriveConnection mockConnection;
@@ -66,7 +69,7 @@ public class OneDriveTest {
 
     @Test
     public void getUserDrive_shouldReturnDrive() {
-        final com.amilesend.onedrive.resource.drive.Drive driveToReturn = newDriveMock(1);
+        final com.amilesend.onedrive.resource.drive.Drive driveToReturn = newMockDrive();
         when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(driveToReturn);
 
         final Drive actual = oneDriveUnderTest.getUserDrive();
@@ -81,20 +84,44 @@ public class OneDriveTest {
 
     @Test
     public void getAvailableDrives_shouldReturnDriveList() {
-        final List<com.amilesend.onedrive.resource.drive.Drive> drives =
-                List.of(newDriveMock(1), newDriveMock(2));
-        when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(drives);
+        final List<com.amilesend.onedrive.resource.drive.Drive> drivesToReturn = newMockDrives();
+        when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(drivesToReturn);
 
         final List<Drive> actual = oneDriveUnderTest.getAvailableDrives();
 
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
-                () -> assertEquals(drives.size(), actual.size()),
+                () -> assertEquals(2, actual.size()),
                 () -> assertEquals("DriveId1", actual.get(0).getId()),
                 () -> assertEquals("DriveId2", actual.get(1).getId()),
                 () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveListParser.class)),
                 () -> assertEquals("http://localhost/me/drives", requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
+    }
+
+    @Test
+    public void getDrive_withValidDriveId_shouldReturnDrive() {
+        final com.amilesend.onedrive.resource.drive.Drive driveToReturn = newMockDrive();
+        when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(driveToReturn);
+
+        final Drive actual = oneDriveUnderTest.getDrive(driveToReturn.getId());
+
+        final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+        assertAll(
+                () -> assertEquals(driveToReturn.getId(), actual.getId()),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveParser.class)),
+                () -> assertEquals("http://localhost/me/drives/DriveId1",
+                        requestCaptor.getValue().url().toString()),
+                () -> assertEquals("GET", requestCaptor.getValue().method()));
+    }
+
+    @Test
+    public void getDrive_withInvalidInput_shouldThrowException() {
+        assertAll(
+                () -> assertThrows(NullPointerException.class, () -> oneDriveUnderTest.getDrive(null)),
+                () -> assertThrows(IllegalArgumentException.class, () -> oneDriveUnderTest.getDrive(StringUtils.EMPTY)),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> oneDriveUnderTest.getDrive(RandomStringUtils.random(1000))));
     }
 
     @Test
@@ -120,10 +147,18 @@ public class OneDriveTest {
         assertEquals(expected, oneDriveUnderTest.getAuthInfo());
     }
 
-    private com.amilesend.onedrive.resource.drive.Drive newDriveMock(final int idSuffix) {
+    static com.amilesend.onedrive.resource.drive.Drive newMockDrive() {
+        return newMockDrive(1);
+    }
+
+    static com.amilesend.onedrive.resource.drive.Drive newMockDrive(final int idSuffix) {
         final com.amilesend.onedrive.resource.drive.Drive mockDrive =
                 mock(com.amilesend.onedrive.resource.drive.Drive.class);
         when(mockDrive.getId()).thenReturn("DriveId" + idSuffix);
         return mockDrive;
+    }
+
+    static List<com.amilesend.onedrive.resource.drive.Drive> newMockDrives() {
+        return List.of(newMockDrive(1), newMockDrive(2));
     }
 }

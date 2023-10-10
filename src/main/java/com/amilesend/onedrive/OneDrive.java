@@ -24,13 +24,22 @@ import com.amilesend.onedrive.parse.resource.parser.DriveParser;
 import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.identity.Identity;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Validate;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.amilesend.onedrive.resource.drive.Drive.DRIVES_BASE_URL_PATH;
+import static com.amilesend.onedrive.resource.drive.Drive.DRIVES_URL_PATH_SUFFIX;
+import static com.amilesend.onedrive.resource.drive.Drive.DRIVE_URL_PATH_SUFFIX;
 
 /**
  * The primary exposed object to consumers to access drives available to the authenticated user.
@@ -46,12 +55,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class OneDrive {
-    private static final String USER_DRIVE_URL_PATH = "/me/drive";
-    private static final String USER_DRIVES_URL_PATH = "/me/drives";
-    private static final DriveParser DRIVE_PARSER = new DriveParser();
-    private static final DriveListParser DRIVE_LIST_PARSER = new DriveListParser();
+    protected static final int MAX_ID_LENGTH = 512;
+    protected static final DriveParser DRIVE_PARSER = new DriveParser();
+    protected static final DriveListParser DRIVE_LIST_PARSER = new DriveListParser();
 
     @NonNull
+    @Getter(AccessLevel.PROTECTED)
     private final OneDriveConnection connection;
 
     /**
@@ -63,7 +72,7 @@ public class OneDrive {
     public Drive getUserDrive() {
         return new Drive(connection.execute(
                 connection.newSignedForApiRequestBuilder()
-                        .url(connection.getBaseUrl() + USER_DRIVE_URL_PATH)
+                        .url(connection.getBaseUrl() + DRIVE_URL_PATH_SUFFIX)
                         .build(),
                 DRIVE_PARSER));
     }
@@ -77,12 +86,32 @@ public class OneDrive {
     public List<Drive> getAvailableDrives() {
         return connection.execute(
                 connection.newSignedForApiRequestBuilder()
-                        .url(connection.getBaseUrl() + USER_DRIVES_URL_PATH)
+                        .url(connection.getBaseUrl() + DRIVES_URL_PATH_SUFFIX)
                         .build(),
                 DRIVE_LIST_PARSER)
                 .stream()
                 .map(d -> new Drive(d))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the {@link Drive} for the given {@code driveId}.
+     *
+     * @param driveId the drive identifier
+     * @return the drive
+     * @see Drive
+     */
+
+    public Drive getDrive(final String driveId) {
+        final String encodedDriveId = validateIdAndUrlEncode(driveId, "driveId");
+        return new Drive(connection.execute(
+                connection.newSignedForApiRequestBuilder()
+                        .url(new StringBuilder(connection.getBaseUrl())
+                                .append(DRIVES_BASE_URL_PATH)
+                                .append(encodedDriveId)
+                                .toString())
+                        .build(),
+                DRIVE_PARSER));
     }
 
     /**
@@ -107,5 +136,11 @@ public class OneDrive {
      */
     public AuthInfo getAuthInfo() {
         return connection.getAuthManager().getAuthInfo();
+    }
+
+    protected String validateIdAndUrlEncode(final String id, final String name) {
+        Validate.notBlank(id, name + " must not be blank");
+        Validate.isTrue(id.length() < MAX_ID_LENGTH, name + " must be less than " + MAX_ID_LENGTH);
+        return URLEncoder.encode(id, StandardCharsets.UTF_8);
     }
 }

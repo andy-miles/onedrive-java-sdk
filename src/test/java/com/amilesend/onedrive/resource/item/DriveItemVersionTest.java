@@ -48,7 +48,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DriveItemVersionTest {
-    private static final String BASE_URL = "http://localhost";
+    private static final String BASE_URL = "http://localhost/me";
     private static final String VERSION_ID = "VersionId";
     private static final String DRIVE_ITEM_ID = "DriveItemId";
     private static final String NAME = "DriveItemVersionName";
@@ -146,9 +146,10 @@ public class DriveItemVersionTest {
         assertAll(
                 () -> assertTrue(actual),
                 () -> verify(mockConnection).execute(requestCaptor.capture()),
-                () -> assertEquals("http://localhost/me/drive/items/DriveItemId/versions/VersionId/restore",
+                () -> assertEquals("http://localhost/me/drive/items/DriveItemId" +
+                                "/versions/VersionId/restoreVersion",
                         requestCaptor.getValue().url().toString()),
-                () -> assertEquals("GET", requestCaptor.getValue().method()));
+                () -> assertEquals("POST", requestCaptor.getValue().method()));
     }
 
     @Test
@@ -161,8 +162,9 @@ public class DriveItemVersionTest {
         assertAll(
                 () -> assertFalse(actual),
                 () -> verify(mockConnection).execute(requestCaptor.capture()),
-                () -> assertEquals("http://localhost/me/drive/items/DriveItemId/versions/VersionId/restore",
+                () -> assertEquals("http://localhost/me/drive/items/DriveItemId" +
+                                "/versions/VersionId/restoreVersion",
                         requestCaptor.getValue().url().toString()),
-                () -> assertEquals("GET", requestCaptor.getValue().method()));
+                () -> assertEquals("POST", requestCaptor.getValue().method()));
     }
 }

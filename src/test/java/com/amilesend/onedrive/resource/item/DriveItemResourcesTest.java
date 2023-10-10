@@ -34,6 +34,7 @@ import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
 import com.amilesend.onedrive.resource.request.PreviewRequest;
 import com.google.gson.Gson;
 import okhttp3.Request;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,6 +57,11 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class DriveItemResourcesTest extends DriveItemTestBase {
     private static final String NEXT_LINK_URL = "http://localhost/NextPageUrl";
+    private static final int INVALID_QUERY_LENGTH = 1001;
+
+    ///////////////////
+    // getActivities
+    ///////////////////
 
     @Test
     public void getActivities_shouldReturnItemActivityList() {
@@ -73,6 +79,10 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
     }
 
+    ///////////////////
+    // getChildren
+    ///////////////////
+
     @Test
     public void getChildren_shouldReturnDriveItemList() {
         setUpPaginatedDriveItemResponseBehavior();
@@ -81,6 +91,10 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
 
         validatePaginatedDriveItemResponseBehavior(actual, "http://localhost/me/drive/items/DriveItemId/children");
     }
+
+    ///////////////////
+    // getVersions
+    ///////////////////
 
     @Test
     public void getVersions_shouldReturnDriveItemVersionList() {
@@ -98,6 +112,10 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
     }
 
+    ///////////////////
+    // getPermissions
+    ///////////////////
+
     @Test
     public void getPermissions_shouldReturnDriveItemVersionList() {
         final List<Permission> expected = List.of(mock(Permission.class), mock(Permission.class));
@@ -113,6 +131,10 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
     }
+
+    ///////////////////
+    // addPermission
+    ///////////////////
 
     @Test
     public void addPermission_withValidRequest_shouldReturnPermission() {
@@ -139,6 +161,10 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
         assertThrows(NullPointerException.class, () -> driveItemUnderTest.addPermission(null));
     }
 
+    //////////////////////
+    // createSharingLink
+    //////////////////////
+
     @Test
     public void createSharingLink_withValidRequest_shouldReturnPermission() {
         final Permission expected = mock(Permission.class);
@@ -163,6 +189,10 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
     public void createSharingLink_withNullRequest_shouldThrowException() {
         assertThrows(NullPointerException.class, () -> driveItemUnderTest.createSharingLink(null));
     }
+
+    //////////////////////
+    // previewItem
+    //////////////////////
 
     @Test
     public void previewItem_withValidRequest_shouldReturnPreview() {
@@ -189,6 +219,10 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
         assertThrows(NullPointerException.class, () -> driveItemUnderTest.previewItem(null));
     }
 
+    //////////////////////
+    // getThumbnails
+    //////////////////////
+
     @Test
     public void getThumbnails_shouldReturnThumbnailSetList() {
         final List<ThumbnailSet> expected = List.of(mock(ThumbnailSet.class), mock(ThumbnailSet.class));
@@ -205,6 +239,10 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
     }
 
+    //////////////////////
+    // search
+    //////////////////////
+
     @Test
     public void search_shouldReturnDriveItemList() {
         setUpPaginatedDriveItemResponseBehavior();
@@ -219,7 +257,9 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
     public void search_withInvalidParameters_shouldThrowException() {
         assertAll(
                 () -> assertThrows(NullPointerException.class, () -> driveItemUnderTest.search(null)),
-                () -> assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.search(StringUtils.EMPTY)));
+                () -> assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.search(StringUtils.EMPTY)),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> driveItemUnderTest.search(RandomStringUtils.random(INVALID_QUERY_LENGTH))));
     }
 
     private void setUpPaginatedDriveItemResponseBehavior() {

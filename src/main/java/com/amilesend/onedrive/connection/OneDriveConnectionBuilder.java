@@ -19,23 +19,21 @@ package com.amilesend.onedrive.connection;
 
 import com.amilesend.onedrive.connection.auth.AuthInfo;
 import com.amilesend.onedrive.connection.auth.AuthManager;
+import com.amilesend.onedrive.connection.auth.PersonalAccountAuthManager;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.NonNull;
 import okhttp3.OkHttpClient;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-
-import java.util.Optional;
 
 /** Builder to configure and return a new {@link OneDriveConnection} instance. */
 public class OneDriveConnectionBuilder {
     private String clientId;
     private String clientSecret;
     private String redirectUrl;
-    private String baseUrl;
-    private OkHttpClient httpClient;
+    private OkHttpClient httpClient = new OkHttpClientBuilder().build();
+    private AuthManager authManager;
     private final GsonFactory gsonFactory;
 
     /**
@@ -97,14 +95,13 @@ public class OneDriveConnectionBuilder {
     }
 
     /**
-     * The connection base URL. This is optional and should not be used until support for
-     * business and site accounts is implemented.
+     * The {@link AuthManager} used to manage authentication and access tokens.
      *
-     * @param baseUrl the base path for the connection
+     * @param authManager the auth manager
      * @return this builder
      */
-    public OneDriveConnectionBuilder baseUrl(final String baseUrl) {
-        this.baseUrl = baseUrl;
+    public OneDriveConnectionBuilder authManager(final AuthManager authManager) {
+        this.authManager = authManager;
         return this;
     }
 
@@ -115,18 +112,8 @@ public class OneDriveConnectionBuilder {
      * @return the connection
      */
     public OneDriveConnection build(final String authCode) {
-        validate();
-        final OkHttpClient client = getHttpClientOrDefault();
-        final AuthManager authManager =AuthManager.builderWithAuthCode()
-                .httpClient(client)
-                .gson(gsonFactory.getInstanceForAuthManager())
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .redirectUrl(redirectUrl)
-                .authCode(authCode)
-                .buildWithAuthCode();
-        final String baseUrlToUse = Optional.ofNullable(baseUrl).orElse(StringUtils.EMPTY);
-        return new OneDriveConnection(client, authManager, gsonFactory, baseUrlToUse);
+        final AuthManager authManager = getAuthManagerOrDefault(httpClient, authCode);
+        return new OneDriveConnection(httpClient, authManager, gsonFactory, authManager.getAuthenticatedEndpoint());
     }
 
     /**
@@ -136,25 +123,41 @@ public class OneDriveConnectionBuilder {
      * @return the connection
      */
     public OneDriveConnection build(final AuthInfo authInfo) {
-        validate();
-        final OkHttpClient client = getHttpClientOrDefault();
-        final AuthManager authManager = AuthManager.builderWithAuthInfo()
-                .httpClient(client)
-                .gson(gsonFactory.getInstanceForAuthManager())
+        final AuthManager authManager = getAuthManagerOrDefault(httpClient, authInfo);
+        return new OneDriveConnection(httpClient, authManager, gsonFactory, authManager.getAuthenticatedEndpoint());
+    }
+
+    private AuthManager getAuthManagerOrDefault(final OkHttpClient httpClient, final String authCode) {
+        if (authManager != null) {
+            return authManager;
+        }
+
+        validateRequiredParametersForAuth();
+        return PersonalAccountAuthManager.builderWithAuthCode()
+                .httpClient(httpClient)
+                .clientId(clientId)
+                .clientSecret(clientSecret)
+                .redirectUrl(redirectUrl)
+                .authCode(authCode)
+                .buildWithAuthCode();
+    }
+
+    private AuthManager getAuthManagerOrDefault(final OkHttpClient httpClient, final AuthInfo authInfo) {
+        if (authManager != null) {
+            return authManager;
+        }
+
+        validateRequiredParametersForAuth();
+        return PersonalAccountAuthManager.builderWithAuthInfo()
+                .httpClient(httpClient)
                 .clientId(clientId)
                 .clientSecret(clientSecret)
                 .redirectUrl(redirectUrl)
                 .authInfo(authInfo)
                 .buildWithAuthInfo();
-        final String baseUrlToUse = Optional.ofNullable(baseUrl).orElse(StringUtils.EMPTY);
-        return new OneDriveConnection(client, authManager, gsonFactory, baseUrlToUse);
     }
 
-    private OkHttpClient getHttpClientOrDefault() {
-        return httpClient != null ? httpClient : new OkHttpClientBuilder().build();
-    }
-
-    private void validate() {
+    private void validateRequiredParametersForAuth() {
         Validate.notBlank(clientId, "clientId must not be blank");
         Validate.notBlank(clientSecret, "clientSecret must not be blank");
         Validate.notBlank(redirectUrl, "redirectUrl must not be blank");

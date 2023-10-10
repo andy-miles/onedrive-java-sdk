@@ -31,7 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.TestDataHelper.newSpecialDriveItem;
+import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newSpecialDriveItem;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class SpecialDriveItemTest {
     private static final SpecialFolder.Type TYPE = SpecialFolder.Type.APP_ROOT;
-    private static final String BASE_URL = "http://localhost";
+    private static final String BASE_URL = "http://localhost/me";
 
     @Mock
     private OneDriveConnection mockConnection;
