@@ -33,7 +33,7 @@ public class SpecialDriveItemInstanceCreator implements InstanceCreator<SpecialD
     /** The current client connection instance. */
     private final OneDriveConnection connection;
 
-    /** Creates a new {@code SpecialDriveItemInstanceCreator} with the current client connection instance. */
+    /** Creates a new {@code SpecialDriveItem} with the current client connection instance. */
     @Override
     public SpecialDriveItem createInstance(final Type type) {
         return SpecialDriveItem.builder().connection(connection).build();

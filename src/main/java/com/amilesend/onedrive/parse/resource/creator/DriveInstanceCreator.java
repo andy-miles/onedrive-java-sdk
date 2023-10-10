@@ -33,7 +33,7 @@ public class DriveInstanceCreator implements InstanceCreator<Drive> {
     /** The current client connection instance. */
     private final OneDriveConnection connection;
 
-    /** Creates a new {@code DriveInstanceCreator} with the current client connection instance. */
+    /** Creates a new {@link Drive} with the current client connection instance. */
     @Override
     public Drive createInstance(final Type type) {
         return Drive.builder().connection(connection).build();

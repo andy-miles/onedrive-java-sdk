@@ -33,7 +33,7 @@ public class PermissionInstanceCreator implements InstanceCreator<Permission> {
     /** The current client connection instance. */
     private final OneDriveConnection connection;
 
-    /** Creates a new {@code DriveItemVersionInstanceCreator} with the current client connection instance. */
+    /** Creates a new {@code Permission} with the current client connection instance. */
     @Override
     public Permission createInstance(final Type type) {
         return Permission.builder().connection(connection).build();

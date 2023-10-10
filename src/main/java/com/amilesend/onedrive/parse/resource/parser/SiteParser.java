@@ -25,6 +25,13 @@ import lombok.NonNull;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/**
+ * Parses a response body that contains a {@link Site}s.
+ * <p>
+ * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/site">
+ * API Documentation</a>
+ * @see Site
+ */
 public class SiteParser implements GsonParser<Site> {
     @Override
     public Site parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {

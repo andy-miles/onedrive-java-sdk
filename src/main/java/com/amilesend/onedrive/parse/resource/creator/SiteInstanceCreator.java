@@ -33,7 +33,7 @@ public class SiteInstanceCreator implements InstanceCreator<Site> {
     /** The current client connection instance. */
     private final OneDriveConnection connection;
 
-    /** Creates a new {@code DriveInstanceCreator} with the current client connection instance. */
+    /** Creates a new {@code Site} with the current client connection instance. */
     @Override
     public Site createInstance(final Type type) {
         return Site.builder().connection(connection).build();

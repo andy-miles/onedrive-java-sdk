@@ -33,6 +33,7 @@ public class ListItemInstanceCreator implements InstanceCreator<ListItem> {
     /** The current client connection instance. */
     private final OneDriveConnection connection;
 
+    /** Creates a new {@link ListItem} with the current client connection instance. */
     @Override
     public ListItem createInstance(final Type type) {
         return ListItem.builder().connection(connection).build();

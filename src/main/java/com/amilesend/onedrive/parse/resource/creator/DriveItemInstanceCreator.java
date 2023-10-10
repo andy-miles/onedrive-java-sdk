@@ -33,7 +33,7 @@ public class DriveItemInstanceCreator implements InstanceCreator<DriveItem> {
     /** The current client connection instance. */
     private final OneDriveConnection connection;
 
-    /** Creates a new {@code DriveItemInstanceCreator} with the current client connection instance. */
+    /** Creates a new {@link DriveItem} with the current client connection instance. */
     @Override
     public DriveItem createInstance(final Type type) {
         return DriveItem.builder().connection(connection).build();
