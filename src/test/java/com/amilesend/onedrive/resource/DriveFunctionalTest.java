@@ -21,7 +21,7 @@ import com.amilesend.onedrive.FunctionalTestBase;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.RequestException;
 import com.amilesend.onedrive.connection.ResponseException;
-import com.amilesend.onedrive.connection.parse.resource.parser.SerializedResource;
+import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,11 +29,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDriveItemFolder;
-import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDriveItemZipFile;
-import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newRootDriveItemFolder;
-import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newSpecialDriveItem;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newItemActivity;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newDriveItemFolder;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newDriveItemZipFile;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newRootDriveItemFolder;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newSpecialDriveItem;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newItemActivity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

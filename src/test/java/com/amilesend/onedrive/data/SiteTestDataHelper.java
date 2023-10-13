@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.amilesend.onedrive.connection.parse.resource.parser;
+package com.amilesend.onedrive.data;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.item.BaseItem;
@@ -43,12 +43,12 @@ import lombok.experimental.UtilityClass;
 
 import java.util.Map;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDrive;
-import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDriveItem;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newIdentitySet;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newParentReference;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newPublicationFacet;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newSharePointIds;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newDrive;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newDriveItem;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newIdentitySet;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newParentReference;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newPublicationFacet;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newSharePointIds;
 
 @UtilityClass
 public class SiteTestDataHelper {

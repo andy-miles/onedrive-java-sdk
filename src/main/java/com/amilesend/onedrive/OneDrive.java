@@ -101,7 +101,6 @@ public class OneDrive {
      * @return the drive
      * @see Drive
      */
-
     public Drive getDrive(final String driveId) {
         final String encodedDriveId = validateIdAndUrlEncode(driveId, "driveId");
         return new Drive(connection.execute(

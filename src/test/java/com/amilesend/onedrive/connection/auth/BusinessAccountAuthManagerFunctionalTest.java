@@ -18,7 +18,7 @@
 package com.amilesend.onedrive.connection.auth;
 
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
-import com.amilesend.onedrive.connection.parse.resource.parser.SerializedResource;
+import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.resource.discovery.Service;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;

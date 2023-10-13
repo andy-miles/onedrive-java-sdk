@@ -20,11 +20,14 @@ package com.amilesend.onedrive;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.OneDriveConnectionBuilder;
 import com.amilesend.onedrive.connection.auth.AuthInfo;
+import com.amilesend.onedrive.connection.auth.AuthManager;
+import com.amilesend.onedrive.connection.auth.BusinessAccountAuthManager;
 import com.amilesend.onedrive.connection.auth.oauth.OAuthReceiver;
 import com.amilesend.onedrive.connection.auth.oauth.OAuthReceiverException;
 import com.amilesend.onedrive.connection.auth.oauth.OneDriveOAuthReceiver;
 import com.amilesend.onedrive.connection.auth.store.AuthInfoStore;
 import com.amilesend.onedrive.connection.auth.store.AuthInfoStoreException;
+import com.amilesend.onedrive.resource.discovery.Service;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
@@ -528,9 +531,6 @@ public class OneDriveFactoryStateManagerTest {
         final OneDriveOAuthReceiver mockReceiver = mock(OneDriveOAuthReceiver.class);
         when(mockReceiver.start()).thenThrow(new OAuthReceiverException("Exception"));
         final OneDriveOAuthReceiver.OneDriveOAuthReceiverBuilder receiverBuilder = setUpReceiverBuilder(mockReceiver);
-        final OneDriveFactoryStateManager.CredentialConfig mockConfig =
-                mock(OneDriveFactoryStateManager.CredentialConfig.class);
-        when(mockConfig.getClientId()).thenReturn("ClientId");
 
         try (final MockedStatic<OneDriveOAuthReceiver> receiverMockedStatic = mockStatic(OneDriveOAuthReceiver.class)) {
             receiverMockedStatic.when(() -> OneDriveOAuthReceiver.builder()).thenReturn(receiverBuilder);
@@ -539,7 +539,80 @@ public class OneDriveFactoryStateManagerTest {
         }
     }
 
-    private OneDriveOAuthReceiver.OneDriveOAuthReceiverBuilder setUpReceiverBuilder(
+    ////////////////////////
+    // authorizeConnection
+    ////////////////////////
+
+    @Test
+    public void authorizeConnection_withBusinessOneDriveType_shouldReturnConnection() {
+        final OneDriveConnection expected = mock(OneDriveConnection.class);
+        final OneDriveConnectionBuilder mockConnectionBuilder = setUpOneDriveConnectionBuilderMock(expected);
+
+        // BusinessAccountAuthManager setup
+        final BusinessAccountAuthManager mockAuthManager = setUpBusinessAccountAuthManagerMock();
+        final BusinessAccountAuthManager.BuilderWithAuthCode mockAuthBuilder =
+                setUpBusinessAccountAuthManagerBuilderMock(mockAuthManager);
+
+        managerUnderTest = OneDriveFactoryStateManager.builder(BusinessOneDrive.class)
+                .httpClient(mockHttpClient)
+                .receiverPort(PORT)
+                .redirectUrl(REDIRECT_URL)
+                .callbackPath(CALLBACK_PATH)
+                .scopes(SCOPES)
+                .stateGson(mockGson)
+                .credentialConfig(mockConfig)
+                .stateFile(mockStateFilePath)
+                .build();
+
+        try (final MockedStatic<BusinessAccountAuthManager> authManagerMockedStatic =
+                mockStatic(BusinessAccountAuthManager.class)) {
+            authManagerMockedStatic.when(() -> BusinessAccountAuthManager.builderWithAuthCode())
+                    .thenReturn(mockAuthBuilder);
+
+            final OneDriveConnection actual = managerUnderTest.authorizeConnection(
+                    mockConnectionBuilder,
+                    mockConfig,
+                    "AuthCodeValue");
+
+            assertEquals(expected, actual);
+        }
+    }
+
+    private static OneDriveConnectionBuilder setUpOneDriveConnectionBuilderMock(final OneDriveConnection expected) {
+        final OneDriveConnectionBuilder mockConnectionBuilder = mock(OneDriveConnectionBuilder.class);
+        when(mockConnectionBuilder.authManager(any(AuthManager.class))).thenReturn(mockConnectionBuilder);
+        when(mockConnectionBuilder.build(any(AuthInfo.class))).thenReturn(expected);
+
+        return mockConnectionBuilder;
+    }
+
+    private static BusinessAccountAuthManager setUpBusinessAccountAuthManagerMock() {
+        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final List<Service> mockServices = List.of(mock(Service.class));
+
+        final BusinessAccountAuthManager mockAuthManager = mock(BusinessAccountAuthManager.class);
+        when(mockAuthManager.getServices()).thenReturn(mockServices);
+        when(mockAuthManager.getAuthInfo()).thenReturn(mockAuthInfo);
+
+        return mockAuthManager;
+    }
+
+    private static BusinessAccountAuthManager.BuilderWithAuthCode setUpBusinessAccountAuthManagerBuilderMock(
+            final BusinessAccountAuthManager authManager) {
+        final BusinessAccountAuthManager.BuilderWithAuthCode mockAuthBuilder =
+                mock(BusinessAccountAuthManager.BuilderWithAuthCode.class);
+        when(mockAuthBuilder.authCode(anyString())).thenReturn(mockAuthBuilder);
+        when(mockAuthBuilder.clientId(anyString())).thenReturn(mockAuthBuilder);
+        when(mockAuthBuilder.clientSecret(anyString())).thenReturn(mockAuthBuilder);
+        when(mockAuthBuilder.httpClient(any(OkHttpClient.class))).thenReturn(mockAuthBuilder);
+        when(mockAuthBuilder.redirectUrl(anyString())).thenReturn(mockAuthBuilder);
+        when(mockAuthBuilder.buildWithAuthCode()).thenReturn(authManager);
+
+        return mockAuthBuilder;
+    }
+
+
+    private static OneDriveOAuthReceiver.OneDriveOAuthReceiverBuilder setUpReceiverBuilder(
             final OneDriveOAuthReceiver receiver) {
         final OneDriveOAuthReceiver.OneDriveOAuthReceiverBuilder mockBuilder =
                 mock(OneDriveOAuthReceiver.OneDriveOAuthReceiverBuilder.class);
@@ -551,7 +624,7 @@ public class OneDriveFactoryStateManagerTest {
         return mockBuilder;
     }
 
-    private OneDriveConnectionBuilder setUpOneDriveConnectionBuilderMock() {
+    private static OneDriveConnectionBuilder setUpOneDriveConnectionBuilderMock() {
         final OneDriveConnectionBuilder builder = mock(OneDriveConnectionBuilder.class);
         when(builder.httpClient(any(OkHttpClient.class))).thenReturn(builder);
         when(builder.clientId(anyString())).thenReturn(builder);

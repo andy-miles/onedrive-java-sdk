@@ -67,7 +67,7 @@ public class Drive extends BaseItem {
     private static final int MAX_QUERY_LENGTH = 1000;
 
     /**
-     * The drive type descriptor.  Valid types are:
+     * The drive type descriptor. Valid types are:
      * <ul>
      *     <li>{@literal personal} - Personal drive</li>
      *     <li>{@literal business} - Business drive</li>

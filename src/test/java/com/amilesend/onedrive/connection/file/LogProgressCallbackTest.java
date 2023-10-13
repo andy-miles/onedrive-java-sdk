@@ -19,6 +19,7 @@ package com.amilesend.onedrive.connection.file;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.slf4j.Logger;
@@ -42,14 +43,13 @@ public class LogProgressCallbackTest {
     private static MockedStatic<LoggerFactory> FACTORY_MOCKED_STATIC = mockStatic(LoggerFactory.class);
     private static LoggingEventBuilder MOCK_LOGGING_EVENT_BUILDER = mock(LoggingEventBuilder.class);
     private static Logger MOCK_LOGGER = mock(Logger.class);
-    private static LogProgressCallback CALLBACK_UNDER_TEST;
+    private LogProgressCallback callbackUnderTest;
 
     @BeforeAll
     public static void init() {
         FACTORY_MOCKED_STATIC.when(() -> LoggerFactory.getLogger(any(Class.class)))
                 .thenReturn(MOCK_LOGGER);
         lenient().when(MOCK_LOGGER.atLevel(any(Level.class))).thenReturn(MOCK_LOGGING_EVENT_BUILDER);
-        CALLBACK_UNDER_TEST = newLogProgressCallback();
     }
 
     @AfterAll
@@ -57,6 +57,10 @@ public class LogProgressCallbackTest {
         FACTORY_MOCKED_STATIC.close();
     }
 
+    @BeforeEach
+    public void setUp() {
+        callbackUnderTest = newLogProgressCallback();
+    }
 
     ////////////////
     // onUpdate
@@ -64,10 +68,10 @@ public class LogProgressCallbackTest {
 
     @Test
     public void onUpdate_withTimeAdvancementAndPercentageChange_shouldLogProgress() {
-        CALLBACK_UNDER_TEST.setLastUpdateTimestamp(Instant.now().minus(10L, ChronoUnit.SECONDS));
-        CALLBACK_UNDER_TEST.setLastUpdateProgressValue(0L);
+        callbackUnderTest.setLastUpdateTimestamp(Instant.now().minus(10L, ChronoUnit.SECONDS));
+        callbackUnderTest.setLastUpdateProgressValue(0L);
 
-        CALLBACK_UNDER_TEST.onUpdate(50L, 100L);
+        callbackUnderTest.onUpdate(50L, 100L);
 
         verify(MOCK_LOGGING_EVENT_BUILDER).log(
                 eq("{} Status: {}% ({} of {} bytes)"),
@@ -79,19 +83,19 @@ public class LogProgressCallbackTest {
 
     @Test
     public void onUpdate_withNoProgress_shouldNotLog() {
-        CALLBACK_UNDER_TEST.setLastUpdateTimestamp(Instant.now().minus(5L, ChronoUnit.SECONDS));
-        CALLBACK_UNDER_TEST.setLastUpdateProgressValue(50L);
+        callbackUnderTest.setLastUpdateTimestamp(Instant.now().minus(5L, ChronoUnit.SECONDS));
+        callbackUnderTest.setLastUpdateProgressValue(50L);
 
-        CALLBACK_UNDER_TEST.onUpdate(50L, 100L);
+        callbackUnderTest.onUpdate(50L, 100L);
 
         verifyNoMoreInteractions(MOCK_LOGGING_EVENT_BUILDER);
     }
 
     @Test
     public void onUpdate_withDurationLessThanUpdateInterval_shouldNotLog() {
-        CALLBACK_UNDER_TEST.setLastUpdateTimestamp(Instant.now());
+        callbackUnderTest.setLastUpdateTimestamp(Instant.now());
 
-        CALLBACK_UNDER_TEST.onUpdate(50L, 100L);
+        callbackUnderTest.onUpdate(50L, 100L);
 
         verifyNoMoreInteractions(MOCK_LOGGING_EVENT_BUILDER);
     }
@@ -104,7 +108,7 @@ public class LogProgressCallbackTest {
     public void onFailure_shouldLogFailure() {
         final Throwable cause = new IllegalStateException("Exception");
 
-        CALLBACK_UNDER_TEST.onFailure(cause);
+        callbackUnderTest.onFailure(cause);
 
         verify(MOCK_LOGGER).error(
                 eq("An error occurred during {}: {}"),
@@ -121,7 +125,7 @@ public class LogProgressCallbackTest {
     public void onComplete_shouldLogFailure() {
         final long bytesTransferred = 1000L;
 
-        CALLBACK_UNDER_TEST.onComplete(bytesTransferred);
+        callbackUnderTest.onComplete(bytesTransferred);
 
         verify(MOCK_LOGGING_EVENT_BUILDER).log(
                 eq("{} complete with {} bytes transferred"),

@@ -41,7 +41,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDrive;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newDrive;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

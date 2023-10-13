@@ -21,14 +21,14 @@ import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.RequestException;
 import com.amilesend.onedrive.connection.ResponseException;
 import com.amilesend.onedrive.connection.auth.AuthInfo;
-import com.amilesend.onedrive.connection.parse.resource.parser.SerializedResource;
+import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.resource.Drive;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.validateAuthInfo;
-import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDrive;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newDrive;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

@@ -20,12 +20,12 @@ package com.amilesend.onedrive.resource.item;
 import com.amilesend.onedrive.FunctionalTestBase;
 import com.amilesend.onedrive.connection.RequestException;
 import com.amilesend.onedrive.connection.ResponseException;
-import com.amilesend.onedrive.connection.parse.resource.parser.SerializedResource;
+import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.resource.item.type.AsyncJobStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newAsyncJobStatus;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newAsyncJobStatus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

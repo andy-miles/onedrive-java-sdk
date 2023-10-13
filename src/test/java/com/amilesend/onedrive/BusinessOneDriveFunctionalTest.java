@@ -23,7 +23,7 @@ import com.amilesend.onedrive.connection.ResponseException;
 import com.amilesend.onedrive.connection.auth.BusinessAccountAuthManager;
 import com.amilesend.onedrive.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
-import com.amilesend.onedrive.connection.parse.resource.parser.SerializedResource;
+import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.Site;
@@ -47,8 +47,8 @@ import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerF
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.CLIENT_SECRET;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.REDIRECT_URL;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.TOKEN_URL_PATH;
-import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDrive;
-import static com.amilesend.onedrive.connection.parse.resource.parser.SiteTestDataHelper.newSite;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newDrive;
+import static com.amilesend.onedrive.data.SiteTestDataHelper.newSite;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

@@ -22,7 +22,7 @@ import com.amilesend.onedrive.connection.auth.AuthManager;
 import com.amilesend.onedrive.connection.auth.PersonalAccountAuthManager;
 import com.amilesend.onedrive.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
-import com.amilesend.onedrive.connection.parse.resource.parser.SerializedResource;
+import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.parse.GsonFactory;
 import lombok.Getter;
 import lombok.SneakyThrows;

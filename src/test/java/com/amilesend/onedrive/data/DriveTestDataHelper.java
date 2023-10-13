@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.amilesend.onedrive.connection.parse.resource.parser;
+package com.amilesend.onedrive.data;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.drive.Drive;
@@ -28,25 +28,25 @@ import lombok.experimental.UtilityClass;
 
 import java.util.List;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newAudio;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newDeleted;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newFile;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newFileSystemInfo;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newFolder;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newGeoCoordinates;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newIdentitySet;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newImage;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newPackage;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newParentReference;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newPhoto;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newPublicationFacet;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newQuota;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newRemoteItem;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newSearchResult;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newSharePointIds;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newShared;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newSpecialFolder;
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newVideo;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newAudio;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newDeleted;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newFile;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newFileSystemInfo;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newFolder;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newGeoCoordinates;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newIdentitySet;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newImage;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newPackage;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newParentReference;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newPhoto;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newPublicationFacet;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newQuota;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newRemoteItem;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newSearchResult;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newSharePointIds;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newShared;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newSpecialFolder;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newVideo;
 
 @UtilityClass
 public class DriveTestDataHelper {

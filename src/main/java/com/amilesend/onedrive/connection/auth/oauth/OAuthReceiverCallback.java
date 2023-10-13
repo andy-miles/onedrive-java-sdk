@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.connection.auth.oauth;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -26,10 +27,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
@@ -46,8 +50,10 @@ import static java.net.HttpURLConnection.HTTP_OK;
  * HttpServer handler that takes the verifier token passed over from the OAuth provider and
  * stashes it where {@link OAuthReceiver#waitForCode} will find it.
  */
+@Slf4j
 public class OAuthReceiverCallback implements HttpHandler {
-    private static final String LANDING_HTML = new StringBuilder("<html>")
+    private static final String LANDING_HTML_RESOURCE = "/SuccessLanding.html";
+    private static final String LANDING_HTML_FALLBACK = new StringBuilder("<html>")
             .append("<head><title>OAuth 2.0 Authentication Token Received</title></head>")
             .append("<body>")
             .append("Received verification code. You may now close this window.")
@@ -170,8 +176,18 @@ public class OAuthReceiverCallback implements HttpHandler {
              final OutputStreamWriter doc = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
             exchange.sendResponseHeaders(HTTP_OK, 0);
             headers.add("ContentType", "text/html");
-            doc.write(LANDING_HTML);
+            doc.write(getLandingHtml());
             doc.flush();
+        }
+    }
+
+    private static String getLandingHtml() {
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader
+                (OAuthReceiverCallback.class.getResourceAsStream(LANDING_HTML_RESOURCE), StandardCharsets.UTF_8))) {
+            return CharStreams.toString(reader);
+        } catch (final IOException ex) {
+            log.warn("Error trying to load resource: {}", LANDING_HTML_RESOURCE);
+            return LANDING_HTML_FALLBACK;
         }
     }
 }

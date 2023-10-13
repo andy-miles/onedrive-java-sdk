@@ -26,7 +26,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.TypeTestDataHelper.newPermission;
+import static com.amilesend.onedrive.data.TypeTestDataHelper.newPermission;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;

@@ -32,6 +32,8 @@ import java.util.StringJoiner;
  * @see OAuthReceiver
  */
 public class OneDriveOAuthReceiver extends OAuthReceiver {
+    private static final String URL_ENCODED_SPACE = "%20";
+
     /** The registered application client identifier. */
     @Getter
     private final String clientId;
@@ -81,7 +83,7 @@ public class OneDriveOAuthReceiver extends OAuthReceiver {
     }
 
     private String getFormattedScopes() {
-        final StringJoiner sj = new StringJoiner("%20");
+        final StringJoiner sj = new StringJoiner(URL_ENCODED_SPACE);
         for (String s : getScopes()) sj.add(s);
         return sj.toString();
     }

@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
-import static com.amilesend.onedrive.connection.parse.resource.parser.SiteTestDataHelper.newFieldValueSet;
+import static com.amilesend.onedrive.data.SiteTestDataHelper.newFieldValueSet;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

@@ -32,7 +32,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.SiteTestDataHelper.newSite;
+import static com.amilesend.onedrive.data.SiteTestDataHelper.newSite;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

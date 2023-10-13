@@ -26,7 +26,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.amilesend.onedrive.connection.parse.resource.parser.SiteTestDataHelper.newListItemVersion;
+import static com.amilesend.onedrive.data.SiteTestDataHelper.newListItemVersion;
 import static com.amilesend.onedrive.resource.site.ListItemVersion.NO_CONTENT_RESPONSE_HTTP_CODE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>OAuth 2.0 Authentication Token Received</title>
+<style>
+
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#auth {
+  position: relative;
+  height: 100vh;
+}
+
+#auth .auth {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.auth {
+  max-width: 520px;
+  width: 100%;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.auth .auth-error {
+  position: relative;
+  height: 200px;
+  margin: 0px auto 20px;
+  z-index: -1;
+}
+
+.auth .auth-error h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 200px;
+  font-weight: 300;
+  margin: 0px;
+  color: #211b19;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+@media only screen and (max-width: 767px) {
+  .auth .auth-error h1 {
+    font-size: 148px;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .auth .auth-error {
+    height: 148px;
+    margin: 0px auto 10px;
+  }
+  .auth .auth-error h1 {
+    font-size: 120px;
+    font-weight: 200px;
+  }
+  .auth .auth-error h2 {
+    font-size: 30px;
+  }
+  .auth a {
+    padding: 7px 15px;
+    font-size: 24px;
+  }
+  .h2 {
+    font-size: 148px;
+  }
+}
+</style>
+</head>
+<body>
+<div id="auth">
+  <div class="auth">
+    <h1>Received verification code.<br/>You may now close this window.</a></h1>
+  </div>
+</div>
+</body>
+</html>

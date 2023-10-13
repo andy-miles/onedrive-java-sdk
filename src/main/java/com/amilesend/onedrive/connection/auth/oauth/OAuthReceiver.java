@@ -41,6 +41,8 @@ import java.net.URI;
 @Slf4j
 public class OAuthReceiver implements AutoCloseable {
     private static final int DEFAULT_SYSTEM_BACKLOG = 0;
+
+    /** Max allowed port range for listening for the OAuth redirect. */
     @VisibleForTesting
     static final int MAX_PORT_RANGE = 65535;
 

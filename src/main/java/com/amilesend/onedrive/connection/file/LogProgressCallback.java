@@ -23,7 +23,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 import java.time.Duration;
@@ -33,7 +34,6 @@ import java.time.Instant;
  * A log-based implementation of {@link TransferProgressCallback} that logs transfer progress.
  * @see TransferProgressCallback
  */
-@Slf4j
 public class LogProgressCallback implements TransferProgressCallback {
     private static final Duration DEFAULT_UPDATE_FREQUENCY = Duration.ofMillis(100L);
 
@@ -46,6 +46,8 @@ public class LogProgressCallback implements TransferProgressCallback {
     private final Level loggingLevel;
     /** Duration between logging updates. */
     private final Duration updateFrequency;
+    /** The logger instance. */
+    private final Logger log;
     // Used to limit unnecessarily entries to the log.
     @VisibleForTesting
     @Setter(AccessLevel.PACKAGE)
@@ -58,6 +60,7 @@ public class LogProgressCallback implements TransferProgressCallback {
     private LogProgressCallback(final TransferType transferType,
                                 final Level loggingLevel,
                                 final Duration updateFrequency) {
+        log = LoggerFactory.getLogger(LogProgressCallback.class);
         this.transferType = transferType == null ? TransferType.UNDEFINED : transferType;
         this.loggingLevel = loggingLevel == null ? Level.INFO : loggingLevel;
         this.updateFrequency = updateFrequency == null

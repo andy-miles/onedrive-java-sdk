@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
-import static com.amilesend.onedrive.connection.parse.resource.parser.DriveTestDataHelper.newDriveItem;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newDriveItem;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
