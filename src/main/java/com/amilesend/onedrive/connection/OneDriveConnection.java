@@ -87,10 +87,11 @@ public class OneDriveConnection {
      * @param baseUrl the base URL to use for Graph API invocations
      * @see OneDriveConnectionBuilder
      */
-    public OneDriveConnection(@NonNull final OkHttpClient httpClient,
-                              @NonNull final AuthManager authManager,
-                              @NonNull final GsonFactory gsonFactory,
-                              final String baseUrl) {
+    public OneDriveConnection(
+            @NonNull final OkHttpClient httpClient,
+            @NonNull final AuthManager authManager,
+            @NonNull final GsonFactory gsonFactory,
+            final String baseUrl) {
         this.httpClient = httpClient;
         this.authManager = authManager;
         this.gson = gsonFactory.newInstanceForConnection(this);
@@ -212,8 +213,9 @@ public class OneDriveConnection {
      * @return the CompletableFuture used to fetch the parsed response or failure exception reason
      * @param <T> the POJO resource type
      */
-    public <T> CompletableFuture<T> executeAsync(@NonNull final Request request,
-                                                 @NonNull final GsonParser<T> parser) {
+    public <T> CompletableFuture<T> executeAsync(
+            @NonNull final Request request,
+            @NonNull final GsonParser<T> parser) {
         final CompletableFuture<T> future = new CompletableFuture<>();
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -250,11 +252,12 @@ public class OneDriveConnection {
      * @return the size of the downloaded file in bytes
      * @throws OneDriveConnectionException if an error occurred while downloading the content for the request
      */
-    public long download(@NonNull final Request request,
-                         @NonNull final Path folderPath,
-                         final String name,
-                         final long sizeBytes,
-                         @NonNull final TransferProgressCallback callback) throws OneDriveConnectionException {
+    public long download(
+            @NonNull final Request request,
+            @NonNull final Path folderPath,
+            final String name,
+            final long sizeBytes,
+            @NonNull final TransferProgressCallback callback) throws OneDriveConnectionException {
         Validate.notBlank(name, "name must not be blank");
 
         final Path downloadPath;
@@ -288,11 +291,12 @@ public class OneDriveConnection {
      * @param callback the {@link TransferProgressCallback} call to invoke to report download transfer progress
      * @return the CompletableFuture used to fetch the number of bytes downloaded
      */
-    public CompletableFuture<Long> downloadAsync(@NonNull final Request request,
-                                                 @NonNull final Path folderPath,
-                                                 final String name,
-                                                 final long sizeBytes,
-                                                 @NonNull final TransferProgressCallback callback) {
+    public CompletableFuture<Long> downloadAsync(
+            @NonNull final Request request,
+            @NonNull final Path folderPath,
+            final String name,
+            final long sizeBytes,
+            @NonNull final TransferProgressCallback callback) {
         Validate.notBlank(name, "name must not be blank");
         final CompletableFuture<Long> future = new CompletableFuture<>();
 
@@ -336,10 +340,11 @@ public class OneDriveConnection {
     }
 
     @VisibleForTesting
-    long processDownloadResponse(final Response response,
-                                 final Path downloadPath,
-                                 final long sizeBytes,
-                                 final TransferProgressCallback callback) throws IOException {
+    long processDownloadResponse(
+            final Response response,
+            final Path downloadPath,
+            final long sizeBytes,
+            final TransferProgressCallback callback) throws IOException {
         if (log.isDebugEnabled()) {
             log.debug("Received response: {}", response);
         }

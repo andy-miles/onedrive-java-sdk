@@ -86,9 +86,10 @@ public class OAuthReceiverCallback implements HttpHandler {
      * @param failureLandingPageUrl optional URL for a custom failure landing page
      */
     @Builder
-    public OAuthReceiverCallback(@NonNull final String callbackPath,
-                                 final String successLandingPageUrl,
-                                 final String failureLandingPageUrl) {
+    public OAuthReceiverCallback(
+            @NonNull final String callbackPath,
+            final String successLandingPageUrl,
+            final String failureLandingPageUrl) {
         this.callbackPath = callbackPath;
         this.successLandingPageUrl = successLandingPageUrl;
         this.failureLandingPageUrl = failureLandingPageUrl;

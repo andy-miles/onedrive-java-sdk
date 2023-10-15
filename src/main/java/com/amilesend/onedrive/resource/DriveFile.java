@@ -219,8 +219,9 @@ public class DriveFile extends DriveItemType {
      * @see TransferProgressCallback
      * @see DriveFileDownloadExecution
      */
-    public DriveFileDownloadExecution downloadAsync(final Path folderPath,
-                                                    final TransferProgressCallback callback) {
+    public DriveFileDownloadExecution downloadAsync(
+            final Path folderPath,
+            final TransferProgressCallback callback) {
         return new DriveFileDownloadExecution(getDelegate().downloadAsync(folderPath, callback));
     }
 
@@ -282,8 +283,9 @@ public class DriveFile extends DriveItemType {
      * @throws IOException if unable to read the file.
      * @see TransferProgressCallback
      */
-    public DriveFileUploadExecution uploadAsync(final File file,
-                                                final TransferProgressCallback callback) throws IOException {
+    public DriveFileUploadExecution uploadAsync(
+            final File file,
+            final TransferProgressCallback callback) throws IOException {
         return new DriveFileUploadExecution(getDelegate().uploadAsync(file, callback));
     }
 

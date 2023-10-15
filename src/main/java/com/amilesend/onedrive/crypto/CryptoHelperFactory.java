@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.crypto;
 
+import lombok.Builder;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -28,7 +28,7 @@ import java.security.NoSuchAlgorithmException;
  * Factory used to vend a configured {@link CryptoHelper} instance.
  * @see CryptoHelper
  */
-@RequiredArgsConstructor
+@Builder
 public class CryptoHelperFactory {
     private static final String ALIAS = "onedrive-auth-crypto-key";
     private static final String KEY_CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
@@ -41,6 +41,10 @@ public class CryptoHelperFactory {
     /** The password for the keystore. */
     @NonNull
     private final char[] keyPassword;
+    /** The key alias that is stored in the keystore. */
+    @Builder.Default
+    @NonNull
+    private final String keyAlias = ALIAS;
 
     /**
      * Creates a new {@link CryptoHelper} instance.
@@ -50,11 +54,11 @@ public class CryptoHelperFactory {
      */
     public CryptoHelper newInstance() throws CryptoHelperException {
         try {
-            SecretKey cryptoKey = keyStoreHelper.getSecretKey(ALIAS, keyPassword);
+            SecretKey cryptoKey = keyStoreHelper.getSecretKey(keyAlias, keyPassword);
             // Not using Optional#ofNullable() here so that exceptions are propagated
             if (cryptoKey == null) {
                 cryptoKey = generateNewCryptoKey();
-                keyStoreHelper.saveSecretKey(ALIAS, cryptoKey, keyPassword);
+                keyStoreHelper.saveSecretKey(keyAlias, cryptoKey, keyPassword);
             }
 
             return new CryptoHelper(KEY_CIPHER_ALGORITHM, cryptoKey);

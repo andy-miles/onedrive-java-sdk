@@ -65,9 +65,10 @@ public class SiteTestDataHelper {
         return newList(connection, siteId, null);
     }
 
-    public static List newList(final OneDriveConnection connection,
-                               final String siteId,
-                               final Object system) {
+    public static List newList(
+            final OneDriveConnection connection,
+            final String siteId,
+            final Object system) {
         return List.builder()
                 .columns(java.util.List.of(newColumnDefinition()))
                 .connection(connection)
@@ -90,9 +91,10 @@ public class SiteTestDataHelper {
                 .build();
     }
 
-    public static ListItem newListItem(final OneDriveConnection connection,
-                                       final String siteId,
-                                       final String listId) {
+    public static ListItem newListItem(
+            final OneDriveConnection connection,
+            final String siteId,
+            final String listId) {
         return ListItem.builder()
                 .connection(connection)
                 .contentType(newContentType())
@@ -116,10 +118,11 @@ public class SiteTestDataHelper {
                 .build();
     }
 
-    public static ListItemVersion newListItemVersion(final OneDriveConnection connection,
-                                                     final String siteId,
-                                                     final String listId,
-                                                     final String listItemId) {
+    public static ListItemVersion newListItemVersion(
+            final OneDriveConnection connection,
+            final String siteId,
+            final String listId,
+            final String listItemId) {
         return ListItemVersion.builder()
                 .connection(connection)
                 .fields(newFieldValueSet())

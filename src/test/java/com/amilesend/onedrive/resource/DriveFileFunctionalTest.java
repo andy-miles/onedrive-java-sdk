@@ -538,9 +538,10 @@ public class DriveFileFunctionalTest extends FunctionalTestBase {
         assertThrows(ResponseException.class, () -> fileUnderTest.delete());
     }
 
-    static DriveItemVersion copyWithNameAndDriveItemId(final DriveItemVersion orig,
-                                                       final String name,
-                                                       final String driveItemId) {
+    static DriveItemVersion copyWithNameAndDriveItemId(
+            final DriveItemVersion orig,
+            final String name,
+            final String driveItemId) {
         return DriveItemVersion.builder()
                 .connection(orig.getConnection())
                 .driveItemId(driveItemId)

@@ -224,9 +224,10 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
     }
 
     @VisibleForTesting
-    OneDriveConnection authorizeConnection(final OneDriveConnectionBuilder connectionBuilder,
-                                           final CredentialConfig config,
-                                           final String authCode) {
+    OneDriveConnection authorizeConnection(
+            final OneDriveConnectionBuilder connectionBuilder,
+            final CredentialConfig config,
+            final String authCode) {
         if (onedriveType != BusinessOneDrive.class) {
             return connectionBuilder.build(authCode);
         }

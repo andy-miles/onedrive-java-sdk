@@ -102,8 +102,9 @@ public abstract class DriveItemFolderType extends DriveItemType {
      * @throws IOException if an error occurred while uploading the file
      * @see DriveFileUploadExecution
      */
-    public DriveFileUploadExecution uploadAsync(final File file,
-                                                final TransferProgressCallback callback) throws IOException {
+    public DriveFileUploadExecution uploadAsync(
+            final File file,
+            final TransferProgressCallback callback) throws IOException {
         return new DriveFileUploadExecution(getDelegate().uploadNewAsync(file, callback));
     }
 

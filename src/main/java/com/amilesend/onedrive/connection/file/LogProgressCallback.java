@@ -57,9 +57,10 @@ public class LogProgressCallback implements TransferProgressCallback {
     private volatile Instant lastUpdateTimestamp = Instant.now();
 
     @Builder
-    private LogProgressCallback(final TransferType transferType,
-                                final Level loggingLevel,
-                                final Duration updateFrequency) {
+    private LogProgressCallback(
+            final TransferType transferType,
+            final Level loggingLevel,
+            final Duration updateFrequency) {
         log = LoggerFactory.getLogger(LogProgressCallback.class);
         this.transferType = transferType == null ? TransferType.UNDEFINED : transferType;
         this.loggingLevel = loggingLevel == null ? Level.INFO : loggingLevel;

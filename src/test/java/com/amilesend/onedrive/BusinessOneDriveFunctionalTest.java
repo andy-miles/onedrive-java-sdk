@@ -21,7 +21,6 @@ import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.RequestException;
 import com.amilesend.onedrive.connection.ResponseException;
 import com.amilesend.onedrive.connection.auth.BusinessAccountAuthManager;
-import com.amilesend.onedrive.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.parse.GsonFactory;
@@ -55,11 +54,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BusinessOneDriveFunctionalTest {
     protected static final int SUCCESS_STATUS_CODE = 200;
-    protected static final int SUCCESS_ASYNC_JOB_CODE = 202;
     protected static final int ERROR_STATUS_CODE = 404;
     protected static final int SERVICE_ERROR_STATUS_CODE = 503;
-    protected static final TransferProgressCallback NO_OP_TRANSFER_PROGRESS_CALLBACK =
-            new FunctionalTestBase.NoOpTransferProgressCallback();
 
     private MockWebServer mockWebServer = new MockWebServer();
     private OkHttpClient httpClient;

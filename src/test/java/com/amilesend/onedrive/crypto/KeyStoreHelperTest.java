@@ -75,7 +75,7 @@ public class KeyStoreHelperTest {
     }
 
     @Test
-    public void ctor_withInvalidParameters_shouldThrowExeception() {
+    public void ctor_withInvalidParameters_shouldThrowException() {
         assertAll(
                 () -> assertThrows(NullPointerException.class,
                         () -> new KeyStoreHelper(null, KEYSTORE_PASSWORD)),

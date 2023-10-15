@@ -420,18 +420,12 @@
                 <reportSets>
                     <reportSet>
                         <id>default</id>
-                        <configuration>
-                            <!-- Specific configuration for the given reports -->
-                        </configuration>
                         <reports>
                             <report>javadoc</report>
                         </reports>
                     </reportSet>
                     <reportSet>
                         <id>aggregate</id>
-                        <configuration>
-                            <!-- Specific configuration for the given reports -->
-                        </configuration>
                         <reports>
                             <report>aggregate</report>
                         </reports>

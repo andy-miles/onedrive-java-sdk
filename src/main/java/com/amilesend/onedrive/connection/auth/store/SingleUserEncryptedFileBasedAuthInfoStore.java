@@ -92,7 +92,8 @@ public class SingleUserEncryptedFileBasedAuthInfoStore implements AuthInfoStore 
 
             final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
             final EncryptedEnvelope encryptedEnvelope = gson.fromJson(encryptedEnvelopeJson, EncryptedEnvelope.class);
-            final String decryptedAuthInfoJson = new String(cryptoHelper.decrypt(encryptedEnvelope), StandardCharsets.UTF_8);
+            final String decryptedAuthInfoJson =
+                    new String(cryptoHelper.decrypt(encryptedEnvelope), StandardCharsets.UTF_8);
             return AuthInfo.fromJson(decryptedAuthInfoJson);
         } catch (final CryptoHelperException ex) {
             throw new AuthInfoStoreException("Unable to decrypt AuthInfo: " + ex.getMessage(), ex);

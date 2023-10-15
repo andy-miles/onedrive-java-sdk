@@ -87,9 +87,10 @@ public class TypeTestDataHelper {
         return newPermission(connection, driveItemId, driveItemId);
     }
 
-    public static Permission newPermission(final OneDriveConnection connection,
-                                           final String idSuffix,
-                                           final String driveItemId) {
+    public static Permission newPermission(
+            final OneDriveConnection connection,
+            final String idSuffix,
+            final String driveItemId) {
         return Permission.builder()
                 .connection(connection)
                 .driveItemId(driveItemId)
@@ -122,9 +123,6 @@ public class TypeTestDataHelper {
                 .source(newThumbnail("Source"))
                 .build();
     }
-
-
-
 
     static Audio newAudio() {
         return Audio.builder()

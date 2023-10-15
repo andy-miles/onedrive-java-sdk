@@ -79,10 +79,11 @@ public class DriveTestDataHelper {
         return newDriveItem(connection, suffix, new Object(), new Object());
     }
 
-    public static DriveItem newDriveItem(final OneDriveConnection connection,
-                                         final int suffix,
-                                         final Object malware,
-                                         final Object root) {
+    public static DriveItem newDriveItem(
+            final OneDriveConnection connection,
+            final int suffix,
+            final Object malware,
+            final Object root) {
         return DriveItem.builder()
                 .audio(newAudio())
                 .conflictBehavior("ConflictBehaviorValue")
@@ -175,8 +176,9 @@ public class DriveTestDataHelper {
                 .build();
     }
 
-    public static DriveItemVersion newDriveItemVersion(final OneDriveConnection connection,
-                                                       final String versionIdSuffix) {
+    public static DriveItemVersion newDriveItemVersion(
+            final OneDriveConnection connection,
+            final String versionIdSuffix) {
         final String versionId = "VersionIdValue" + versionIdSuffix;
         return DriveItemVersion.builder()
                 .connection(connection)

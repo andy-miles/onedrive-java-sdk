@@ -88,12 +88,13 @@ public class PersonalAccountAuthManager implements AuthManager {
     @Builder(builderClassName = "BuilderWithAuthCode",
              buildMethodName = "buildWithAuthCode",
              builderMethodName = "builderWithAuthCode")
-    protected PersonalAccountAuthManager(@NonNull final OkHttpClient httpClient,
-                        final String baseTokenUrl,
-                        final String clientId,
-                        final String clientSecret,
-                        final String redirectUrl,
-                        final String authCode) {
+    protected PersonalAccountAuthManager(
+            @NonNull final OkHttpClient httpClient,
+            final String baseTokenUrl,
+            final String clientId,
+            final String clientSecret,
+            final String redirectUrl,
+            final String authCode) {
         Validate.notBlank(authCode, "authCode must not be blank");
         Validate.notBlank(clientId, "clientId must not be blank");
         Validate.notBlank(clientSecret, "clientSecret must not be blank");
@@ -111,12 +112,13 @@ public class PersonalAccountAuthManager implements AuthManager {
     @Builder(builderClassName = "BuilderWithAuthInfo",
              builderMethodName = "builderWithAuthInfo",
              buildMethodName = "buildWithAuthInfo")
-    private PersonalAccountAuthManager(@NonNull final OkHttpClient httpClient,
-                        final String baseTokenUrl,
-                        final String clientId,
-                        final String clientSecret,
-                        final String redirectUrl,
-                        @NonNull final AuthInfo authInfo) {
+    private PersonalAccountAuthManager(
+            @NonNull final OkHttpClient httpClient,
+            final String baseTokenUrl,
+            final String clientId,
+            final String clientSecret,
+            final String redirectUrl,
+            @NonNull final AuthInfo authInfo) {
         Validate.notBlank(clientId, "clientId must not be blank");
         Validate.notBlank(clientSecret, "clientSecret must not be blank");
         Validate.notBlank(redirectUrl, "redirectUrl must not be blank");

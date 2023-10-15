@@ -55,16 +55,25 @@ public class CryptoHelperFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        factoryUnderTest = new CryptoHelperFactory(mockKeyStoreHelper, KEY_PASSWORD);
+        factoryUnderTest = CryptoHelperFactory.builder()
+                .keyStoreHelper(mockKeyStoreHelper)
+                .keyPassword(KEY_PASSWORD)
+                .build();
     }
 
     @Test
     public void ctor_withInvalidParameters_shouldThrowException() {
         assertAll(
                 () -> assertThrows(NullPointerException.class,
-                        () -> new CryptoHelperFactory(null, KEY_PASSWORD)),
+                        () -> CryptoHelperFactory.builder()
+                                .keyStoreHelper(null)
+                                .keyPassword(KEY_PASSWORD)
+                                .build()),
                 () -> assertThrows(NullPointerException.class,
-                        () -> new CryptoHelperFactory(mockKeyStoreHelper, null)));
+                        () -> CryptoHelperFactory.builder()
+                                .keyStoreHelper(mockKeyStoreHelper)
+                                .keyPassword(null)
+                                .build()));
     }
 
     @SneakyThrows
@@ -106,7 +115,7 @@ public class CryptoHelperFactoryTest {
     }
 
     @Test
-    public void newInstance_withNoSuchAlgorithmException_shouldThrowExecption() {
+    public void newInstance_withNoSuchAlgorithmException_shouldThrowException() {
         try (final MockedStatic<KeyGenerator> keyGeneratorMockedStatic = mockStatic(KeyGenerator.class)) {
             keyGeneratorMockedStatic.when(() -> KeyGenerator.getInstance(anyString()))
                     .thenThrow(new NoSuchAlgorithmException("Exception"));

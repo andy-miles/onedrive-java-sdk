@@ -209,8 +209,9 @@ public class DriveItem extends BaseItem {
      * @param callback the callback to inform of transfer progress
      * @return the CompletableFuture used to fetch the number of bytes downloaded
      */
-    public CompletableFuture<Long> downloadAsync(@NonNull final Path folderPath,
-                                                 @NonNull final TransferProgressCallback callback) {
+    public CompletableFuture<Long> downloadAsync(
+            @NonNull final Path folderPath,
+            @NonNull final TransferProgressCallback callback) {
         return connection.downloadAsync(
                 connection.newSignedForRequestBuilder()
                         .url(getContentUrl(validateAndGetUrlEncodedId()))
@@ -260,9 +261,9 @@ public class DriveItem extends BaseItem {
      * @return the CompletableFuture to fetch the updated drive item information
      * @throws IOException if unable to read or determine the file's content type
      */
-    public CompletableFuture<DriveItem> uploadAsync(@NonNull final java.io.File file,
-                                                    @NonNull final TransferProgressCallback callback)
-            throws IOException {
+    public CompletableFuture<DriveItem> uploadAsync(
+            @NonNull final java.io.File file,
+            @NonNull final TransferProgressCallback callback) throws IOException {
         return uploadInternalAsync(
                 getContentUrl(validateAndGetUrlEncodedId()),
                 ProgressReportingFileRequestBody.builder()
@@ -311,9 +312,9 @@ public class DriveItem extends BaseItem {
      * @return the completable future to fetch the updated drive item information
      * @throws IOException if unable to read or determine the file's content type
      */
-    public CompletableFuture<DriveItem> uploadNewAsync(@NonNull final java.io.File file,
-                                                       @NonNull final TransferProgressCallback callback)
-            throws IOException {
+    public CompletableFuture<DriveItem> uploadNewAsync(
+            @NonNull final java.io.File file,
+            @NonNull final TransferProgressCallback callback) throws IOException {
         return uploadInternalAsync(
                 getContentUrl(validateAndGetUrlEncodedId(), file.getName()),
                 ProgressReportingFileRequestBody.builder()
@@ -333,8 +334,9 @@ public class DriveItem extends BaseItem {
                 DRIVE_ITEM_PARSER);
     }
 
-    private CompletableFuture<DriveItem> uploadInternalAsync(final String url,
-                                                             final ProgressReportingFileRequestBody body) {
+    private CompletableFuture<DriveItem> uploadInternalAsync(
+            final String url,
+            final ProgressReportingFileRequestBody body) {
         return connection.executeAsync(
                 connection.newSignedForApiRequestBuilder()
                         .url(url)
@@ -776,9 +778,10 @@ public class DriveItem extends BaseItem {
                 .toString();
     }
 
-    private String getSearchUrl(final DriveItemPage page,
-                                final String urlEncodedDriveItemId,
-                                final String searchQuery) {
+    private String getSearchUrl(
+            final DriveItemPage page,
+            final String urlEncodedDriveItemId,
+            final String searchQuery) {
         return page == null
                 ? new StringBuilder(connection.getBaseUrl())
                         .append(DRIVE_ITEM_BASE_URL_PATH)
