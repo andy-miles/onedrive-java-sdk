@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.amilesend.onedrive.connection.file.LogProgressCallback.formatPrefix;
+
 /**
  * Defines shared operations between drive folders and packages.
  * @see DriveFolder
@@ -58,9 +60,12 @@ public abstract class DriveItemFolderType extends DriveItemType {
      * @see DriveFile
      */
     public DriveFile upload(final File file) throws IOException {
-        return upload(file, LogProgressCallback.builder()
-                .transferType(LogProgressCallback.TransferType.UPLOAD)
-                .build());
+        return upload(
+                file,
+                LogProgressCallback.builder()
+                        .prefix(formatPrefix(file.getName(), "OneDrive"))
+                        .transferType(LogProgressCallback.TransferType.UPLOAD)
+                        .build());
     }
 
     /**
@@ -87,9 +92,12 @@ public abstract class DriveItemFolderType extends DriveItemType {
      * @see DriveFileUploadExecution
      */
     public DriveFileUploadExecution uploadAsync(final File file) throws IOException {
-        return uploadAsync(file, LogProgressCallback.builder()
-                .transferType(LogProgressCallback.TransferType.UPLOAD)
-                .build());
+        return uploadAsync(
+                file,
+                LogProgressCallback.builder()
+                        .prefix(formatPrefix(file.getName(), "OneDrive"))
+                        .transferType(LogProgressCallback.TransferType.UPLOAD)
+                        .build());
     }
 
     /**

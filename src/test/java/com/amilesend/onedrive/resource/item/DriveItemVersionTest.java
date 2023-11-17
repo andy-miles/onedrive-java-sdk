@@ -29,7 +29,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 
+import static com.amilesend.onedrive.resource.DriveFileTest.newMockFolderPath;
 import static com.amilesend.onedrive.resource.item.DriveItemVersion.NO_CONTENT_RESPONSE_HTTP_CODE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,6 +73,10 @@ public class DriveItemVersionTest {
                 .build();
     }
 
+    /////////////
+    // download
+    /////////////
+
     @Test
     public void download_withValidFolderPathAndCallback_shouldInvokeApi() {
         final Path mockPath = mock(Path.class);
@@ -100,7 +106,7 @@ public class DriveItemVersionTest {
 
     @Test
     public void download_withFolderPathOnly_shouldInvokeApiWithDefaultCallback() {
-        final Path mockPath = mock(Path.class);
+        final Path mockPath = newMockFolderPath();
         when(mockConnection.download(
                 any(Request.class),
                 any(Path.class),
@@ -135,6 +141,79 @@ public class DriveItemVersionTest {
                 () -> assertThrows(NullPointerException.class,
                         () -> versionUnderTest.download(mockPath, null)));
     }
+
+    //////////////////
+    // downloadAsync
+    //////////////////
+
+    @Test
+    public void downloadAsync_withValidFolderPathAndCallback_shouldInvokeApi() {
+        final Path mockPath = mock(Path.class);
+        final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
+        when(mockConnection.downloadAsync(
+                any(Request.class),
+                any(Path.class),
+                anyString(),
+                anyLong(),
+                any(TransferProgressCallback.class)))
+                .thenReturn(CompletableFuture.completedFuture(SIZE));
+
+        versionUnderTest.downloadAsync(mockPath, mockCallback);
+
+        final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+        assertAll(
+                () -> verify(mockConnection).downloadAsync(
+                        requestCaptor.capture(),
+                        eq(mockPath),
+                        eq(NAME),
+                        eq(SIZE),
+                        eq(mockCallback)),
+                () -> assertEquals("http://localhost/me/drive/items/DriveItemId/versions/VersionId/content",
+                        requestCaptor.getValue().url().toString()),
+                () -> assertEquals("GET", requestCaptor.getValue().method()));
+    }
+
+    @Test
+    public void downloadAsync_withFolderPathOnly_shouldInvokeApiWithDefaultCallback() {
+        final Path mockPath = newMockFolderPath();
+        when(mockConnection.downloadAsync(
+                any(Request.class),
+                any(Path.class),
+                anyString(),
+                anyLong(),
+                any(TransferProgressCallback.class)))
+                .thenReturn(CompletableFuture.completedFuture(SIZE));
+
+        versionUnderTest.downloadAsync(mockPath);
+
+        final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+        assertAll(
+                () -> verify(mockConnection).downloadAsync(
+                        requestCaptor.capture(),
+                        eq(mockPath),
+                        eq(NAME),
+                        eq(SIZE),
+                        isA(LogProgressCallback.class)),
+                () -> assertEquals("http://localhost/me/drive/items/DriveItemId/versions/VersionId/content",
+                        requestCaptor.getValue().url().toString()),
+                () -> assertEquals("GET", requestCaptor.getValue().method()));
+    }
+
+    @Test
+    public void downloadAsync_withInvalidParameters_shouldThrowException() {
+        final Path mockPath = mock(Path.class);
+        final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
+
+        assertAll(
+                () -> assertThrows(NullPointerException.class,
+                        () -> versionUnderTest.downloadAsync(null, mockCallback)),
+                () -> assertThrows(NullPointerException.class,
+                        () -> versionUnderTest.downloadAsync(mockPath, null)));
+    }
+
+    ////////////
+    // restore
+    ////////////
 
     @Test
     public void restore_withValidResponseCode_shouldReturnTrue() {

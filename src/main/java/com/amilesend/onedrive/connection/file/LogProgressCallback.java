@@ -23,12 +23,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 
 /**
  * A log-based implementation of {@link TransferProgressCallback} that logs transfer progress.
@@ -48,6 +51,8 @@ public class LogProgressCallback implements TransferProgressCallback {
     private final Duration updateFrequency;
     /** The logger instance. */
     private final Logger log;
+    /** Prefix to include in every logging statement. */
+    private final String prefix;
     // Used to limit unnecessarily entries to the log.
     @VisibleForTesting
     @Setter(AccessLevel.PACKAGE)
@@ -60,13 +65,32 @@ public class LogProgressCallback implements TransferProgressCallback {
     private LogProgressCallback(
             final TransferType transferType,
             final Level loggingLevel,
-            final Duration updateFrequency) {
+            final Duration updateFrequency,
+            final String prefix) {
         log = LoggerFactory.getLogger(LogProgressCallback.class);
-        this.transferType = transferType == null ? TransferType.UNDEFINED : transferType;
-        this.loggingLevel = loggingLevel == null ? Level.INFO : loggingLevel;
-        this.updateFrequency = updateFrequency == null
-                ? DEFAULT_UPDATE_FREQUENCY
-                : updateFrequency;
+        this.transferType = Optional.ofNullable(transferType).orElse(TransferType.UNDEFINED);
+        this.loggingLevel = Optional.ofNullable(loggingLevel).orElse(Level.INFO);
+        this.updateFrequency = Optional.ofNullable(updateFrequency).orElse(DEFAULT_UPDATE_FREQUENCY);
+        this.prefix = Optional.ofNullable(prefix).orElse(StringUtils.EMPTY);
+    }
+
+    /**
+     * Helper method to format the logging prefix to use.
+     *
+     * @param source the source
+     * @param destination the destination
+     * @return the logging prefix
+     */
+    public static String formatPrefix(final String source, final String destination) {
+        Validate.notBlank(source, "source must not be blank");
+        Validate.notBlank(destination, "destination must not be blank");
+
+        return new StringBuilder("[")
+                .append(source)
+                .append(" -> ")
+                .append(destination)
+                .append("] ")
+                .toString();
     }
 
     @Override
@@ -81,7 +105,8 @@ public class LogProgressCallback implements TransferProgressCallback {
         }
 
         log.atLevel(loggingLevel)
-                .log("{} Status: {}% ({} of {} bytes)",
+                .log("{}{} Status: {}% ({} of {} bytes)",
+                        prefix,
                         transferType.getLogPrefix(),
                         currentProgressPercent,
                         currentBytes,
@@ -92,13 +117,16 @@ public class LogProgressCallback implements TransferProgressCallback {
 
     @Override
     public void onFailure(final Throwable cause) {
-        log.error("An error occurred during {}: {}", transferType.getLogPrefix(), cause.getMessage(), cause);
+        log.error("{}An error occurred during {}: {}", prefix, transferType.getLogPrefix(), cause.getMessage(), cause);
     }
 
     @Override
     public void onComplete(final long bytesTransferred) {
-        log.atLevel(loggingLevel)
-                .log("{} complete with {} bytes transferred", transferType.getLogPrefix(), bytesTransferred);
+        log.atLevel(loggingLevel).log(
+                "{}{} complete with {} bytes transferred",
+                prefix,
+                transferType.getLogPrefix(),
+                bytesTransferred);
     }
 
     /** Describes that transfer type used for logging progress. */

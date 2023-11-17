@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.connection.file;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,7 +75,8 @@ public class LogProgressCallbackTest {
         callbackUnderTest.onUpdate(50L, 100L);
 
         verify(MOCK_LOGGING_EVENT_BUILDER).log(
-                eq("{} Status: {}% ({} of {} bytes)"),
+                eq("{}{} Status: {}% ({} of {} bytes)"),
+                eq(StringUtils.EMPTY),
                 eq(LogProgressCallback.TransferType.UNDEFINED.getLogPrefix()),
                 eq(50),
                 eq(50L),
@@ -111,7 +113,8 @@ public class LogProgressCallbackTest {
         callbackUnderTest.onFailure(cause);
 
         verify(MOCK_LOGGER).error(
-                eq("An error occurred during {}: {}"),
+                eq("{}An error occurred during {}: {}"),
+                eq(StringUtils.EMPTY),
                 eq(LogProgressCallback.TransferType.UNDEFINED.getLogPrefix()),
                 eq("Exception"),
                 eq(cause));
@@ -128,7 +131,8 @@ public class LogProgressCallbackTest {
         callbackUnderTest.onComplete(bytesTransferred);
 
         verify(MOCK_LOGGING_EVENT_BUILDER).log(
-                eq("{} complete with {} bytes transferred"),
+                eq("{}{} complete with {} bytes transferred"),
+                eq(StringUtils.EMPTY),
                 eq(LogProgressCallback.TransferType.UNDEFINED.getLogPrefix()),
                 eq(bytesTransferred));
     }

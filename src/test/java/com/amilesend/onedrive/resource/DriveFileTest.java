@@ -340,7 +340,7 @@ public class DriveFileTest {
 
     @Test
     public void download_withFolderPath_shouldInvokeDelegate() {
-        final Path mockFolderPath = mock(Path.class);
+        final Path mockFolderPath = newMockFolderPath();
 
         driveFileUnderTest.download(mockFolderPath);
 
@@ -360,7 +360,7 @@ public class DriveFileTest {
     @SneakyThrows
     @Test
     public void downloadAsync_withFolderPath_shouldReturnExecution() {
-        final Path mockFolderPath = mock(Path.class);
+        final Path mockFolderPath = newMockFolderPath();
         final CompletableFuture<Long> mockFuture = mock(CompletableFuture.class);
         when(mockFuture.get()).thenReturn(1024L);
         when(mockDelegate.downloadAsync(any(Path.class), any(TransferProgressCallback.class))).thenReturn(mockFuture);
@@ -399,7 +399,7 @@ public class DriveFileTest {
         when(mockUploadedDriveItem.getId()).thenReturn("UploadedDriveItemId");
         when(mockDelegate.upload(any(File.class), any(TransferProgressCallback.class)))
                 .thenReturn(mockUploadedDriveItem);
-        final File mockFile = mock(File.class);
+        final File mockFile = newMockFile();
 
         final DriveFile actual = driveFileUnderTest.upload(mockFile);
 
@@ -430,7 +430,7 @@ public class DriveFileTest {
     public void upload_withIOException_shouldThrowException() {
         when(mockDelegate.upload(any(File.class), any(TransferProgressCallback.class)))
                 .thenThrow(new IOException("Exception"));
-        final File mockFile = mock(File.class);
+        final File mockFile = newMockFile();
 
         assertAll(
                 () -> assertThrows(IOException.class, () -> driveFileUnderTest.upload(mockFile)),
@@ -446,7 +446,7 @@ public class DriveFileTest {
         final CompletableFuture<DriveItem> mockFuture = mock(CompletableFuture.class);
         when(mockFuture.get()).thenReturn(mockUploadedDriveItem);
         when(mockDelegate.uploadAsync(any(File.class), any(TransferProgressCallback.class))).thenReturn(mockFuture);
-        final File mockFile = mock(File.class);
+        final File mockFile = newMockFile();
 
         final DriveFileUploadExecution actual = driveFileUnderTest.uploadAsync(mockFile);
 
@@ -478,7 +478,7 @@ public class DriveFileTest {
     public void uploadAsync_withIOException_shouldThrowException() {
         when(mockDelegate.uploadAsync(any(File.class), any(TransferProgressCallback.class)))
                 .thenThrow(new IOException("Exception"));
-        final File mockFile = mock(File.class);
+        final File mockFile = newMockFile();
 
         assertAll(
                 () -> assertThrows(IOException.class, () -> driveFileUnderTest.uploadAsync(mockFile)),
@@ -678,5 +678,19 @@ public class DriveFileTest {
         assertAll(
                 () -> assertFalse(driveFileUnderTest.equals(differentFile)),
                 () -> assertNotEquals(driveFileUnderTest.hashCode(), differentFile.hashCode()));
+    }
+
+    public static File newMockFile() {
+        final File mockFile = mock(File.class);
+        when(mockFile.getName()).thenReturn("FilenameValue");
+        return mockFile;
+    }
+
+    public static Path newMockFolderPath() {
+        final File mockFile = newMockFile();
+        final Path mockFolderPath = mock(Path.class);
+        when(mockFolderPath.toFile()).thenReturn(mockFile);
+
+        return mockFolderPath;
     }
 }

@@ -35,6 +35,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import static com.amilesend.onedrive.connection.file.LogProgressCallback.formatPrefix;
+
 /** A wrapper around a {@link DriveItem} that represents a file. */
 public class DriveFile extends DriveItemType {
 
@@ -176,10 +178,12 @@ public class DriveFile extends DriveItemType {
      * @param folderPath the folder to download the file to
      */
     public void download(final Path folderPath) {
-        getDelegate()
-                .download(folderPath, LogProgressCallback.builder()
-                .transferType(LogProgressCallback.TransferType.DOWNLOAD)
-                .build());
+        getDelegate().download(
+                folderPath,
+                LogProgressCallback.builder()
+                        .prefix(formatPrefix("OneDrive", folderPath.toFile().getName()))
+                        .transferType(LogProgressCallback.TransferType.DOWNLOAD)
+                        .build());
     }
 
     /**
@@ -203,9 +207,12 @@ public class DriveFile extends DriveItemType {
      * @see DriveFileDownloadExecution
      */
     public DriveFileDownloadExecution downloadAsync(final Path folderPath) {
-        return downloadAsync(folderPath, LogProgressCallback.builder()
-                .transferType(LogProgressCallback.TransferType.DOWNLOAD)
-                .build());
+        return downloadAsync(
+                folderPath,
+                LogProgressCallback.builder()
+                        .prefix(formatPrefix("OneDrive", folderPath.toFile().getName()))
+                        .transferType(LogProgressCallback.TransferType.DOWNLOAD)
+                        .build());
     }
 
     /**
@@ -238,9 +245,12 @@ public class DriveFile extends DriveItemType {
      * @see DriveFile
      */
     public DriveFile upload(final File file) throws IOException {
-        return upload(file, LogProgressCallback.builder()
-                .transferType(LogProgressCallback.TransferType.UPLOAD)
-                .build());
+        return upload(
+                file,
+                LogProgressCallback.builder()
+                        .prefix(formatPrefix(file.getName(), "OneDrive"))
+                        .transferType(LogProgressCallback.TransferType.UPLOAD)
+                        .build());
     }
 
     /**
@@ -268,9 +278,12 @@ public class DriveFile extends DriveItemType {
      * @see DriveFileUploadExecution
      */
     public DriveFileUploadExecution uploadAsync(final File file) throws IOException {
-        return uploadAsync(file, LogProgressCallback.builder()
-                .transferType(LogProgressCallback.TransferType.UPLOAD)
-                .build());
+        return uploadAsync(
+                file,
+                LogProgressCallback.builder()
+                        .prefix(formatPrefix(file.getName(), "OneDrive"))
+                        .transferType(LogProgressCallback.TransferType.UPLOAD)
+                        .build());
     }
 
     /**

@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static com.amilesend.onedrive.resource.DriveFileTest.newMockFile;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -291,7 +292,7 @@ public class DriveFolderTest {
         final DriveItem uploadedItem = mock(DriveItem.class);
         when(uploadedItem.getId()).thenReturn("UploadedFileId");
         when(mockDelegate.uploadNew(any(File.class), any(TransferProgressCallback.class))).thenReturn(uploadedItem);
-        final File mockFile = mock(File.class);
+        final File mockFile = newMockFile();
 
         final DriveFile actual = driveFolderUnderTest.upload(mockFile);
 
@@ -321,7 +322,7 @@ public class DriveFolderTest {
     public void upload_withIOException_shouldThrowException() {
         when(mockDelegate.uploadNew(any(File.class), any(TransferProgressCallback.class)))
                 .thenThrow(new IOException("Exception"));
-        final File mockFile = mock(File.class);
+        final File mockFile = newMockFile();
 
         assertAll(
                 () -> assertThrows(IOException.class, () -> driveFolderUnderTest.upload(mockFile)),
@@ -337,7 +338,7 @@ public class DriveFolderTest {
         final CompletableFuture<DriveItem> mockFuture = mock(CompletableFuture.class);
         when(mockFuture.get()).thenReturn(mockUploadedDriveItem);
         when(mockDelegate.uploadNewAsync(any(File.class), any(TransferProgressCallback.class))).thenReturn(mockFuture);
-        final File mockFile = mock(File.class);
+        final File mockFile = newMockFile();
 
         final DriveFileUploadExecution actual = driveFolderUnderTest.uploadAsync(mockFile);
 
@@ -369,7 +370,7 @@ public class DriveFolderTest {
     public void uploadAsync_withIOException_shouldThrowException() {
         when(mockDelegate.uploadNewAsync(any(File.class), any(TransferProgressCallback.class)))
                 .thenThrow(new IOException("Exception"));
-        final File mockFile = mock(File.class);
+        final File mockFile = newMockFile();
 
         assertAll(
                 () -> assertThrows(IOException.class, () -> driveFolderUnderTest.uploadAsync(mockFile)),

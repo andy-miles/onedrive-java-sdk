@@ -21,6 +21,7 @@ import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.file.LogProgressCallback;
 import com.amilesend.onedrive.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.parse.strategy.GsonExclude;
+import com.amilesend.onedrive.resource.DriveFileDownloadExecution;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import com.amilesend.onedrive.resource.item.type.PublicationFacet;
 import com.google.common.annotations.VisibleForTesting;
@@ -34,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.nio.file.Path;
 
 import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
+import static com.amilesend.onedrive.connection.file.LogProgressCallback.formatPrefix;
 import static com.amilesend.onedrive.resource.item.DriveItem.DRIVE_ITEM_BASE_URL_PATH;
 
 /**
@@ -83,9 +85,12 @@ public class DriveItemVersion {
      * @param folderPath the path of the folder to download the drive item version content to
      */
     public void download(final Path folderPath) {
-        download(folderPath, LogProgressCallback.builder()
-                .transferType(LogProgressCallback.TransferType.DOWNLOAD)
-                .build());
+        download(
+                folderPath,
+                LogProgressCallback.builder()
+                        .prefix(formatPrefix("OneDrive", folderPath.toFile().getName()))
+                        .transferType(LogProgressCallback.TransferType.DOWNLOAD)
+                        .build());
     }
 
     /**
@@ -107,6 +112,46 @@ public class DriveItemVersion {
                 getName(),
                 getSize(),
                 callback);
+    }
+
+    /**
+     * Downloads a specific drive item version asynchronously.
+     *
+     * @param folderPath the folder to download the file to
+     * @return the asynchronous execution that contains the number of bytes downloaded
+     * @see DriveFileDownloadExecution
+     */
+    public DriveFileDownloadExecution downloadAsync(final Path folderPath) {
+        return downloadAsync(
+                folderPath,
+                LogProgressCallback.builder()
+                        .prefix(formatPrefix("OneDrive", folderPath.toFile().getName()))
+                        .transferType(LogProgressCallback.TransferType.DOWNLOAD)
+                        .build());
+    }
+
+    /**
+     * Downloads a specific drive item version asynchronously and reports transfer progress to the specified
+     * {@link TransferProgressCallback}. Consumers can block on transfer completion by invoking
+     * {@link DriveFileDownloadExecution#get()}.
+     *
+     * @param folderPath the folder to download the file to
+     * @param callback the callback be notified of transfer progress
+     * @return the asynchronous execution that contains the number of bytes downloaded
+     * @see TransferProgressCallback
+     * @see DriveFileDownloadExecution
+     */
+    public DriveFileDownloadExecution downloadAsync(
+            @NonNull final Path folderPath,
+            @NonNull TransferProgressCallback callback) {
+        return new DriveFileDownloadExecution(connection.downloadAsync(
+                connection.newSignedForRequestBuilder()
+                        .url(getContentUrl(getDriveItemId(), getId()))
+                        .build(),
+                folderPath,
+                getName(),
+                getSize(),
+                callback));
     }
 
     /**
