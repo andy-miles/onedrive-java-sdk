@@ -55,13 +55,33 @@
         <developerConnection>scm:git:https://github.com/andy-miles/onedrive-java-sdk.git</developerConnection>
         <url>https://github.com/andy-miles/onedrive-java-sdk</url>
     </scm>
-    <distributionManagement>
-        <repository>
+    <profiles>
+        <profile>
             <id>github</id>
-            <name>GitHub andy-miles Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/andy-miles/onedrive-java-sdk</url>
-        </repository>
-    </distributionManagement>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub andy-miles Apache Maven Packages</name>
+                    <url>https://maven.pkg.github.com/andy-miles/onedrive-java-sdk</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>ossrh</id>
+            <distributionManagement>
+                <repository>
+                    <id>ossrh</id>
+                    <name>Sonatype Maven Central Repository</name>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <name>Sonatype SNAPSHOT Maven Central Repository</name>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -71,11 +91,12 @@
         <github.global.server>github</github.global.server>
         <maven.resolver.transport>wagon</maven.resolver.transport>
         <lombok.version>1.18.30</lombok.version>
-        <maven.javadoc.plugin.version>3.6.2</maven.javadoc.plugin.version>
-        <mockito.version>5.6.0</mockito.version>
-        <slf4j.version>2.0.9</slf4j.version>
-        <spotbugs.version>4.8.1</spotbugs.version>
+        <maven.javadoc.plugin.version>3.6.3</maven.javadoc.plugin.version>
+        <mockito.version>5.9.0</mockito.version>
+        <slf4j.version>2.0.11</slf4j.version>
+        <spotbugs.version>4.8.3</spotbugs.version>
         <spotbugs.maven.plugin.version>4.8.1.0</spotbugs.maven.plugin.version>
+        <okhttp.version>4.12.0</okhttp.version>
     </properties>
 
     <dependencies>
@@ -88,7 +109,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>[5.10,)</version>
+            <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -119,19 +140,19 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>[2.10,)</version>
+            <version>2.10.1</version>
         </dependency>
         <!-- Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>32.1.3-jre</version>
+            <version>33.0.0-jre</version>
         </dependency>
         <!-- Apache Commons -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>[3.13,)</version>
+            <version>3.14.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -142,18 +163,18 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.12.0</version>
+            <version>${okhttp.version}</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>mockwebserver</artifactId>
-            <version>4.12.0</version>
+            <version>${okhttp.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.squareup.okio</groupId>
             <artifactId>okio</artifactId>
-            <version>3.6.0</version>
+            <version>3.7.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.spotbugs</groupId>
@@ -178,9 +199,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.12.1</version>
                 <configuration>
                     <compilerArgs>
+                        <!-- Required for Lombok annotation processing on JDK 21+ -->
                         <arg>-proc:full</arg>
                     </compilerArgs>
                 </configuration>
@@ -188,8 +210,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>3.2.5</version>
                 <configuration>
+                    <!-- Suppress warnings for mockito -->
                     <argLine>@{argLine} -XX:+EnableDynamicAgentLoading</argLine>
                 </configuration>
             </plugin>
@@ -266,7 +289,7 @@
                         <goals>
                             <goal>javadoc</goal>
                         </goals>
-                        <!-- Required to run the hacky annotation fix before bundling as a jar -->
+                        <!-- Required to run the hacky annotation formatting fix before bundling as a jar -->
                         <phase>prepare-package</phase>
                     </execution>
                 </executions>
@@ -288,7 +311,7 @@
                         <goals>
                             <goal>replace</goal>
                         </goals>
-                        <!-- Required to run the hacky annotation fix before bundling as a jar -->
+                        <!-- Required to run the hacky annotation formatting fix before bundling as a jar -->
                         <phase>prepare-package</phase>
                     </execution>
                 </executions>
@@ -431,7 +454,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.4.5</version>
+                <version>3.5.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
