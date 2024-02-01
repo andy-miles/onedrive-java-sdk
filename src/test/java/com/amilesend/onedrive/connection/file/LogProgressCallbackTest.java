@@ -19,10 +19,14 @@ package com.amilesend.onedrive.connection.file;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -37,14 +41,19 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+@ExtendWith(MockitoExtension.class)
 public class LogProgressCallbackTest {
+    private static final long DURATION_INTERVAL_SECONDS = 10L;
     private static MockedStatic<LoggerFactory> FACTORY_MOCKED_STATIC = mockStatic(LoggerFactory.class);
     private static LoggingEventBuilder MOCK_LOGGING_EVENT_BUILDER = mock(LoggingEventBuilder.class);
     private static Logger MOCK_LOGGER = mock(Logger.class);
     private LogProgressCallback callbackUnderTest;
+    @Mock
+    private TransferProgressCallback mockChainedCallback;
 
     @BeforeAll
     public static void init() {
@@ -60,7 +69,15 @@ public class LogProgressCallbackTest {
 
     @BeforeEach
     public void setUp() {
-        callbackUnderTest = newLogProgressCallback();
+        callbackUnderTest = LogProgressCallback.builder()
+                .chainedCallback(mockChainedCallback)
+                .updateFrequency(Duration.ofSeconds(DURATION_INTERVAL_SECONDS))
+                .build();
+    }
+
+    @AfterEach
+    public void resetMocks() {
+        reset(MOCK_LOGGING_EVENT_BUILDER);
     }
 
     ////////////////
@@ -69,7 +86,9 @@ public class LogProgressCallbackTest {
 
     @Test
     public void onUpdate_withTimeAdvancementAndPercentageChange_shouldLogProgress() {
-        callbackUnderTest.setLastUpdateTimestamp(Instant.now().minus(10L, ChronoUnit.SECONDS));
+        final Instant lastUpdated = callbackUnderTest.getLastUpdateTimestamp();
+        final long lapsedDurationIntervalSeconds = DURATION_INTERVAL_SECONDS + 1L;
+        callbackUnderTest.setLastUpdateTimestamp(lastUpdated.minus(lapsedDurationIntervalSeconds, ChronoUnit.SECONDS));
         callbackUnderTest.setLastUpdateProgressValue(0L);
 
         callbackUnderTest.onUpdate(50L, 100L);
@@ -85,7 +104,9 @@ public class LogProgressCallbackTest {
 
     @Test
     public void onUpdate_withNoProgress_shouldNotLog() {
-        callbackUnderTest.setLastUpdateTimestamp(Instant.now().minus(5L, ChronoUnit.SECONDS));
+        final Instant lastUpdated = callbackUnderTest.getLastUpdateTimestamp();
+        final long lapsedDurationIntervalSeconds = DURATION_INTERVAL_SECONDS + 1L;
+        callbackUnderTest.setLastUpdateTimestamp(lastUpdated.minus(lapsedDurationIntervalSeconds, ChronoUnit.SECONDS));
         callbackUnderTest.setLastUpdateProgressValue(50L);
 
         callbackUnderTest.onUpdate(50L, 100L);
@@ -96,10 +117,18 @@ public class LogProgressCallbackTest {
     @Test
     public void onUpdate_withDurationLessThanUpdateInterval_shouldNotLog() {
         callbackUnderTest.setLastUpdateTimestamp(Instant.now());
+        callbackUnderTest.setLastUpdateProgressValue(0L);
 
         callbackUnderTest.onUpdate(50L, 100L);
 
         verifyNoMoreInteractions(MOCK_LOGGING_EVENT_BUILDER);
+    }
+
+    @Test
+    public void onUpdate_withChainedCallback_shouldInvokeCallback() {
+        callbackUnderTest.onUpdate(50L, 100L);
+
+        verify(mockChainedCallback).onUpdate(eq(50L), eq(100L));
     }
 
     ////////////////
@@ -120,12 +149,21 @@ public class LogProgressCallbackTest {
                 eq(cause));
     }
 
+    @Test
+    public void onFailure_withChainedCallback_shouldInvokeCallback() {
+        final Throwable cause = new IllegalStateException("Exception");
+
+        callbackUnderTest.onFailure(cause);
+
+        verify(mockChainedCallback).onFailure(eq(cause));
+    }
+
     ////////////////
     // onComplete
     ////////////////
 
     @Test
-    public void onComplete_shouldLogFailure() {
+    public void onComplete_shouldLogCompletion() {
         final long bytesTransferred = 1000L;
 
         callbackUnderTest.onComplete(bytesTransferred);
@@ -137,9 +175,12 @@ public class LogProgressCallbackTest {
                 eq(bytesTransferred));
     }
 
-    private static LogProgressCallback newLogProgressCallback() {
-        return LogProgressCallback.builder()
-                .updateFrequency(Duration.ofSeconds(1L))
-                .build();
+    @Test
+    public void onComplete_withChainedCallback_shouldInvokeCallback() {
+        final long bytesTransferred = 1000L;
+
+        callbackUnderTest.onComplete(bytesTransferred);
+
+        verify(mockChainedCallback).onComplete(eq(bytesTransferred));
     }
 }

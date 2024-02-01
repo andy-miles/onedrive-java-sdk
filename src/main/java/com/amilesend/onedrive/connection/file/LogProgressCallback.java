@@ -53,11 +53,15 @@ public class LogProgressCallback implements TransferProgressCallback {
     private final Logger log;
     /** Prefix to include in every logging statement. */
     private final String prefix;
+    /** Used to chain multiple callbacks. */
+    private final Optional<TransferProgressCallback> chainedCallback;
     // Used to limit unnecessarily entries to the log.
     @VisibleForTesting
+    @Getter(AccessLevel.PACKAGE)
     @Setter(AccessLevel.PACKAGE)
     volatile long lastUpdateProgressValue = 0L;
     @VisibleForTesting
+    @Getter(AccessLevel.PACKAGE)
     @Setter(AccessLevel.PACKAGE)
     private volatile Instant lastUpdateTimestamp = Instant.now();
 
@@ -66,12 +70,14 @@ public class LogProgressCallback implements TransferProgressCallback {
             final TransferType transferType,
             final Level loggingLevel,
             final Duration updateFrequency,
-            final String prefix) {
+            final String prefix,
+            final TransferProgressCallback chainedCallback) {
         log = LoggerFactory.getLogger(LogProgressCallback.class);
         this.transferType = Optional.ofNullable(transferType).orElse(TransferType.UNDEFINED);
         this.loggingLevel = Optional.ofNullable(loggingLevel).orElse(Level.INFO);
         this.updateFrequency = Optional.ofNullable(updateFrequency).orElse(DEFAULT_UPDATE_FREQUENCY);
         this.prefix = Optional.ofNullable(prefix).orElse(StringUtils.EMPTY);
+        this.chainedCallback = Optional.ofNullable(chainedCallback);
     }
 
     /**
@@ -95,38 +101,50 @@ public class LogProgressCallback implements TransferProgressCallback {
 
     @Override
     public void onUpdate(final long currentBytes, final long totalBytes) {
-        if (Duration.between(lastUpdateTimestamp, Instant.now()).compareTo(updateFrequency) < 0) {
-            return;
-        }
+        try {
+            if (Duration.between(lastUpdateTimestamp, Instant.now()).compareTo(updateFrequency) < 0) {
+                return;
+            }
 
-        final int currentProgressPercent = (int) Math.floor(((double) currentBytes / (double) totalBytes) * 100D);
-        if (currentProgressPercent == lastUpdateProgressValue) {
-            return;
-        }
+            final int currentProgressPercent = (int) Math.floor(((double) currentBytes / (double) totalBytes) * 100D);
+            if (currentProgressPercent == lastUpdateProgressValue) {
+                return;
+            }
 
-        log.atLevel(loggingLevel)
-                .log("{}{} Status: {}% ({} of {} bytes)",
-                        prefix,
-                        transferType.getLogPrefix(),
-                        currentProgressPercent,
-                        currentBytes,
-                        totalBytes);
-        lastUpdateTimestamp = Instant.now();
-        lastUpdateProgressValue = currentProgressPercent;
+            log.atLevel(loggingLevel)
+                    .log("{}{} Status: {}% ({} of {} bytes)",
+                            prefix,
+                            transferType.getLogPrefix(),
+                            currentProgressPercent,
+                            currentBytes,
+                            totalBytes);
+            lastUpdateTimestamp = Instant.now();
+            lastUpdateProgressValue = currentProgressPercent;
+        } finally {
+            chainedCallback.ifPresent(c -> c.onUpdate(currentBytes, totalBytes));
+        }
     }
 
     @Override
     public void onFailure(final Throwable cause) {
-        log.error("{}An error occurred during {}: {}", prefix, transferType.getLogPrefix(), cause.getMessage(), cause);
+        try {
+            log.error("{}An error occurred during {}: {}", prefix, transferType.getLogPrefix(), cause.getMessage(), cause);
+        } finally {
+            chainedCallback.ifPresent(c -> c.onFailure(cause));
+        }
     }
 
     @Override
     public void onComplete(final long bytesTransferred) {
-        log.atLevel(loggingLevel).log(
-                "{}{} complete with {} bytes transferred",
-                prefix,
-                transferType.getLogPrefix(),
-                bytesTransferred);
+        try {
+            log.atLevel(loggingLevel).log(
+                    "{}{} complete with {} bytes transferred",
+                    prefix,
+                    transferType.getLogPrefix(),
+                    bytesTransferred);
+        } finally {
+            chainedCallback.ifPresent(c -> c.onComplete(bytesTransferred));
+        }
     }
 
     /** Describes that transfer type used for logging progress. */
