@@ -51,9 +51,9 @@ public class LogProgressCallbackTest {
     private static MockedStatic<LoggerFactory> FACTORY_MOCKED_STATIC = mockStatic(LoggerFactory.class);
     private static LoggingEventBuilder MOCK_LOGGING_EVENT_BUILDER = mock(LoggingEventBuilder.class);
     private static Logger MOCK_LOGGER = mock(Logger.class);
-    private LogProgressCallback callbackUnderTest;
     @Mock
     private TransferProgressCallback mockChainedCallback;
+    private LogProgressCallback callbackUnderTest;
 
     @BeforeAll
     public static void init() {
@@ -86,10 +86,11 @@ public class LogProgressCallbackTest {
 
     @Test
     public void onUpdate_withTimeAdvancementAndPercentageChange_shouldLogProgress() {
-        final Instant lastUpdated = callbackUnderTest.getLastUpdateTimestamp();
+        final Instant lastUpdated = callbackUnderTest.getLastUpdateTimestamp().get();
         final long lapsedDurationIntervalSeconds = DURATION_INTERVAL_SECONDS + 1L;
-        callbackUnderTest.setLastUpdateTimestamp(lastUpdated.minus(lapsedDurationIntervalSeconds, ChronoUnit.SECONDS));
-        callbackUnderTest.setLastUpdateProgressValue(0L);
+        callbackUnderTest.getLastUpdateTimestamp()
+                .set(lastUpdated.minus(lapsedDurationIntervalSeconds, ChronoUnit.SECONDS));
+        callbackUnderTest.getLastUpdateProgressValue().set(0);
 
         callbackUnderTest.onUpdate(50L, 100L);
 
@@ -104,10 +105,11 @@ public class LogProgressCallbackTest {
 
     @Test
     public void onUpdate_withNoProgress_shouldNotLog() {
-        final Instant lastUpdated = callbackUnderTest.getLastUpdateTimestamp();
+        final Instant lastUpdated = callbackUnderTest.getLastUpdateTimestamp().get();
         final long lapsedDurationIntervalSeconds = DURATION_INTERVAL_SECONDS + 1L;
-        callbackUnderTest.setLastUpdateTimestamp(lastUpdated.minus(lapsedDurationIntervalSeconds, ChronoUnit.SECONDS));
-        callbackUnderTest.setLastUpdateProgressValue(50L);
+        callbackUnderTest.getLastUpdateTimestamp()
+                .set(lastUpdated.minus(lapsedDurationIntervalSeconds, ChronoUnit.SECONDS));
+        callbackUnderTest.getLastUpdateProgressValue().set(50);
 
         callbackUnderTest.onUpdate(50L, 100L);
 
@@ -116,8 +118,8 @@ public class LogProgressCallbackTest {
 
     @Test
     public void onUpdate_withDurationLessThanUpdateInterval_shouldNotLog() {
-        callbackUnderTest.setLastUpdateTimestamp(Instant.now());
-        callbackUnderTest.setLastUpdateProgressValue(0L);
+        callbackUnderTest.getLastUpdateTimestamp().set(Instant.now());
+        callbackUnderTest.getLastUpdateProgressValue().set(0);
 
         callbackUnderTest.onUpdate(50L, 100L);
 

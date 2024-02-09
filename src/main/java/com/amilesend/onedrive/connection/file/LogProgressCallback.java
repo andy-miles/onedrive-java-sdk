@@ -22,7 +22,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -32,6 +31,8 @@ import org.slf4j.event.Level;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A log-based implementation of {@link TransferProgressCallback} that logs transfer progress.
@@ -58,12 +59,10 @@ public class LogProgressCallback implements TransferProgressCallback {
     // Used to limit unnecessarily entries to the log.
     @VisibleForTesting
     @Getter(AccessLevel.PACKAGE)
-    @Setter(AccessLevel.PACKAGE)
-    volatile long lastUpdateProgressValue = 0L;
+    private final AtomicInteger lastUpdateProgressValue = new AtomicInteger();
     @VisibleForTesting
     @Getter(AccessLevel.PACKAGE)
-    @Setter(AccessLevel.PACKAGE)
-    private volatile Instant lastUpdateTimestamp = Instant.now();
+    private final AtomicReference<Instant> lastUpdateTimestamp = new AtomicReference<>(Instant.now());
 
     @Builder
     private LogProgressCallback(
@@ -102,12 +101,12 @@ public class LogProgressCallback implements TransferProgressCallback {
     @Override
     public void onUpdate(final long currentBytes, final long totalBytes) {
         try {
-            if (Duration.between(lastUpdateTimestamp, Instant.now()).compareTo(updateFrequency) < 0) {
+            if (Duration.between(lastUpdateTimestamp.get(), Instant.now()).compareTo(updateFrequency) < 0) {
                 return;
             }
 
             final int currentProgressPercent = (int) Math.floor(((double) currentBytes / (double) totalBytes) * 100D);
-            if (currentProgressPercent == lastUpdateProgressValue) {
+            if (currentProgressPercent == lastUpdateProgressValue.get()) {
                 return;
             }
 
@@ -118,8 +117,8 @@ public class LogProgressCallback implements TransferProgressCallback {
                             currentProgressPercent,
                             currentBytes,
                             totalBytes);
-            lastUpdateTimestamp = Instant.now();
-            lastUpdateProgressValue = currentProgressPercent;
+            lastUpdateTimestamp.set(Instant.now());
+            lastUpdateProgressValue.set(currentProgressPercent);
         } finally {
             chainedCallback.ifPresent(c -> c.onUpdate(currentBytes, totalBytes));
         }
