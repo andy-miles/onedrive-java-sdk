@@ -97,7 +97,7 @@ needs to be registered via the [Azure Apps Registration Page](https://aka.ms/App
 
 Key configuration  to note:
 1. The following <strong>delegated</strong> API permissions are recommended: <code>Files.ReadWrite.All</code> <code>User.Read</code> <code>offline_access</code>
-   1. The following <strong>delegated</strong> API permission are recommended for business accounts access SharePoint sites: <code>Sites.ReadWrite.All</code> <code>Sites.Manage.All</code> <code>Sites.FullControl.All</code>
+   1. The following <strong>delegated</strong> API permission are recommended for business accounts in order to access SharePoint sites: <code>Sites.ReadWrite.All</code> <code>Sites.Manage.All</code> <code>Sites.FullControl.All</code>
 2. If using the default OAuth receiver to handle the redirect for auth code grants, then set the redirect URL to <code>http://localhost:8890/Callback </code>
 3. Generate your own client secret, and record your application's client ID and client secret value.
    1. You can save this as a JAR bundled resource within your project named <code>/ms-onedrive-credentials.json</code> and should be formatted as:
@@ -115,9 +115,10 @@ Key configuration  to note:
 ## Primary Classes
 The primary classes used to interact with a OneDrive account is modeled as a tree structure and is as follows:
 1. [OneDrive](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/OneDrive.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/OneDrive.html)) to obtain user accessible drives
+      1. [BusinessOneDrive](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/BusinessOneDrive.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/BusinessOneDrive.html)) to obtain business-related user accessible drives and sites
 2. [Drive](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/Drive.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/resource/Drive.html)) to access folders
 3. [DriveFolder](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/DriveFolder.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/resource/DriveFolder.html)) to manage folders, access subfolders, and upload new files
-4. [DrivePackage](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/DrivePackage.java) to manage folders, access subfolders, and upload new files for packages (OneNote)
+4. [DrivePackage](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/DrivePackage.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/resource/DrivePackage.html)) to manage folders, access subfolders, and upload new files for packages (OneNote)
 5. [DriveFile](https://github.com/andy-miles/onedrive-java-sdk/blob/main/src/main/java/com/amilesend/onedrive/resource/DriveFile.java) ([javadoc](https://www.amilesend.com/onedrive-java-sdk/apidocs/com/amilesend/onedrive/resource/DriveFile.html)) to manage, upload (as a new version), and download a file
 
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
