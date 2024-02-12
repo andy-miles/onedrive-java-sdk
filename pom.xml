@@ -25,7 +25,7 @@
 
     <groupId>com.amilesend</groupId>
     <artifactId>onedrive-java-sdk</artifactId>
-    <version>0.2.3-SNAPSHOT</version>
+    <version>0.2.3</version>
 
     <name>onedrive-java-sdk</name>
     <description>A Java SDK to access OneDrive drives and files.</description>
@@ -64,21 +64,6 @@
                     <name>GitHub andy-miles Apache Maven Packages</name>
                     <url>https://maven.pkg.github.com/andy-miles/onedrive-java-sdk</url>
                 </repository>
-            </distributionManagement>
-        </profile>
-        <profile>
-            <id>ossrh</id>
-            <distributionManagement>
-                <repository>
-                    <id>ossrh</id>
-                    <name>Sonatype Maven Central Repository</name>
-                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-                <snapshotRepository>
-                    <id>ossrh</id>
-                    <name>Sonatype SNAPSHOT Maven Central Repository</name>
-                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
             </distributionManagement>
         </profile>
     </profiles>
@@ -424,6 +409,40 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <keyname>${gpg.keyname}</keyname>
+                            <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.3.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <autoPublish>false</autoPublish>
+                    <checksums>all</checksums>
+                    <publishingServerId>central</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                </configuration>
             </plugin>
         </plugins>
     </build>
