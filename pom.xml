@@ -322,6 +322,9 @@
                     <additionalJOption>-Xdoclint:-missing,-reference</additionalJOption>
                     <show>public</show>
                     <sourcepath>target/generated-sources/delombok</sourcepath>
+                    <bottom>
+                        <![CDATA[Copyright &#169; 2023-2024 <a href="https://www.amilesend.com">Andy Miles</a>. All rights reserved.]]>
+                    </bottom>
                 </configuration>
                 <executions>
                     <execution>
@@ -509,6 +512,9 @@
                 <configuration>
                     <additionalJOption>-Xdoclint:-missing,-reference</additionalJOption>
                     <show>public</show>
+                    <bottom>
+                        <![CDATA[Copyright &#169; 2023-2024 <a href="https://www.amilesend.com">Andy Miles</a>. All rights reserved.]]>
+                    </bottom>
                 </configuration>
                 <reportSets>
                     <reportSet>
