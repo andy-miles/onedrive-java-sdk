@@ -108,7 +108,11 @@ public class BusinessAccountAuthManager implements AuthManager {
      * The GSON instance used for JSON serialization.
      */
     private final String authBaseTokenUrl;
+    /**
+     * The URL to query for a list of authorized services.
+     */
     private final String discoveryBaseTokenUrl;
+    private final Object lock = new Object();
 
     @Getter
     @Setter(AccessLevel.PACKAGE)
@@ -218,38 +222,42 @@ public class BusinessAccountAuthManager implements AuthManager {
     @Override
     public AuthInfo redeemToken(final String authCode) {
         Validate.notBlank(authCode, "authCode must not be blank");
-        return authInfo =
-                AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
-                        .url(authBaseTokenUrl)
-                        .header(CONTENT_TYPE, FORM_DATA.toString())
-                        .post(new FormBody.Builder()
-                                .add(CLIENT_ID_BODY_PARAM, clientId)
-                                .add(CLIENT_SECRET_BODY_PARAM, clientSecret)
-                                .add(REDIRECT_URI_BODY_PARAM, redirectUrl)
-                                .add(RESOURCE_BODY_PARAM, resourceId)
-                                .add(AUTH_CODE_BODY_ARAM, authCode)
-                                .add(GRANT_TYPE_BODY_PARAM, AUTH_CODE_GRANT_TYPE_BODY_PARAM_VALUE)
-                                .build())
-                        .build())
-                .copyWithResourceId(resourceId);
+        synchronized (lock) {
+            return authInfo =
+                    AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
+                                    .url(authBaseTokenUrl)
+                                    .header(CONTENT_TYPE, FORM_DATA.toString())
+                                    .post(new FormBody.Builder()
+                                            .add(CLIENT_ID_BODY_PARAM, clientId)
+                                            .add(CLIENT_SECRET_BODY_PARAM, clientSecret)
+                                            .add(REDIRECT_URI_BODY_PARAM, redirectUrl)
+                                            .add(RESOURCE_BODY_PARAM, resourceId)
+                                            .add(AUTH_CODE_BODY_ARAM, authCode)
+                                            .add(GRANT_TYPE_BODY_PARAM, AUTH_CODE_GRANT_TYPE_BODY_PARAM_VALUE)
+                                            .build())
+                                    .build())
+                            .copyWithResourceId(resourceId);
+        }
     }
 
     @Override
     public AuthInfo refreshToken() {
-        return authInfo =
-                AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
-                        .url(authBaseTokenUrl)
-                        .header(CONTENT_TYPE, FORM_DATA_CONTENT_TYPE)
-                        .post(new FormBody.Builder()
-                                .add(CLIENT_ID_BODY_PARAM, clientId)
-                                .add(CLIENT_SECRET_BODY_PARAM, clientSecret)
-                                .add(REDIRECT_URI_BODY_PARAM, redirectUrl)
-                                .add(RESOURCE_BODY_PARAM, resourceId)
-                                .add(REFRESH_TOKEN_BODY_PARAM, authInfo.getRefreshToken())
-                                .add(GRANT_TYPE_BODY_PARAM, REFRESH_TOKEN_GRANT_TYPE_BODY_PARAM_VALUE)
-                                .build())
-                        .build())
-                .copyWithResourceId(resourceId);
+        synchronized (lock) {
+            return authInfo =
+                    AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
+                                    .url(authBaseTokenUrl)
+                                    .header(CONTENT_TYPE, FORM_DATA_CONTENT_TYPE)
+                                    .post(new FormBody.Builder()
+                                            .add(CLIENT_ID_BODY_PARAM, clientId)
+                                            .add(CLIENT_SECRET_BODY_PARAM, clientSecret)
+                                            .add(REDIRECT_URI_BODY_PARAM, redirectUrl)
+                                            .add(RESOURCE_BODY_PARAM, resourceId)
+                                            .add(REFRESH_TOKEN_BODY_PARAM, authInfo.getRefreshToken())
+                                            .add(GRANT_TYPE_BODY_PARAM, REFRESH_TOKEN_GRANT_TYPE_BODY_PARAM_VALUE)
+                                            .build())
+                                    .build())
+                            .copyWithResourceId(resourceId);
+        }
     }
 
     /**

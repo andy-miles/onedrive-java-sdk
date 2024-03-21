@@ -64,6 +64,8 @@ import static com.google.common.net.MediaType.FORM_DATA;
 public class PersonalAccountAuthManager implements AuthManager {
     private static final String PERSONAL_ENDPOINT_URL = "https://graph.microsoft.com/v1.0/me";
 
+    private final Object lock = new Object();
+
     /** The client identifier. */
     @Getter(AccessLevel.PROTECTED)
     protected final String clientId;
@@ -159,33 +161,38 @@ public class PersonalAccountAuthManager implements AuthManager {
 
     @Override
     public AuthInfo redeemToken(final String authCode) {
-        authInfo = AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
-                .url(baseTokenUrl)
-                .header(CONTENT_TYPE, FORM_DATA.toString())
-                .post(new FormBody.Builder()
-                        .add(CLIENT_ID_BODY_PARAM, clientId)
-                        .add(CLIENT_SECRET_BODY_PARAM, clientSecret)
-                        .add(REDIRECT_URI_BODY_PARAM, redirectUrl)
-                        .add(AUTH_CODE_BODY_ARAM, authCode)
-                        .add(GRANT_TYPE_BODY_PARAM, AUTH_CODE_GRANT_TYPE_BODY_PARAM_VALUE)
-                        .build())
-                .build());
-        return authInfo;
+        Validate.notBlank(authCode, "authCode must not be blank");
+        synchronized (lock) {
+            authInfo = AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
+                    .url(baseTokenUrl)
+                    .header(CONTENT_TYPE, FORM_DATA.toString())
+                    .post(new FormBody.Builder()
+                            .add(CLIENT_ID_BODY_PARAM, clientId)
+                            .add(CLIENT_SECRET_BODY_PARAM, clientSecret)
+                            .add(REDIRECT_URI_BODY_PARAM, redirectUrl)
+                            .add(AUTH_CODE_BODY_ARAM, authCode)
+                            .add(GRANT_TYPE_BODY_PARAM, AUTH_CODE_GRANT_TYPE_BODY_PARAM_VALUE)
+                            .build())
+                    .build());
+            return authInfo;
+        }
     }
 
     @Override
     public AuthInfo refreshToken() {
-       authInfo = AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
-                .url(baseTokenUrl)
-                .header(CONTENT_TYPE, FORM_DATA_CONTENT_TYPE)
-                .post(new FormBody.Builder()
-                        .add(CLIENT_ID_BODY_PARAM, clientId)
-                        .add(CLIENT_SECRET_BODY_PARAM, clientSecret)
-                        .add(REDIRECT_URI_BODY_PARAM, redirectUrl)
-                        .add(REFRESH_TOKEN_BODY_PARAM, authInfo.getRefreshToken())
-                        .add(GRANT_TYPE_BODY_PARAM, REFRESH_TOKEN_GRANT_TYPE_BODY_PARAM_VALUE)
-                        .build())
-                .build());
-       return authInfo;
+        synchronized (lock) {
+            authInfo = AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
+                    .url(baseTokenUrl)
+                    .header(CONTENT_TYPE, FORM_DATA_CONTENT_TYPE)
+                    .post(new FormBody.Builder()
+                            .add(CLIENT_ID_BODY_PARAM, clientId)
+                            .add(CLIENT_SECRET_BODY_PARAM, clientSecret)
+                            .add(REDIRECT_URI_BODY_PARAM, redirectUrl)
+                            .add(REFRESH_TOKEN_BODY_PARAM, authInfo.getRefreshToken())
+                            .add(GRANT_TYPE_BODY_PARAM, REFRESH_TOKEN_GRANT_TYPE_BODY_PARAM_VALUE)
+                            .build())
+                    .build());
+            return authInfo;
+        }
     }
 }

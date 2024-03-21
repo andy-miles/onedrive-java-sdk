@@ -73,7 +73,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.2.1</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -95,7 +95,7 @@
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
-                        <version>0.3.0</version>
+                        <version>0.4.0</version>
                         <extensions>true</extensions>
                         <configuration>
                             <autoPublish>false</autoPublish>
@@ -116,9 +116,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <github.global.server>github</github.global.server>
         <maven.resolver.transport>wagon</maven.resolver.transport>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.32</lombok.version>
         <maven.javadoc.plugin.version>3.6.3</maven.javadoc.plugin.version>
-        <mockito.version>5.10.0</mockito.version>
+        <mockito.version>5.11.0</mockito.version>
         <slf4j.version>2.0.12</slf4j.version>
         <spotbugs.version>4.8.3</spotbugs.version>
         <spotbugs.maven.plugin.version>4.8.3.1</spotbugs.maven.plugin.version>
@@ -172,7 +172,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.0.0-jre</version>
+            <version>33.1.0-jre</version>
         </dependency>
         <!-- Apache Commons -->
         <dependency>
@@ -200,7 +200,7 @@
         <dependency>
             <groupId>com.squareup.okio</groupId>
             <artifactId>okio</artifactId>
-            <version>3.8.0</version>
+            <version>3.9.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.spotbugs</groupId>
@@ -224,8 +224,28 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.6.3</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.12.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <compilerArgs>
                         <!-- Required for Lombok annotation processing on JDK 21+ -->
@@ -434,7 +454,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.7.1</version>
                 <executions>
                     <execution>
                         <id>javadoc-jar</id>
