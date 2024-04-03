@@ -19,8 +19,6 @@ package com.amilesend.onedrive;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.auth.AuthInfo;
-import com.amilesend.onedrive.parse.resource.parser.DriveListParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveParser;
 import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.identity.Identity;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
@@ -37,6 +35,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_PARSER;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVES_BASE_URL_PATH;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVES_URL_PATH_SUFFIX;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVE_URL_PATH_SUFFIX;
@@ -56,8 +56,6 @@ import static com.amilesend.onedrive.resource.drive.Drive.DRIVE_URL_PATH_SUFFIX;
 @RequiredArgsConstructor
 public class OneDrive {
     protected static final int MAX_ID_LENGTH = 512;
-    protected static final DriveParser DRIVE_PARSER = new DriveParser();
-    protected static final DriveListParser DRIVE_LIST_PARSER = new DriveListParser();
 
     @NonNull
     @Getter(AccessLevel.PROTECTED)

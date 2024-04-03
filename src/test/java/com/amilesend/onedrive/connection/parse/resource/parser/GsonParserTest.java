@@ -19,7 +19,6 @@ package com.amilesend.onedrive.connection.parse.resource.parser;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.data.SerializedResource;
-import com.amilesend.onedrive.parse.GsonParser;
 import com.amilesend.onedrive.parse.resource.creator.DriveInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.DriveItemInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.DriveItemVersionInstanceCreator;
@@ -28,27 +27,7 @@ import com.amilesend.onedrive.parse.resource.creator.ListItemVersionInstanceCrea
 import com.amilesend.onedrive.parse.resource.creator.PermissionInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.SiteInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.SpecialDriveItemInstanceCreator;
-import com.amilesend.onedrive.parse.resource.parser.AsyncJobStatusParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemListParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemPageParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemVersionListParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveListParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveParser;
-import com.amilesend.onedrive.parse.resource.parser.FieldValueSetParser;
-import com.amilesend.onedrive.parse.resource.parser.GetColumnValuesResponseParser;
-import com.amilesend.onedrive.parse.resource.parser.ItemActivityListParser;
-import com.amilesend.onedrive.parse.resource.parser.ListItemParser;
-import com.amilesend.onedrive.parse.resource.parser.ListItemVersionListParser;
-import com.amilesend.onedrive.parse.resource.parser.ListItemVersionParser;
-import com.amilesend.onedrive.parse.resource.parser.ListListParser;
-import com.amilesend.onedrive.parse.resource.parser.PermissionListParser;
-import com.amilesend.onedrive.parse.resource.parser.PermissionParser;
-import com.amilesend.onedrive.parse.resource.parser.PreviewParser;
-import com.amilesend.onedrive.parse.resource.parser.SiteListParser;
-import com.amilesend.onedrive.parse.resource.parser.SiteParser;
-import com.amilesend.onedrive.parse.resource.parser.SpecialDriveItemParser;
-import com.amilesend.onedrive.parse.resource.parser.ThumbnailSetListParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.amilesend.onedrive.parse.strategy.AnnotationBasedExclusionStrategy;
 import com.amilesend.onedrive.parse.strategy.AnnotationBasedSerializationExclusionStrategy;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
@@ -91,6 +70,27 @@ import static com.amilesend.onedrive.data.TypeTestDataHelper.newItemActivity;
 import static com.amilesend.onedrive.data.TypeTestDataHelper.newPermission;
 import static com.amilesend.onedrive.data.TypeTestDataHelper.newPreview;
 import static com.amilesend.onedrive.data.TypeTestDataHelper.newThumbnailSet;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.ASYNC_JOB_STATUS_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PAGE_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.FIELD_VALUE_SET_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.GET_COLUMN_VALUES_RESPONSE_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.ITEM_ACTIVITY_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.SITE_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.SITE_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.THUMBNAIL_SET_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newDriveItemVersionListParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListItemParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListItemVersionListParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListItemVersionParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListListParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPermissionListParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPermissionParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPreviewParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newSpecialDriveItemParser;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -108,7 +108,7 @@ public class GsonParserTest {
     public void asyncJobStatusParser_withValidInputStream_shouldReturnAsyncJobStatus() {
         final AsyncJobStatus expected = newAsyncJobStatus();
         final AsyncJobStatus actual =
-                new AsyncJobStatusParser().parse(gson, SerializedResource.ASYNC_JOB_STATUS.getResource());
+                ASYNC_JOB_STATUS_PARSER.parse(gson, SerializedResource.ASYNC_JOB_STATUS.getResource());
         assertAll(
                 () -> assertEquals(expected, actual),
                 () -> assertEquals(expected.hashCode(), actual.hashCode()));
@@ -116,7 +116,7 @@ public class GsonParserTest {
 
     @Test
     public void asyncJobStatusParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new AsyncJobStatusParser());
+        parse_withInvalidParameters_shouldThrowException(ASYNC_JOB_STATUS_PARSER);
     }
 
     ///////////////////////////////
@@ -127,7 +127,7 @@ public class GsonParserTest {
     public void driveItemParser_withValidInputStream_shouldReturnDriveItem() {
         final DriveItem expected = newDriveItem(connection, 1);
         final DriveItem actual =
-                new DriveItemParser().parse(gson, SerializedResource.DRIVE_ITEM.getResource());
+                DRIVE_ITEM_PARSER.parse(gson, SerializedResource.DRIVE_ITEM.getResource());
         assertAll(
                 () -> assertEquals(expected, actual),
                 () -> assertEquals(expected.hashCode(), actual.hashCode()));
@@ -135,7 +135,7 @@ public class GsonParserTest {
 
     @Test
     public void driveItemParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new DriveItemParser());
+        parse_withInvalidParameters_shouldThrowException(DRIVE_ITEM_PARSER);
     }
 
     ///////////////////////////////
@@ -147,7 +147,7 @@ public class GsonParserTest {
         final List<DriveItem> expected =
                 List.of(newDriveItemZipFile(connection, 1), newDriveItemFolder(connection));
         final List<DriveItem> actual =
-                new DriveItemListParser().parse(gson, SerializedResource.DRIVE_ITEM_LIST.getResource());
+                DRIVE_ITEM_LIST_PARSER.parse(gson, SerializedResource.DRIVE_ITEM_LIST.getResource());
         assertAll(
                 () -> assertEquals(expected, actual),
                 () -> assertEquals(expected.hashCode(), actual.hashCode()));
@@ -155,7 +155,7 @@ public class GsonParserTest {
 
     @Test
     public void driveItemListParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new DriveItemListParser());
+        parse_withInvalidParameters_shouldThrowException(DRIVE_ITEM_LIST_PARSER);
     }
 
     ///////////////////////////////
@@ -166,7 +166,7 @@ public class GsonParserTest {
     public void driveItemPageParser_withValidInputStream_shouldReturnDriveItemPage() {
         final DriveItemPage expected = newDriveItemPage(connection);
         final DriveItemPage actual =
-                new DriveItemPageParser().parse(gson, SerializedResource.DRIVE_ITEM_PAGE.getResource());
+                DRIVE_ITEM_PAGE_PARSER.parse(gson, SerializedResource.DRIVE_ITEM_PAGE.getResource());
         assertAll(
                 () -> assertEquals(expected, actual),
                 () -> assertEquals(expected.hashCode(), actual.hashCode()));
@@ -174,7 +174,7 @@ public class GsonParserTest {
 
     @Test
     public void driveItemPageParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new DriveItemPageParser());
+        parse_withInvalidParameters_shouldThrowException(DRIVE_ITEM_PAGE_PARSER);
     }
 
     ///////////////////////////////
@@ -187,7 +187,7 @@ public class GsonParserTest {
                 newDriveItemVersion(connection, "1"),
                 newDriveItemVersion(connection, "2"));
         final List<DriveItemVersion> actual =
-                new DriveItemVersionListParser(
+                newDriveItemVersionListParser(
                         expected.get(0).getDriveItemId(),
                         expected.get(0).getName())
                 .parse(gson, SerializedResource.DRIVE_ITEM_VERSION_LIST.getResource());
@@ -199,7 +199,7 @@ public class GsonParserTest {
     @Test
     public void driveItemVersionListParser_withInvalidParameters_shouldThrowException() {
         parse_withInvalidParameters_shouldThrowException(
-                new DriveItemVersionListParser("VersionIdValue", "Filename"));
+                newDriveItemVersionListParser("VersionIdValue", "Filename"));
 
     }
 
@@ -210,7 +210,7 @@ public class GsonParserTest {
     @Test
     public void driveParser_withValidInputStream_shouldReturnDrive() {
         final Drive expected = newDrive(connection, 1);
-        final Drive actual = new DriveParser().parse(gson, SerializedResource.DRIVE.getResource());
+        final Drive actual = DRIVE_PARSER.parse(gson, SerializedResource.DRIVE.getResource());
         assertAll(
                 () -> assertEquals(expected, actual),
                 () -> assertEquals(expected.hashCode(), actual.hashCode()));
@@ -218,7 +218,7 @@ public class GsonParserTest {
 
     @Test
     public void driveParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new DriveParser());
+        parse_withInvalidParameters_shouldThrowException(DRIVE_PARSER);
     }
 
     ///////////////////////////////
@@ -228,7 +228,7 @@ public class GsonParserTest {
     @Test
     public void driveListParser_withValidInputStream_shouldReturnDriveList() {
         final List<Drive> expected = List.of(newDrive(connection, 1), newDrive(connection, 2));
-        final List<Drive> actual = new DriveListParser().parse(gson, SerializedResource.DRIVE_LIST.getResource());
+        final List<Drive> actual = DRIVE_LIST_PARSER.parse(gson, SerializedResource.DRIVE_LIST.getResource());
         assertAll(
                 () -> assertEquals(expected, actual),
                 () -> assertEquals(expected.hashCode(), actual.hashCode()));
@@ -236,7 +236,7 @@ public class GsonParserTest {
 
     @Test
     public void driveListParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new DriveListParser());
+        parse_withInvalidParameters_shouldThrowException(DRIVE_LIST_PARSER);
     }
 
     ///////////////////////////////
@@ -247,7 +247,7 @@ public class GsonParserTest {
     public void fieldValueSetParser_withValidInputStream_shouldReturnDriveItemVersionList() {
         final Map<String, Object> expected = newFieldValueSet();
         final Map<String, Object> actual =
-                new FieldValueSetParser().parse(gson, SerializedResource.FIELD_VALUE_SET.getResource());
+                FIELD_VALUE_SET_PARSER.parse(gson, SerializedResource.FIELD_VALUE_SET.getResource());
         assertAll(
                 () -> assertEquals(expected, actual),
                 () -> assertEquals(expected.hashCode(), actual.hashCode()));
@@ -255,7 +255,7 @@ public class GsonParserTest {
 
     @Test
     public void fieldValueSetParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new FieldValueSetParser());
+        parse_withInvalidParameters_shouldThrowException(FIELD_VALUE_SET_PARSER);
     }
 
     //////////////////////////////////
@@ -265,7 +265,7 @@ public class GsonParserTest {
     @Test
     public void getColumnValuesResponseParser_withValidInputStream_shouldReturnResponse() {
         final GetColumnValuesResponse expected = newGetColumnValuesResponse();
-        final GetColumnValuesResponse actual = new GetColumnValuesResponseParser()
+        final GetColumnValuesResponse actual = GET_COLUMN_VALUES_RESPONSE_PARSER
                 .parse(gson, SerializedResource.GET_COLUMN_VALUES_RESPONSE.getResource());
 
         assertAll(
@@ -275,7 +275,7 @@ public class GsonParserTest {
 
     @Test
     public void getColumnValuesResponseParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new GetColumnValuesResponseParser());
+        parse_withInvalidParameters_shouldThrowException(GET_COLUMN_VALUES_RESPONSE_PARSER);
     }
 
     ///////////////////////////////
@@ -286,7 +286,7 @@ public class GsonParserTest {
     public void itemActivityListParser_withValidInputStream_shouldReturnDriveItemVersionList() {
         final List<ItemActivity> expected = List.of(newItemActivity(1), newItemActivity(2));
         final List<ItemActivity> actual =
-                new ItemActivityListParser().parse(gson, SerializedResource.ITEM_ACTIVITY_LIST.getResource());
+                ITEM_ACTIVITY_LIST_PARSER.parse(gson, SerializedResource.ITEM_ACTIVITY_LIST.getResource());
         assertAll(
                 () -> assertEquals(expected, actual),
                 () -> assertEquals(expected.hashCode(), actual.hashCode()));
@@ -294,7 +294,7 @@ public class GsonParserTest {
 
     @Test
     public void itemActivityListParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new ItemActivityListParser());
+        parse_withInvalidParameters_shouldThrowException(ITEM_ACTIVITY_LIST_PARSER);
     }
 
     ///////////////////////////////
@@ -307,7 +307,7 @@ public class GsonParserTest {
         final String listId = "ListIdValue";
         final ListItem expected = newListItem(connection, siteId, listId);
         final ListItem actual =
-                new ListItemParser(siteId, listId).parse(gson, SerializedResource.LIST_ITEM.getResource());
+                newListItemParser(siteId, listId).parse(gson, SerializedResource.LIST_ITEM.getResource());
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -316,7 +316,7 @@ public class GsonParserTest {
 
     @Test
     public void listItemParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new ListItemParser("SiteIdValue", "ListIdValue"));
+        parse_withInvalidParameters_shouldThrowException(newListItemParser("SiteIdValue", "ListIdValue"));
     }
 
     ///////////////////////////////
@@ -332,7 +332,7 @@ public class GsonParserTest {
                 newListItemVersion(connection, siteId, listId, listItemId),
                 newListItemVersion(connection, siteId, listId, listItemId));
         final List<ListItemVersion> actual =
-                new ListItemVersionListParser(siteId, listId, listItemId)
+                newListItemVersionListParser(siteId, listId, listItemId)
                         .parse(gson, SerializedResource.LIST_ITEM_VERSION_LIST.getResource());
 
         assertAll(
@@ -343,7 +343,7 @@ public class GsonParserTest {
     @Test
     public void listItemVersionListParser_withInvalidParameters_shouldThrowException() {
         parse_withInvalidParameters_shouldThrowException(
-                new ListItemVersionListParser("SiteIdValue", "ListIdValue", "ListItemIdValue"));
+                newListItemVersionListParser("SiteIdValue", "ListIdValue", "ListItemIdValue"));
     }
 
     ///////////////////////////////
@@ -357,7 +357,7 @@ public class GsonParserTest {
         final String listItemId = "ListItemIdValue";
         final ListItemVersion expected = newListItemVersion(connection, siteId, listId, listItemId);
         final ListItemVersion actual =
-                new ListItemVersionParser(siteId, listId, listItemId)
+                newListItemVersionParser(siteId, listId, listItemId)
                         .parse(gson, SerializedResource.LIST_ITEM_VERSION.getResource());
 
         assertAll(
@@ -368,7 +368,7 @@ public class GsonParserTest {
     @Test
     public void listItemVersionParser_withInvalidParameters_shouldThrowException() {
         parse_withInvalidParameters_shouldThrowException(
-                new ListItemVersionParser("SiteIdValue", "ListIdValue", "ListItemIdValue"));
+                newListItemVersionParser("SiteIdValue", "ListIdValue", "ListItemIdValue"));
     }
 
     ///////////////////////////////
@@ -380,7 +380,7 @@ public class GsonParserTest {
         final String siteId = "SiteIdValue";
         final List<com.amilesend.onedrive.resource.site.List> expected = List.of(newList(connection, siteId));
         final List<com.amilesend.onedrive.resource.site.List> actual =
-                new ListListParser(siteId).parse(gson, SerializedResource.LIST_OF_LIST.getResource());
+                newListListParser(siteId).parse(gson, SerializedResource.LIST_OF_LIST.getResource());
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -389,7 +389,7 @@ public class GsonParserTest {
 
     @Test
     public void listListParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new ListListParser("SiteIdValue"));
+        parse_withInvalidParameters_shouldThrowException(newListListParser("SiteIdValue"));
     }
 
 
@@ -418,7 +418,7 @@ public class GsonParserTest {
     @Test
     public void permissionParser_withValidInputStream_shouldReturnDriveItemVersionList() {
         final Permission expected = newPermission(connection, "driveItemIdValue");
-        final Permission actual = new PermissionParser("driveItemIdValue")
+        final Permission actual = newPermissionParser("driveItemIdValue")
                 .parse(gson, SerializedResource.PERMISSION.getResource());
 
         assertAll(
@@ -428,7 +428,7 @@ public class GsonParserTest {
 
     @Test
     public void permissionParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new PermissionParser("driveItemIdValue"));
+        parse_withInvalidParameters_shouldThrowException(newPermissionParser("driveItemIdValue"));
     }
 
     ///////////////////////////////
@@ -440,7 +440,7 @@ public class GsonParserTest {
         final List<Permission> expected = List.of(
                 newPermission(connection, "driveItemIdValue"),
                 newPermission(connection, "driveItemIdValue"));
-        final List<Permission> actual = new PermissionListParser("driveItemIdValue")
+        final List<Permission> actual = newPermissionListParser("driveItemIdValue")
                 .parse(gson, SerializedResource.PERMISSION_LIST.getResource());
 
         assertAll(
@@ -450,7 +450,7 @@ public class GsonParserTest {
 
     @Test
     public void permissionsListParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new PermissionListParser("driveItemIdValue"));
+        parse_withInvalidParameters_shouldThrowException(newPermissionListParser("driveItemIdValue"));
     }
 
     ///////////////////////////////
@@ -460,7 +460,7 @@ public class GsonParserTest {
     @Test
     public void previewParser_withValidInputStream_shouldReturnPreview() {
         final Preview expected = newPreview("driveItemIdValue");
-        final Preview actual = new PreviewParser("driveItemIdValue")
+        final Preview actual = newPreviewParser("driveItemIdValue")
                 .parse(gson, SerializedResource.PREVIEW.getResource());
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -469,7 +469,7 @@ public class GsonParserTest {
 
     @Test
     public void previewParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new PreviewParser("driveItemIdValue"));
+        parse_withInvalidParameters_shouldThrowException(newPreviewParser("driveItemIdValue"));
     }
 
     ///////////////////////////////
@@ -479,7 +479,7 @@ public class GsonParserTest {
     @Test
     public void siteParser_withValidInputStream_shouldReturnSite() {
         final Site expected = newSite(connection);
-        final Site actual = new SiteParser().parse(gson, SerializedResource.SITE.getResource());
+        final Site actual = SITE_PARSER.parse(gson, SerializedResource.SITE.getResource());
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -488,7 +488,7 @@ public class GsonParserTest {
 
     @Test
     public void siteParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new SiteParser());
+        parse_withInvalidParameters_shouldThrowException(SITE_PARSER);
     }
 
     ///////////////////////////////
@@ -499,7 +499,7 @@ public class GsonParserTest {
     public void setListParser_withValidInputStream_shouldReturnSiteList() {
         final java.util.List<Site> expected = List.of(newSite(connection), newSite(connection));
         final java.util.List<Site> actual =
-                new SiteListParser().parse(gson, SerializedResource.SITE_LIST.getResource());
+                SITE_LIST_PARSER.parse(gson, SerializedResource.SITE_LIST.getResource());
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -508,7 +508,7 @@ public class GsonParserTest {
 
     @Test
     public void siteListParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new SiteListParser());
+        parse_withInvalidParameters_shouldThrowException(SITE_LIST_PARSER);
     }
 
     ///////////////////////////////
@@ -518,7 +518,7 @@ public class GsonParserTest {
     @Test
     public void specialDriveItemParser_withValidInputStream_shouldReturnDriveItemVersionList() {
         final SpecialDriveItem expected = newSpecialDriveItem(connection);
-        final SpecialDriveItem actual = new SpecialDriveItemParser(SpecialFolder.Type.MUSIC)
+        final SpecialDriveItem actual = newSpecialDriveItemParser(SpecialFolder.Type.MUSIC)
                 .parse(gson, SerializedResource.SPECIAL_DRIVE_ITEM.getResource());
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -528,7 +528,7 @@ public class GsonParserTest {
 
     @Test
     public void specialDriveItemParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new SpecialDriveItemParser(SpecialFolder.Type.MUSIC));
+        parse_withInvalidParameters_shouldThrowException(newSpecialDriveItemParser(SpecialFolder.Type.MUSIC));
     }
 
     ///////////////////////////////
@@ -538,7 +538,7 @@ public class GsonParserTest {
     @Test
     public void thumbnailSetListParser_withValidInputStream_shouldReturnDriveItemVersionList() {
         final List<ThumbnailSet> expected = List.of(newThumbnailSet(), newThumbnailSet());
-        final List<ThumbnailSet> actual = new ThumbnailSetListParser()
+        final List<ThumbnailSet> actual = THUMBNAIL_SET_LIST_PARSER
                 .parse(gson, SerializedResource.THUMBNAIL_SET_LIST.getResource());
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -547,7 +547,7 @@ public class GsonParserTest {
 
     @Test
     public void thumbnailSetListParser_withInvalidParameters_shouldThrowException() {
-        parse_withInvalidParameters_shouldThrowException(new ThumbnailSetListParser());
+        parse_withInvalidParameters_shouldThrowException(THUMBNAIL_SET_LIST_PARSER);
     }
 
     private <T extends GsonParser<?>> void parse_withInvalidParameters_shouldThrowException(final T parserUnderTest) {

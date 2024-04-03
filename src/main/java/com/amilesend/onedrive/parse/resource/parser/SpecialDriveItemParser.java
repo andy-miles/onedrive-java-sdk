@@ -17,28 +17,29 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
-import com.amilesend.onedrive.parse.GsonParser;
 import com.amilesend.onedrive.resource.item.SpecialDriveItem;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import com.google.gson.Gson;
+import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Parses a response body that contains a {@link SpecialDriveItem}.
  * @see SpecialDriveItem
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class SpecialDriveItemParser implements GsonParser<SpecialDriveItem> {
+    private static final BasicParser<SpecialDriveItem> BASIC_PARSER = new BasicParser<>(SpecialDriveItem.class);
+
     /** The special folder type associated with the special drive item to parse. */
     private final SpecialFolder.Type specialFolderType;
 
     @Override
     public SpecialDriveItem parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final SpecialDriveItem item = gson.fromJson(new InputStreamReader(jsonStream), SpecialDriveItem.class);
+        final SpecialDriveItem item = BASIC_PARSER.parse(gson, jsonStream);
         item.setSpecialFolderType(specialFolderType);
         return item;
     }

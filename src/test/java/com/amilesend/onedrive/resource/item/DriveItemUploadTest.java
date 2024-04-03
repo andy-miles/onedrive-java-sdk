@@ -19,8 +19,8 @@ package com.amilesend.onedrive.resource.item;
 
 import com.amilesend.onedrive.connection.file.ProgressReportingFileRequestBody;
 import com.amilesend.onedrive.connection.file.TransferProgressCallback;
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemParser;
+import com.amilesend.onedrive.parse.resource.parser.BasicParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import lombok.SneakyThrows;
 import okhttp3.Request;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ public class DriveItemUploadTest extends DriveItemTestBase {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveItemParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://localhost/me/drive/items/DriveItemId/content",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals(FILE_CONTENT_TYPE, requestCaptor.getValue().header(CONTENT_TYPE)),
@@ -106,7 +106,7 @@ public class DriveItemUploadTest extends DriveItemTestBase {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual.get()),
-                () -> verify(mockConnection).executeAsync(requestCaptor.capture(), isA(DriveItemParser.class)),
+                () -> verify(mockConnection).executeAsync(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://localhost/me/drive/items/DriveItemId/content",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals(FILE_CONTENT_TYPE, requestCaptor.getValue().header(CONTENT_TYPE)),
@@ -147,7 +147,7 @@ public class DriveItemUploadTest extends DriveItemTestBase {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveItemParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://localhost/me/drive/items/DriveItemId:/"
                                 + FILENAME + ":/content",
                         requestCaptor.getValue().url().toString()),
@@ -189,7 +189,7 @@ public class DriveItemUploadTest extends DriveItemTestBase {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual.get()),
-                () -> verify(mockConnection).executeAsync(requestCaptor.capture(), isA(DriveItemParser.class)),
+                () -> verify(mockConnection).executeAsync(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://localhost/me/drive/items/DriveItemId:/" + FILENAME + ":/content",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals(FILE_CONTENT_TYPE, requestCaptor.getValue().header(CONTENT_TYPE)),

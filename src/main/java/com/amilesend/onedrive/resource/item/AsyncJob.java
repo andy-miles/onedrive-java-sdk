@@ -18,7 +18,6 @@
 package com.amilesend.onedrive.resource.item;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.resource.parser.AsyncJobStatusParser;
 import com.amilesend.onedrive.resource.item.type.AsyncJobStatus;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.AccessLevel;
@@ -27,6 +26,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import org.apache.commons.lang3.Validate;
+
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.ASYNC_JOB_STATUS_PARSER;
 
 /**
  * Utility that allows consumers to query for remote asynchronous operation status from the OneDrive API.
@@ -39,7 +40,6 @@ import org.apache.commons.lang3.Validate;
 @Builder
 @EqualsAndHashCode
 public class AsyncJob {
-    private static final AsyncJobStatusParser PARSER = new AsyncJobStatusParser();
 
     @Getter(AccessLevel.PACKAGE)
     @VisibleForTesting
@@ -71,6 +71,6 @@ public class AsyncJob {
                 connection.newSignedForApiRequestBuilder()
                         .url(monitorUrl)
                         .build(),
-                PARSER);
+                ASYNC_JOB_STATUS_PARSER);
     }
 }

@@ -17,24 +17,25 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.resource.site.Site;
 import com.google.gson.Gson;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Parses a response body that contains a {@link Site}s.
- * <p>
- * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/site">
- * API Documentation</a>
- * @see Site
+ * Defines a basic {@link GsonParser} implementation for single object type.
+ *
+ * @param <T> the object type
  */
-public class SiteParser implements GsonParser<Site> {
+@RequiredArgsConstructor
+public class BasicParser<T> implements GsonParser<T> {
+    @NonNull
+    private final Class<T> clazz;
+
     @Override
-    public Site parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        return gson.fromJson(new InputStreamReader(jsonStream), Site.class);
+    public T parse(@NonNull final Gson gson, @NonNull InputStream jsonStream) {
+        return gson.fromJson(new InputStreamReader(jsonStream), clazz);
     }
 }

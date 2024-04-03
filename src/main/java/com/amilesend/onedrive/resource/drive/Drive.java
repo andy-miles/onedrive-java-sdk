@@ -18,10 +18,6 @@
 package com.amilesend.onedrive.resource.drive;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemPageParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemParser;
-import com.amilesend.onedrive.parse.resource.parser.ItemActivityListParser;
-import com.amilesend.onedrive.parse.resource.parser.SpecialDriveItemParser;
 import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
@@ -43,6 +39,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PAGE_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.ITEM_ACTIVITY_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newSpecialDriveItemParser;
 import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals;
 
 /**
@@ -99,7 +99,7 @@ public class Drive extends BaseItem {
                 connection.newSignedForApiRequestBuilder()
                         .url(getActivitiesUrl(getId()))
                         .build(),
-                new ItemActivityListParser());
+                ITEM_ACTIVITY_LIST_PARSER);
     }
 
     /**
@@ -114,7 +114,7 @@ public class Drive extends BaseItem {
                 connection.newSignedForApiRequestBuilder()
                         .url(connection.getBaseUrl() + ROOT_FOLDER_URL_PATH)
                         .build(),
-                new DriveItemParser());
+                DRIVE_ITEM_PARSER);
     }
 
     /**
@@ -134,7 +134,7 @@ public class Drive extends BaseItem {
                     connection.newSignedForApiRequestBuilder()
                             .url(getChangesUrl(currentPage))
                             .build(),
-                    new DriveItemPageParser());
+                    DRIVE_ITEM_PAGE_PARSER);
             changes.addAll(currentPage.getValue());
         } while (hasNextPage(currentPage));
 
@@ -164,7 +164,7 @@ public class Drive extends BaseItem {
                     connection.newSignedForApiRequestBuilder()
                             .url(getSearchUrl(currentPage, encodedQuery))
                             .build(),
-                    new DriveItemPageParser());
+                    DRIVE_ITEM_PAGE_PARSER);
             results.addAll(currentPage.getValue());
         } while (hasNextPage(currentPage));
 
@@ -183,7 +183,7 @@ public class Drive extends BaseItem {
                 connection.newSignedForApiRequestBuilder()
                         .url(getSpecialFolderUrl(type))
                         .build(),
-                new SpecialDriveItemParser(type));
+                newSpecialDriveItemParser(type));
     }
 
     @Override

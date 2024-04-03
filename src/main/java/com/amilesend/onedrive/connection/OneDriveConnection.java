@@ -21,7 +21,7 @@ import com.amilesend.onedrive.connection.auth.AuthManager;
 import com.amilesend.onedrive.connection.file.TransferFileWriter;
 import com.amilesend.onedrive.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.parse.GsonFactory;
-import com.amilesend.onedrive.parse.GsonParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;

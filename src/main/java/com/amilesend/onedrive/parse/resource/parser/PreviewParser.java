@@ -17,26 +17,27 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
-import com.amilesend.onedrive.parse.GsonParser;
 import com.amilesend.onedrive.resource.item.type.Preview;
 import com.google.gson.Gson;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Parses a response body that contains a {@link Preview}.
  * @see Preview
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class PreviewParser implements GsonParser<Preview> {
+    private static final BasicParser<Preview> BASIC_PARSER = new BasicParser<>(Preview.class);
+
     /** The permission associated with the permission to parse. */
     private final String driveItemId;
 
     @Override
     public Preview parse(final Gson gson, final InputStream jsonStream) {
-        final Preview preview = gson.fromJson(new InputStreamReader(jsonStream), Preview.class);
+        final Preview preview = BASIC_PARSER.parse(gson, jsonStream);
         return Preview.builder()
                 .driveItemId(driveItemId)
                 .getUrl(preview.getGetUrl())

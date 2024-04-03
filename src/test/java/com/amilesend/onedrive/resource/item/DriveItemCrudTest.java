@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.resource.item;
 
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemParser;
+import com.amilesend.onedrive.parse.resource.parser.BasicParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.amilesend.onedrive.resource.item.type.ItemReference;
 import com.google.gson.Gson;
 import okhttp3.Request;
@@ -58,7 +58,7 @@ public class DriveItemCrudTest extends DriveItemTestBase {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveItemParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://localhost/me/drive/items/DriveItemId/children",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("POST", requestCaptor.getValue().method()),
@@ -76,7 +76,7 @@ public class DriveItemCrudTest extends DriveItemTestBase {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveItemParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://localhost/me/drive/items/DriveItemId",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("PATCH", requestCaptor.getValue().method()),

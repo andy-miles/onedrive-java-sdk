@@ -18,9 +18,9 @@
 package com.amilesend.onedrive.resource.site;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.parse.resource.parser.ItemActivityListParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.amilesend.onedrive.parse.resource.parser.ListItemParser;
+import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.site.request.CreateListItemRequest;
 import com.google.gson.Gson;
@@ -120,7 +120,7 @@ public class ListTest {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ItemActivityListParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ListResponseBodyParser.class)),
                 () -> assertEquals("http://localhost/sites/SiteIdValue/lists/ListIdValue/activities",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));

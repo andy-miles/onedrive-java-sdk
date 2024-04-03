@@ -17,33 +17,36 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.resource.site.Site;
 import com.google.gson.Gson;
-import lombok.Data;
+import com.google.gson.reflect.TypeToken;
 import lombok.NonNull;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
+import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
- * Parses a response body that contains a list of {@link Site}s.
- * <p>
- * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/site_search">
- * API Documentation</a>
- * @see Site
+ * Defines a {@link GsonParser} implementation for a map of key value pairs.
+ *
+ * @param <K> the key object type
+ * @param <V> the value object type
  */
-public class SiteListParser implements GsonParser<List<Site>> {
-    @Override
-    public List<Site> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        return gson.fromJson(new InputStreamReader(jsonStream), SiteListResponseBody.class).getValue();
+public class MapParser<K, V> implements GsonParser<Map<K, V>> {
+    private final Type typeSpecifier;
+
+    /**
+     * Creates a new {@code ListParser} for the given class type.
+     *
+     * @param keyClazz the class type for the key
+     * @param valueClazz the class type for the value
+     */
+    public MapParser(@NonNull final Class<K> keyClazz, @NonNull final Class<V> valueClazz) {
+        typeSpecifier = TypeToken.getParameterized(Map.class, keyClazz, valueClazz).getType();
     }
 
-    /** Used to deserialize a response body that contains a list of list item versions. */
-    @Data
-    public static class SiteListResponseBody {
-        /** The list of list items returned for a response body. */
-        private List<Site> value;
+    @Override
+    public Map<K, V> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
+        return gson.fromJson(new InputStreamReader(jsonStream), typeSpecifier);
     }
 }

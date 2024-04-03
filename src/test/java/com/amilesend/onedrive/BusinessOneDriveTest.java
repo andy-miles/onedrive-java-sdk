@@ -18,11 +18,9 @@
 package com.amilesend.onedrive;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveListParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveParser;
-import com.amilesend.onedrive.parse.resource.parser.SiteListParser;
-import com.amilesend.onedrive.parse.resource.parser.SiteParser;
+import com.amilesend.onedrive.parse.resource.parser.BasicParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
+import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
 import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.Site;
 import okhttp3.Request;
@@ -86,7 +84,7 @@ public class BusinessOneDriveTest {
         assertAll(
                 () -> assertNotNull(actual),
                 () -> assertEquals("SiteIdValue", actual.getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(SiteParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://mysite/_api/v2.0/sites/root",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
@@ -107,7 +105,7 @@ public class BusinessOneDriveTest {
         assertAll(
                 () -> assertNotNull(actual),
                 () -> assertEquals("SiteIdValue", actual.getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(SiteParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://mysite/_api/v2.0/sites/SiteIdValue",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
@@ -137,7 +135,7 @@ public class BusinessOneDriveTest {
         assertAll(
                 () -> assertNotNull(actual),
                 () -> assertEquals("SiteIdValue", actual.getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(SiteParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://mysite/_api/v2.0/groups/GroupIdValue/sites/root",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
@@ -169,7 +167,7 @@ public class BusinessOneDriveTest {
                 () -> assertNotNull(actual),
                 () -> assertFalse(actual.isEmpty()),
                 () -> assertEquals("SiteIdValue", actual.get(0).getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(SiteListParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ListResponseBodyParser.class)),
                 () -> assertEquals("http://mysite/_api/v2.0/" +
                                 "sites?select=siteCollection,webUrl&filter=siteCollection/root%20ne%20null",
                         requestCaptor.getValue().url().toString()),
@@ -192,7 +190,7 @@ public class BusinessOneDriveTest {
                 () -> assertNotNull(actual),
                 () -> assertFalse(actual.isEmpty()),
                 () -> assertEquals("SiteIdValue", actual.get(0).getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(SiteListParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ListResponseBodyParser.class)),
                 () -> assertEquals("http://mysite/_api/v2.0/sites?search=SearchQuery",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
@@ -222,7 +220,7 @@ public class BusinessOneDriveTest {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(driveToReturn.getId(), actual.getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://mysite/_api/v2.0/groups/GroupIdValue/drive",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
@@ -253,7 +251,7 @@ public class BusinessOneDriveTest {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(driveToReturn.getId(), actual.getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://mysite/_api/v2.0/sites/SiteIdValue/drive",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
@@ -286,7 +284,7 @@ public class BusinessOneDriveTest {
                 () -> assertEquals(drives.size(), actual.size()),
                 () -> assertEquals("DriveId1", actual.get(0).getId()),
                 () -> assertEquals("DriveId2", actual.get(1).getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveListParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ListResponseBodyParser.class)),
                 () -> assertEquals("http://mysite/_api/v2.0/groups/GroupIdValue/drives",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
@@ -319,7 +317,7 @@ public class BusinessOneDriveTest {
                 () -> assertEquals(drives.size(), actual.size()),
                 () -> assertEquals("DriveId1", actual.get(0).getId()),
                 () -> assertEquals("DriveId2", actual.get(1).getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveListParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ListResponseBodyParser.class)),
                 () -> assertEquals("http://mysite/_api/v2.0/sites/SiteIdValue/drives",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
@@ -352,7 +350,7 @@ public class BusinessOneDriveTest {
                 () -> assertEquals(drives.size(), actual.size()),
                 () -> assertEquals("DriveId1", actual.get(0).getId()),
                 () -> assertEquals("DriveId2", actual.get(1).getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveListParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ListResponseBodyParser.class)),
                 () -> assertEquals("http://mysite/_api/v2.0/users/UserIdValue/drives",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));

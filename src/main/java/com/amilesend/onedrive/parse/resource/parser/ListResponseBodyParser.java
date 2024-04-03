@@ -17,44 +17,38 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.resource.item.DriveItem;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.Data;
 import lombok.NonNull;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * Parses a response body that contains a list of {@link DriveItem}s.
- * <p>
- * Example response body:
- * <pre>
- * {
- *   "value": [
- *     {"name": "myfile.jpg", "size": 2048, "file": {} },
- *     {"name": "Documents", "folder": { "childCount": 4} },
- *     {"name": "Photos", "folder": { "childCount": 203} },
- *     {"name": "my sheet(1).xlsx", "size": 197 }
- *   ]
- * }
- * </pre>
- * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/drive_get_specialfolder">
- * API Documentation</a>
- * @see DriveItem
+ * Defines a {@link GsonParser} implementation for a response body that contains a list of items.
+ *
+ * @param <T> the object type
  */
-public class DriveItemListParser implements GsonParser<List<DriveItem>> {
+public class ListResponseBodyParser<T> implements GsonParser<List<T>> {
+    private final Type typeSpecifier;
+
+    public ListResponseBodyParser(@NonNull final Class<T> clazz) {
+        typeSpecifier = TypeToken.getParameterized(ListResponseBody.class, clazz).getType();
+    }
+
     @Override
-    public List<DriveItem> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        return gson.fromJson(new InputStreamReader(jsonStream), DriveItemListResponseBody.class).getValue();
+    public List<T> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
+        final ListResponseBody<T> responseBody = gson.fromJson(new InputStreamReader(jsonStream), typeSpecifier);
+        return responseBody.getValue();
     }
 
     /** Used to deserialize a response body that contains a list of drive items. */
     @Data
-    public static class DriveItemListResponseBody {
-        /** The list of drive items returned for a response body. */
-        private List<DriveItem> value;
+    public static class ListResponseBody<T> {
+        /** The list of items returned for a response body. */
+        private List<T> value;
     }
 }

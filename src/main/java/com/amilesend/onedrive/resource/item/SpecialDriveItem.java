@@ -18,7 +18,6 @@
 package com.amilesend.onedrive.resource.item;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemListParser;
 import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import lombok.Getter;
@@ -30,6 +29,7 @@ import org.apache.commons.lang3.Validate;
 import java.util.List;
 import java.util.Objects;
 
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_LIST_PARSER;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVE_BASE_URL_PATH;
 
 /**
@@ -65,7 +65,7 @@ public class SpecialDriveItem extends DriveItem {
                                 .append("/children")
                                 .toString())
                         .build(),
-                new DriveItemListParser());
+                DRIVE_ITEM_LIST_PARSER);
     }
 
     @Override

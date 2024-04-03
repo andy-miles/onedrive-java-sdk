@@ -18,8 +18,8 @@
 package com.amilesend.onedrive.resource.item;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.parse.resource.parser.AsyncJobStatusParser;
+import com.amilesend.onedrive.parse.resource.parser.BasicParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.amilesend.onedrive.resource.item.type.AsyncJobStatus;
 import okhttp3.Request;
 import org.apache.commons.lang3.StringUtils;
@@ -74,7 +74,7 @@ public class AsyncJobTest {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(AsyncJobStatusParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals(MONITOR_URL, requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
     }

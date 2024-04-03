@@ -18,8 +18,6 @@
 package com.amilesend.onedrive.resource.site;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.resource.parser.ItemActivityListParser;
-import com.amilesend.onedrive.parse.resource.parser.ListItemParser;
 import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.drive.Drive;
@@ -37,6 +35,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.ITEM_ACTIVITY_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListItemParser;
 import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals;
 import static com.amilesend.onedrive.resource.site.ListItem.LIST_ITEM_URL_SUFFIX;
 import static com.amilesend.onedrive.resource.site.Site.SITE_BASE_URL_PATH;
@@ -99,7 +99,7 @@ public class List extends BaseItem {
                                 .toString())
                         .post(RequestBody.create(request.toJson(), JSON_MEDIA_TYPE))
                         .build(),
-                new ListItemParser(getSiteId(), getId()));
+                newListItemParser(getSiteId(), getId()));
     }
 
     /**
@@ -117,7 +117,7 @@ public class List extends BaseItem {
                                 .append(ACTIVITIES_URL_SUFFIX)
                                 .toString())
                         .build(),
-                new ItemActivityListParser());
+                ITEM_ACTIVITY_LIST_PARSER);
     }
 
     @Override

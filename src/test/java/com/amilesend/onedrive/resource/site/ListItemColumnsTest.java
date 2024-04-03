@@ -17,9 +17,9 @@
  */
 package com.amilesend.onedrive.resource.site;
 
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.parse.resource.parser.FieldValueSetParser;
-import com.amilesend.onedrive.parse.resource.parser.GetColumnValuesResponseParser;
+import com.amilesend.onedrive.parse.resource.parser.BasicParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
+import com.amilesend.onedrive.parse.resource.parser.MapParser;
 import com.amilesend.onedrive.resource.site.response.GetColumnValuesResponse;
 import okhttp3.Request;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -59,7 +59,7 @@ public class ListItemColumnsTest extends ListItemTestBase {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(GetColumnValuesResponseParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://localhost/sites/SiteIdValue" +
                                 "/lists/ListIdValue/items/ListItemIdValue?expand=fields",
                         requestCaptor.getValue().url().toString()),
@@ -77,7 +77,7 @@ public class ListItemColumnsTest extends ListItemTestBase {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(GetColumnValuesResponseParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://localhost/sites/SiteIdValue/lists/ListIdValue" +
                                 "/items/ListItemIdValue?expand=fields(select=Col1,Col2,Col3)",
                         requestCaptor.getValue().url().toString()),
@@ -136,7 +136,7 @@ public class ListItemColumnsTest extends ListItemTestBase {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(FieldValueSetParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(MapParser.class)),
                 () -> assertEquals("http://localhost/sites/SiteIdValue/lists/ListIdValue" +
                                 "/items/ListItemIdValue/fields",
                         requestCaptor.getValue().url().toString()),

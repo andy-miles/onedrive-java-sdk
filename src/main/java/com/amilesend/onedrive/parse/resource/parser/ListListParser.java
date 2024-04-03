@@ -17,16 +17,14 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
-import com.amilesend.onedrive.parse.GsonParser;
 import com.amilesend.onedrive.resource.site.List;
 import com.amilesend.onedrive.resource.site.ListItem;
 import com.google.gson.Gson;
-import lombok.Data;
+import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -37,15 +35,17 @@ import java.util.stream.Collectors;
  * API Documentation</a>
  * @see ListItem
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class ListListParser implements GsonParser<java.util.List<List>> {
+    private static final ListResponseBodyParser<List> RESPONSE_BODY_PARSER =
+            new ListResponseBodyParser<>(List.class);
+
     /** The associated site identifier. */
     private final String siteId;
 
     @Override
     public java.util.List<List> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        return gson.fromJson(new InputStreamReader(jsonStream), ListListResponseBody.class)
-                .getValue()
+        return RESPONSE_BODY_PARSER.parse(gson, jsonStream)
                 .stream()
                 .filter(Objects::nonNull)
                 .map(l -> {
@@ -73,12 +73,5 @@ public class ListListParser implements GsonParser<java.util.List<List>> {
                             .build();
                 })
                 .collect(Collectors.toList());
-    }
-
-    /** Used to deserialize a response body that contains a list of list item versions. */
-    @Data
-    public static class ListListResponseBody {
-        /** The list of list items returned for a response body. */
-        private java.util.List<List> value;
     }
 }

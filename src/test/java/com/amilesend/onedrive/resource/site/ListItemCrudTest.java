@@ -17,7 +17,7 @@
  */
 package com.amilesend.onedrive.resource.site;
 
-import com.amilesend.onedrive.parse.GsonParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.amilesend.onedrive.parse.resource.parser.ListItemParser;
 import okhttp3.Request;
 import org.junit.jupiter.api.Test;

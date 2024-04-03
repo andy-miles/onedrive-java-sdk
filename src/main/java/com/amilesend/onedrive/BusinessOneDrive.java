@@ -18,8 +18,6 @@
 package com.amilesend.onedrive;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.resource.parser.SiteListParser;
-import com.amilesend.onedrive.parse.resource.parser.SiteParser;
 import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.Site;
 import org.apache.commons.lang3.Validate;
@@ -29,6 +27,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.SITE_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.SITE_PARSER;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVES_URL_PATH_SUFFIX;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVE_URL_PATH_SUFFIX;
 import static com.amilesend.onedrive.resource.site.Site.SITE_BASE_URL_PATH;
@@ -47,8 +49,6 @@ import static com.amilesend.onedrive.resource.site.Site.SITE_URL_PATH_SUFFIX;
  */
 public class BusinessOneDrive extends OneDrive {
     private static final String GROUPS_BASE_URL_PATH = "/groups/";
-    private static final SiteParser SITE_PARSER = new SiteParser();
-    private static final SiteListParser SITE_LIST_PARSER = new SiteListParser();
     private static final int MAX_QUERY_LENGTH = 1000;
 
     /**

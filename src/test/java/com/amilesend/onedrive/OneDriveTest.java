@@ -20,9 +20,9 @@ package com.amilesend.onedrive;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.auth.AuthInfo;
 import com.amilesend.onedrive.connection.auth.AuthManager;
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveListParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveParser;
+import com.amilesend.onedrive.parse.resource.parser.BasicParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
+import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
 import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.identity.Identity;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
@@ -77,7 +77,7 @@ public class OneDriveTest {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals("DriveId1", actual.getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://localhost/me/drive", requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
     }
@@ -94,7 +94,7 @@ public class OneDriveTest {
                 () -> assertEquals(2, actual.size()),
                 () -> assertEquals("DriveId1", actual.get(0).getId()),
                 () -> assertEquals("DriveId2", actual.get(1).getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveListParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ListResponseBodyParser.class)),
                 () -> assertEquals("http://localhost/me/drives", requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
     }
@@ -109,7 +109,7 @@ public class OneDriveTest {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(driveToReturn.getId(), actual.getId()),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(DriveParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals("http://localhost/me/drives/DriveId1",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));

@@ -17,14 +17,13 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
-import com.amilesend.onedrive.parse.GsonParser;
 import com.amilesend.onedrive.resource.site.ListItem;
 import com.google.gson.Gson;
+import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Parses a response body that contains a {@link ListItem}.
@@ -33,8 +32,10 @@ import java.io.InputStreamReader;
  * API Documentation</a>
  * @see ListItem
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class ListItemParser implements GsonParser<ListItem> {
+    private static final BasicParser<ListItem> BASIC_PARSER = new BasicParser<>(ListItem.class);
+
     /** The associated site identifier. */
     private final String siteId;
     /** The associated list identifier. */
@@ -42,7 +43,7 @@ public class ListItemParser implements GsonParser<ListItem> {
 
     @Override
     public ListItem parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final ListItem response = gson.fromJson(new InputStreamReader(jsonStream), ListItem.class);
+        final ListItem response = BASIC_PARSER.parse(gson, jsonStream);
         return ListItem.builder()
                 .connection(response.getConnection())
                 .contentType(response.getContentType())

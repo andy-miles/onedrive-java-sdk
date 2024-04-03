@@ -18,9 +18,6 @@
 package com.amilesend.onedrive.resource.site;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.resource.parser.DriveListParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveParser;
-import com.amilesend.onedrive.parse.resource.parser.ListListParser;
 import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.drive.Drive;
 import com.amilesend.onedrive.resource.item.BaseItem;
@@ -33,6 +30,9 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
 
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListListParser;
 import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVES_URL_PATH_SUFFIX;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVE_URL_PATH_SUFFIX;
@@ -49,9 +49,6 @@ import static com.amilesend.onedrive.resource.site.List.LIST_URL_PATH_SUFFIX;
 public class Site extends BaseItem {
     public static final String SITE_BASE_URL_PATH = "/sites/";
     public static final String SITE_URL_PATH_SUFFIX = "/sites";
-
-    private static final DriveParser DRIVE_PARSER = new DriveParser();
-    private static final DriveListParser DRIVE_LIST_PARSER = new DriveListParser();
 
     /** The full title for the site. */
     private final String displayName;
@@ -130,7 +127,7 @@ public class Site extends BaseItem {
                                 .append(LIST_URL_PATH_SUFFIX)
                                 .toString())
                         .build(),
-                new ListListParser(siteId));
+                newListListParser(siteId));
     }
 
     @Override

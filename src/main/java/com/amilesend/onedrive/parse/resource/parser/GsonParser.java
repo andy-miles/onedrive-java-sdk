@@ -17,21 +17,22 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.resource.drive.Drive;
 import com.google.gson.Gson;
-import lombok.NonNull;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
- * Parses a response body that contains a {@link Drive}.
- * @see Drive
+ * Defines a parser that deserializes a JSON-formatted source input stream to the defined POJO type.
+ *
+ * @param <T> the POJO type
  */
-public class DriveParser implements GsonParser<Drive> {
-    @Override
-    public Drive parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        return gson.fromJson(new InputStreamReader(jsonStream), Drive.class);
-    }
+public interface GsonParser<T> {
+    /**
+     * Deserializes a JSON-formatted input stream to the defined POJO type.
+     *
+     * @param gson the Gson instance used to deserialize the string
+     * @param jsonStream stream with expected JSON-formatted contents
+     * @return the parsed POJO instance
+     */
+    T parse(Gson gson, InputStream jsonStream);
 }

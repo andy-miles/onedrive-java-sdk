@@ -18,11 +18,6 @@
 package com.amilesend.onedrive.resource.site;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.resource.parser.FieldValueSetParser;
-import com.amilesend.onedrive.parse.resource.parser.GetColumnValuesResponseParser;
-import com.amilesend.onedrive.parse.resource.parser.ListItemParser;
-import com.amilesend.onedrive.parse.resource.parser.ListItemVersionListParser;
-import com.amilesend.onedrive.parse.resource.parser.ListItemVersionParser;
 import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.item.BaseItem;
 import com.amilesend.onedrive.resource.item.DriveItem;
@@ -44,6 +39,11 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.FIELD_VALUE_SET_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.GET_COLUMN_VALUES_RESPONSE_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListItemParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListItemVersionListParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListItemVersionParser;
 import static com.amilesend.onedrive.resource.site.List.LIST_BASE_URL_PATH;
 import static com.amilesend.onedrive.resource.site.ListItemVersion.LIST_ITEM_VERSIONS_URL_SUFFIX;
 import static com.amilesend.onedrive.resource.site.ListItemVersion.LIST_ITEM_VERSION_BASE_URL_PATH;
@@ -63,9 +63,6 @@ public class ListItem extends BaseItem {
     public static final String LIST_ITEM_BASE_URL_PATH = "/items/";
     public static final String LIST_ITEM_URL_SUFFIX = "/items";
 
-    private static final GetColumnValuesResponseParser GET_COLUMN_VALUES_RESPONSE_PARSER =
-            new GetColumnValuesResponseParser();
-    private static final FieldValueSetParser FIELD_VALUE_SET_PARSER = new FieldValueSetParser();
     private static final int MAX_COLUMN_LENGTH = 128;
     private static final int MAX_SELECTED_COLUMNS = 12;
 
@@ -183,7 +180,7 @@ public class ListItem extends BaseItem {
                                 .append(LIST_ITEM_VERSIONS_URL_SUFFIX)
                                 .toString())
                         .build(),
-                new ListItemVersionListParser(siteId, listId, listItemId));
+                newListItemVersionListParser(siteId, listId, listItemId));
     }
 
     /**
@@ -209,7 +206,7 @@ public class ListItem extends BaseItem {
                                 .append(versionId)
                                 .toString())
                         .build(),
-                new ListItemVersionParser(siteId, listId, listItemId));
+                newListItemVersionParser(siteId, listId, listItemId));
     }
 
     //////////
@@ -232,7 +229,7 @@ public class ListItem extends BaseItem {
                         .url(newStringBuilderForListItemUrl().toString())
                         .patch(RequestBody.create(toJson(), JSON_MEDIA_TYPE))
                         .build(),
-                new ListItemParser(siteId, listId));
+                newListItemParser(siteId, listId));
     }
 
     /**

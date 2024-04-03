@@ -17,14 +17,13 @@
  */
 package com.amilesend.onedrive.resource.item;
 
-import com.amilesend.onedrive.parse.GsonParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemPageParser;
+import com.amilesend.onedrive.parse.resource.parser.BasicParser;
 import com.amilesend.onedrive.parse.resource.parser.DriveItemVersionListParser;
-import com.amilesend.onedrive.parse.resource.parser.ItemActivityListParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
+import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionListParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionParser;
 import com.amilesend.onedrive.parse.resource.parser.PreviewParser;
-import com.amilesend.onedrive.parse.resource.parser.ThumbnailSetListParser;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.item.type.Permission;
 import com.amilesend.onedrive.resource.item.type.Preview;
@@ -73,7 +72,7 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ItemActivityListParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ListResponseBodyParser.class)),
                 () -> assertEquals("http://localhost/me/drive/items/DriveItemId/activities",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
@@ -233,7 +232,7 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
         final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ThumbnailSetListParser.class)),
+                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(ListResponseBodyParser.class)),
                 () -> assertEquals("http://localhost/me/drive/items/DriveItemId/thumbnails",
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("GET", requestCaptor.getValue().method()));
@@ -278,7 +277,7 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
         assertAll(
                 () -> assertEquals(2, actual.size()),
                 () -> verify(mockConnection, times(2))
-                        .execute(requestCaptor.capture(), isA(DriveItemPageParser.class)),
+                        .execute(requestCaptor.capture(), isA(BasicParser.class)),
                 () -> assertEquals(apiUrl, requestCaptor.getAllValues().get(0).url().toString()),
                 () -> assertEquals("GET", requestCaptor.getAllValues().get(0).method()),
                 () -> assertEquals(NEXT_LINK_URL, requestCaptor.getAllValues().get(1).url().toString()),

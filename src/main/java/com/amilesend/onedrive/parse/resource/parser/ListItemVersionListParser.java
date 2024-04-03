@@ -17,15 +17,13 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
-import com.amilesend.onedrive.parse.GsonParser;
 import com.amilesend.onedrive.resource.site.ListItemVersion;
 import com.google.gson.Gson;
-import lombok.Data;
+import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,8 +35,11 @@ import java.util.stream.Collectors;
  * API Documentation</a>
  * @see ListItemVersion
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class ListItemVersionListParser implements GsonParser<List<ListItemVersion>> {
+    private static final ListResponseBodyParser<ListItemVersion> RESPONSE_BODY_PARSER =
+            new ListResponseBodyParser<>(ListItemVersion.class);
+
     /** The associated site identifier. */
     private final String siteId;
     /** The associated list identifier. */
@@ -48,8 +49,7 @@ public class ListItemVersionListParser implements GsonParser<List<ListItemVersio
 
     @Override
     public List<ListItemVersion> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        return gson.fromJson(new InputStreamReader(jsonStream), ListItemVersionListResponseBody.class)
-                .getValue()
+        return RESPONSE_BODY_PARSER.parse(gson, jsonStream)
                 .stream()
                 .filter(Objects::nonNull)
                 .map(liv -> {
@@ -67,12 +67,5 @@ public class ListItemVersionListParser implements GsonParser<List<ListItemVersio
                             .build();
                 })
                 .collect(Collectors.toList());
-    }
-
-    /** Used to deserialize a response body that contains a list of list item versions. */
-    @Data
-    public static class ListItemVersionListResponseBody {
-        /** The list of list item versions returned for a response body. */
-        private List<ListItemVersion> value;
     }
 }

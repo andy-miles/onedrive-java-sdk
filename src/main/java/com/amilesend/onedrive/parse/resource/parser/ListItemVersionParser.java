@@ -17,14 +17,13 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
-import com.amilesend.onedrive.parse.GsonParser;
 import com.amilesend.onedrive.resource.site.ListItemVersion;
 import com.google.gson.Gson;
+import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Parses a response body that contains a {@link ListItemVersion}.
@@ -33,8 +32,11 @@ import java.io.InputStreamReader;
  * API Documentation</a>
  * @see ListItemVersion
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class ListItemVersionParser implements GsonParser<ListItemVersion> {
+    private static final BasicParser<ListItemVersion> BASIC_PARSER =
+            new BasicParser<>(ListItemVersion.class);
+
     /** The associated site identifier. */
     private final String siteId;
     /** The associated list identifier. */
@@ -44,7 +46,7 @@ public class ListItemVersionParser implements GsonParser<ListItemVersion> {
 
     @Override
     public ListItemVersion parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        final ListItemVersion version = gson.fromJson(new InputStreamReader(jsonStream), ListItemVersion.class);
+        final ListItemVersion version = BASIC_PARSER.parse(gson, jsonStream);
         return ListItemVersion.builder()
                 .connection(version.getConnection())
                 .fields(version.getFields())

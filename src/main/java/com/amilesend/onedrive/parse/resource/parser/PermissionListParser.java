@@ -17,15 +17,13 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
-import com.amilesend.onedrive.parse.GsonParser;
 import com.amilesend.onedrive.resource.item.type.Permission;
 import com.google.gson.Gson;
-import lombok.Data;
+import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -79,24 +77,19 @@ import static com.amilesend.onedrive.parse.resource.parser.PermissionParser.copy
  * API Documentation</a>
  * @see Permission
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class PermissionListParser implements GsonParser<List<Permission>> {
+    private static final ListResponseBodyParser<Permission> RESPONSE_BODY_PARSER =
+            new ListResponseBodyParser<>(Permission.class);
+
     /** The drive item identifier associated with the list of permissions to parse. */
     private final String driveItemId;
 
     public List<Permission> parse(@NonNull final Gson gson, @NonNull final InputStream jsonStream) {
-        return gson.fromJson(new InputStreamReader(jsonStream), PermissionsListResponseBody.class)
-                .getValue()
+        return RESPONSE_BODY_PARSER.parse(gson, jsonStream)
                 .stream()
                 .filter(Objects::nonNull)
                 .map(div -> copyWithDriveItemId(div, driveItemId))
                 .collect(Collectors.toList());
-    }
-
-    /** Used to deserialize a response body that contains a list of permissions. */
-    @Data
-    public static class PermissionsListResponseBody {
-        /** The list of permissions returned for a response body. */
-        private List<Permission> value;
     }
 }

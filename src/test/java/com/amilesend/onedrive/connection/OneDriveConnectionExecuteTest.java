@@ -17,7 +17,7 @@
  */
 package com.amilesend.onedrive.connection;
 
-import com.amilesend.onedrive.parse.GsonParser;
+import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.amilesend.onedrive.resource.item.DriveItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;

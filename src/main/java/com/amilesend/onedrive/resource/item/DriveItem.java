@@ -20,14 +20,6 @@ package com.amilesend.onedrive.resource.item;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.file.ProgressReportingFileRequestBody;
 import com.amilesend.onedrive.connection.file.TransferProgressCallback;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemPageParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemParser;
-import com.amilesend.onedrive.parse.resource.parser.DriveItemVersionListParser;
-import com.amilesend.onedrive.parse.resource.parser.ItemActivityListParser;
-import com.amilesend.onedrive.parse.resource.parser.PermissionListParser;
-import com.amilesend.onedrive.parse.resource.parser.PermissionParser;
-import com.amilesend.onedrive.parse.resource.parser.PreviewParser;
-import com.amilesend.onedrive.parse.resource.parser.ThumbnailSetListParser;
 import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.parse.strategy.GsonSerializeExclude;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
@@ -78,6 +70,14 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
 import static com.amilesend.onedrive.connection.file.TransferFileUtil.fetchMimeTypeFromFile;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PAGE_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.ITEM_ACTIVITY_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.THUMBNAIL_SET_LIST_PARSER;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newDriveItemVersionListParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPermissionListParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPermissionParser;
+import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPreviewParser;
 import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals;
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 
@@ -100,7 +100,6 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 public class DriveItem extends BaseItem {
     public static final String DRIVE_ITEM_BASE_URL_PATH = "/drive/items/";
 
-    private static final DriveItemParser DRIVE_ITEM_PARSER = new DriveItemParser();
     private static final String CONTENT_URL_SUFFIX = "/content";
     private static final int MAX_QUERY_LENGTH = 1000;
 
@@ -463,7 +462,7 @@ public class DriveItem extends BaseItem {
                                 .append("/activities")
                                 .toString())
                         .build(),
-                new ItemActivityListParser());
+                ITEM_ACTIVITY_LIST_PARSER);
     }
 
     /**
@@ -484,7 +483,7 @@ public class DriveItem extends BaseItem {
                     connection.newSignedForApiRequestBuilder()
                             .url(getChildrenUrl(currentPage, urlEncodedId))
                             .build(),
-                    new DriveItemPageParser());
+                    DRIVE_ITEM_PAGE_PARSER);
             changes.addAll(currentPage.getValue());
         } while (hasNextPage(currentPage));
 
@@ -509,7 +508,7 @@ public class DriveItem extends BaseItem {
                                 .append("/versions")
                                 .toString())
                         .build(),
-                new DriveItemVersionListParser(getId(), getName()));
+                newDriveItemVersionListParser(getId(), getName()));
     }
 
     /**
@@ -530,7 +529,7 @@ public class DriveItem extends BaseItem {
                                 .append("/permissions")
                                 .toString())
                         .build(),
-                new PermissionListParser(getId()));
+                newPermissionListParser(getId()));
     }
 
     /**
@@ -552,7 +551,7 @@ public class DriveItem extends BaseItem {
                                 .toString())
                         .post(RequestBody.create(connection.getGson().toJson(requestBody), JSON_MEDIA_TYPE))
                         .build(),
-                new PermissionListParser(getId()));
+                newPermissionListParser(getId()));
     }
 
     /**
@@ -574,7 +573,7 @@ public class DriveItem extends BaseItem {
                                 .toString())
                         .post(RequestBody.create(connection.getGson().toJson(requestBody), JSON_MEDIA_TYPE))
                         .build(),
-                new PermissionParser(getId()));
+                newPermissionParser(getId()));
     }
 
     /**
@@ -597,7 +596,7 @@ public class DriveItem extends BaseItem {
                                 .toString())
                         .post(RequestBody.create(connection.getGson().toJson(requestBody), JSON_MEDIA_TYPE))
                         .build(),
-                new PreviewParser(getId()));
+                newPreviewParser(getId()));
     }
 
     /**
@@ -615,7 +614,7 @@ public class DriveItem extends BaseItem {
                                 .append("/thumbnails")
                                 .toString())
                         .build(),
-                new ThumbnailSetListParser());
+                THUMBNAIL_SET_LIST_PARSER);
     }
 
     /**
@@ -640,7 +639,7 @@ public class DriveItem extends BaseItem {
                     connection.newSignedForApiRequestBuilder()
                             .url(getSearchUrl(currentPage, validateAndGetUrlEncodedId(), query))
                             .build(),
-                    new DriveItemPageParser());
+                    DRIVE_ITEM_PAGE_PARSER);
             results.addAll(currentPage.getValue());
         } while (hasNextPage(currentPage));
 
