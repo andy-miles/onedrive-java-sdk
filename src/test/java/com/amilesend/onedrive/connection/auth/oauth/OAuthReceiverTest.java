@@ -62,6 +62,13 @@ public class OAuthReceiverTest {
                 .build();
     }
 
+    @SneakyThrows
+    @Test
+    public void builder_withNoPortDefined_shouldThrowException() {
+        assertThrows(IllegalArgumentException.class,
+                () -> receiverUnderTest = OAuthReceiver.defaultOAuthReceiverBuilder().build());
+    }
+
     /////////////////////
     // start()
     /////////////////////
@@ -81,13 +88,6 @@ public class OAuthReceiverTest {
 
     @SneakyThrows
     @Test
-    public void start_withNoPortDefined_shouldThrowException() {
-        assertThrows(IllegalArgumentException.class,
-                () -> receiverUnderTest = OAuthReceiver.defaultOAuthReceiverBuilder().build());
-    }
-
-    @SneakyThrows
-    @Test
     public void start_withMultipleInvocations_shouldOnlyStartServiceOnce() {
         try (final MockedStatic<HttpServer> mockServerStatic = mockStatic(HttpServer.class)) {
             mockServerStatic.when(() -> HttpServer.create(any(InetSocketAddress.class), anyInt()))
@@ -97,16 +97,6 @@ public class OAuthReceiverTest {
             receiverUnderTest.start();
 
             verify(mockServer).start();
-        }
-    }
-
-    @SneakyThrows
-    @Test
-    public void start_withNoPortDefined_shouldFetchRandomPort() {
-        try (final MockedStatic<HttpServer> mockServerStatic = mockStatic(HttpServer.class)) {
-            mockServerStatic.when(() -> HttpServer.create(any(InetSocketAddress.class), anyInt()))
-                    .thenReturn(mockServer);
-
         }
     }
 
