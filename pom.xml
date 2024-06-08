@@ -25,7 +25,7 @@
 
     <groupId>com.amilesend</groupId>
     <artifactId>onedrive-java-sdk</artifactId>
-    <version>0.2.6-SNAPSHOT</version>
+    <version>0.2.6</version>
 
     <name>onedrive-java-sdk</name>
     <description>A Java SDK to access OneDrive drives and files.</description>
@@ -117,7 +117,7 @@
         <github.global.server>github</github.global.server>
         <maven.resolver.transport>wagon</maven.resolver.transport>
         <lombok.version>1.18.32</lombok.version>
-        <maven.javadoc.plugin.version>3.6.3</maven.javadoc.plugin.version>
+        <maven.javadoc.plugin.version>3.7.0</maven.javadoc.plugin.version>
         <mockito.version>5.12.0</mockito.version>
         <slf4j.version>2.0.12</slf4j.version>
         <spotbugs.version>4.8.5</spotbugs.version>
@@ -173,7 +173,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.2.0-jre</version>
+            <version>33.2.1-jre</version>
         </dependency>
         <!-- Apache Commons -->
         <dependency>
@@ -226,7 +226,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
