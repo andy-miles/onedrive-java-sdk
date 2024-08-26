@@ -73,7 +73,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.4</version>
+                        <version>3.2.5</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -117,7 +117,7 @@
         <github.global.server>github</github.global.server>
         <maven.resolver.transport>wagon</maven.resolver.transport>
         <lombok.version>1.18.34</lombok.version>
-        <maven.javadoc.plugin.version>3.7.0</maven.javadoc.plugin.version>
+        <maven.javadoc.plugin.version>3.8.0</maven.javadoc.plugin.version>
         <mockito.version>5.12.0</mockito.version>
         <slf4j.version>2.0.16</slf4j.version>
         <spotbugs.version>4.8.6</spotbugs.version>
@@ -257,7 +257,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.4.0</version>
                 <configuration>
                     <!-- Suppress warnings for mockito -->
                     <argLine>@{argLine} -XX:+EnableDynamicAgentLoading</argLine>
@@ -504,6 +504,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+                <!-- Note: 3.7.0 fails to generate dependencies report (i.e., parse license info). -->
                 <version>3.6.2</version>
             </plugin>
             <plugin>
