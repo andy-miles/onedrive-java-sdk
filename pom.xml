@@ -25,7 +25,7 @@
 
     <groupId>com.amilesend</groupId>
     <artifactId>onedrive-java-sdk</artifactId>
-    <version>0.2.9-SNAPSHOT</version>
+    <version>0.2.9</version>
 
     <name>onedrive-java-sdk</name>
     <description>A Java SDK to access OneDrive drives and files.</description>
@@ -136,7 +136,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.11.1</version>
+            <version>5.11.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
