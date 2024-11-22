@@ -116,12 +116,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <github.global.server>github</github.global.server>
         <maven.resolver.transport>wagon</maven.resolver.transport>
-        <lombok.version>1.18.34</lombok.version>
+        <lombok.version>1.18.36</lombok.version>
         <maven.javadoc.plugin.version>3.11.1</maven.javadoc.plugin.version>
         <mockito.version>5.14.2</mockito.version>
         <slf4j.version>2.0.16</slf4j.version>
         <spotbugs.version>4.8.6</spotbugs.version>
-        <spotbugs.maven.plugin.version>4.8.6.5</spotbugs.maven.plugin.version>
+        <spotbugs.maven.plugin.version>4.8.6.6</spotbugs.maven.plugin.version>
         <jacoco.plugin.version>0.8.12</jacoco.plugin.version>
         <okhttp.version>4.12.0</okhttp.version>
     </properties>
@@ -278,7 +278,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.17.1</version>
+                <version>2.18.0</version>
             </plugin>
             <plugin>
                 <groupId>org.projectlombok</groupId>
@@ -487,6 +487,12 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Required for maven-project-info-reports-plugin-3.8.0 for Doxia 2.0 stack -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.21.0</version>
+            </plugin>
         </plugins>
     </build>
 
@@ -521,8 +527,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <!-- Note: 3.7.0 fails to generate dependencies report (i.e., parse license info). -->
-                <version>3.6.2</version>
+                <version>3.8.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

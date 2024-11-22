@@ -199,8 +199,10 @@ char[] myAuthStateCryptoKeyPassword = System.getProperty("MyCryptoKeyPassword").
 // Helper to manage storage of the crypto key
 KeyStoreHelper keyStoreHelper = new KeyStoreHelper(myKeyStorePath, myKeyStorePassword);
 // Helper to encrypt/decrypt AuthInfo contents
-CryptoHelper cryptoHelper = new CryptoHelperFactory(keyStoreHelper, myAuthStateCryptoKeyPassword).newInstance();
-// The AuthInfoStore implementation that encrypts + saves and reads + decrypts from the filesystem.
+CryptoHelper cryptoHelper =
+        new CryptoHelperFactory(keyStoreHelper, myAuthStateCryptoKeyPassword).newInstance();
+// The AuthInfoStore implementation that encrypts + saves and reads + decrypts
+// from the filesystem.
 SingleUserEncryptedFileBasedAuthInfoStore authInfoStore =
         new SingleUserEncryptedFileBasedAuthInfoStore(myOneDriveUserState, cryptoHelper);
 
@@ -223,8 +225,10 @@ or alternatively with [OkHttp's builder](https://square.github.io/okhttp/4.x/okh
 
 ```java
 OkHttpClient httpClient = OkHttpClientBuilder.builder()
-        .trustManager(myX509TrustManager) // Custom trust manager for self/internally signed SSL/TLS certs
-        .hostnameVerifier(myHostnameVerifier) // Custom hostname verification for SSL/TLS endpoints
+        // Custom trust manager for self/internally signed SSL/TLS certs
+        .trustManager(myX509TrustManager)
+        // Custom hostname verification for SSL/TLS endpoints
+        .hostnameVerifier(myHostnameVerifier)
         .proxy(myProxy, myProxyUsername, myProxyPassword) // Proxy config
         .connectTimeout(8000L) // connection timeout in milliseconds
         .readTimeout(5000L) // read timeout in milliseconds
@@ -268,7 +272,8 @@ AuthInfo authInfo = getAuthInfo(); // Obtain the persisted AuthInfo from your ap
 OneDrive oneDrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
         .clientId(clientId) // Your application's client identifier
         .clientSecret(clientSecret) // Your application's client secret
-        .redirectUrl(redirectUrl) // Your custom redirect URL that was used to obtain the authCode
+        // Your custom redirect URL that was used to obtain the authCode
+        .redirectUrl(redirectUrl)
         .build(authInfo));
 authInfo = oneDrive.getAuthInfo(); // Gets the updated tokens after refresh
 ```
@@ -381,11 +386,13 @@ public class MyProgressCallback implements TransferProgressCallback {
 
 // Upload
 DriveFile myDrivefile = myFolder.upload(new File("./MyFile.zip"), new MyProgressCallback());
-DriveFileUploadExecution uploadedExec = myFolder.uploadAsync(new File("./MyFile.zip"), new MyProgressCallback());
+DriveFileUploadExecution uploadedExec =
+        myFolder.uploadAsync(new File("./MyFile.zip"), new MyProgressCallback());
 
 // Download
 myFile.download(Path.of("./"), new MyProgressCallback());
-DriveFileDownloadExecution downloadExec = myFile.downloadAsync(Paths.get("./"), new MyProgressCallback());
+DriveFileDownloadExecution downloadExec =
+        myFile.downloadAsync(Paths.get("./"), new MyProgressCallback());
 ```
 
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
