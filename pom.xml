@@ -2,7 +2,7 @@
 <!--
 
     onedrive-java-sdk - A Java SDK to access OneDrive drives and files.
-    Copyright © 2023-2024 Andy Miles (andy.miles@amilesend.com)
+    Copyright © 2023-2025 Andy Miles (andy.miles@amilesend.com)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 
     <name>onedrive-java-sdk</name>
     <description>A Java SDK to access OneDrive drives and files.</description>
-    <inceptionYear>2023-2024</inceptionYear>
+    <inceptionYear>2023-2025</inceptionYear>
     <url>https://github.com/andy-miles/onedrive-java-sdk</url>
     <organization>
         <name>Andy Miles</name>
@@ -118,7 +118,7 @@
         <maven.resolver.transport>wagon</maven.resolver.transport>
         <lombok.version>1.18.36</lombok.version>
         <maven.javadoc.plugin.version>3.11.2</maven.javadoc.plugin.version>
-        <mockito.version>5.14.2</mockito.version>
+        <mockito.version>5.15.2</mockito.version>
         <slf4j.version>2.0.16</slf4j.version>
         <spotbugs.version>4.8.6</spotbugs.version>
         <spotbugs.maven.plugin.version>4.8.6.6</spotbugs.maven.plugin.version>
@@ -336,7 +336,7 @@
                     <show>public</show>
                     <sourcepath>target/generated-sources/delombok</sourcepath>
                     <bottom>
-                        <![CDATA[Copyright &#169; 2023-2024 <a href="https://www.amilesend.com">Andy Miles</a>. All rights reserved.]]>
+                        <![CDATA[Copyright &#169; 2023-2025 <a href="https://www.amilesend.com">Andy Miles</a>. All rights reserved.]]>
                     </bottom>
                 </configuration>
                 <executions>
@@ -536,8 +536,9 @@
                 <configuration>
                     <additionalJOption>-Xdoclint:-missing,-reference</additionalJOption>
                     <show>public</show>
+                    <sourcepath>target/generated-sources/delombok</sourcepath>
                     <bottom>
-                        <![CDATA[Copyright &#169; 2023-2024 <a href="https://www.amilesend.com">Andy Miles</a>. All rights reserved.]]>
+                        <![CDATA[Copyright &#169; 2023-2025 <a href="https://www.amilesend.com">Andy Miles</a>. All rights reserved.]]>
                     </bottom>
                 </configuration>
                 <reportSets>
