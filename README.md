@@ -92,23 +92,57 @@ documented APIs are implemented.
 <a name="getting-started"></a>
 ## Getting Started
 
-Per the [App Registration](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/app-registration) documentation, your application 
+1. Per the [App Registration](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/app-registration) documentation, your application 
 needs to be registered via the [Azure Apps Registration Page](https://aka.ms/AppRegistrations/).
+   2. Key configuration  to note:
+      1. The following <strong>delegated</strong> API permissions are recommended: <code>Files.ReadWrite.All</code> <code>User.Read</code> <code>offline_access</code>
+      2. The following <strong>delegated</strong> API permission are recommended for business accounts in order to access SharePoint sites: <code>Sites.ReadWrite.All</code> <code>Sites.Manage.All</code> <code>Sites.FullControl.All</code>
+      3. If using the default OAuth receiver to handle the redirect for auth code grants, then set the redirect URL to <code>http://localhost:8890/Callback </code>
+2. Generate your own client secret, and record your application's client ID and client secret value.
+3. Include this package as a dependency in your project. Note: This package is published to both
+   [GitHub](https://github.com/andy-miles/onedrive-java-sdk/packages/1935485) and Maven Central repositories.
 
-Key configuration  to note:
-1. The following <strong>delegated</strong> API permissions are recommended: <code>Files.ReadWrite.All</code> <code>User.Read</code> <code>offline_access</code>
-   1. The following <strong>delegated</strong> API permission are recommended for business accounts in order to access SharePoint sites: <code>Sites.ReadWrite.All</code> <code>Sites.Manage.All</code> <code>Sites.FullControl.All</code>
-2. If using the default OAuth receiver to handle the redirect for auth code grants, then set the redirect URL to <code>http://localhost:8890/Callback </code>
-3. Generate your own client secret, and record your application's client ID and client secret value.
-   1. You can save this as a JAR bundled resource within your project named <code>/ms-onedrive-credentials.json</code> and should be formatted as:
+   ```xml
+   <dependency>
+       <groupId>com.amilesend</groupId>
+       <artifactId>onedrive-java-sdk</artifactId>
+       <version>0.2.11</version>
+   </dependency>
+   ```
+4. Instantiate your client instance per the options described below:
+   1. Pass the recorded client ID and secret to the state manager:
+   ```java
+     // Manage your own secure client credentials
+     OneDriveFactoryStateManager.CredentialConfig config = new OneDriveFactoryStateManager.CredentialConfig();
+     config.setClientId(MY_CLIENT_ID);
+     config.setClientSecret(MY_CLIENT_SECRET);
 
-      ```json
-      {
-        "clientId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-        "clientSecret" : "xxxxxxxxxxxxxxxxxxxxxxxxxxx"
-      }
-      ```
+     // Use the state manager to automatically persist user auth tokens
+     OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
+           .credentialConfig(config)
+           .stateFile(Paths.get("./MyOneDriveUserState.json")) // Path to save/read user auth tokens
+           .build();
 
+     OneDrive oneDrive = factoryStateManager.getInstance();
+     ```
+   2. Save the credentials as a JAR bundled resource within your project named <code>/ms-onedrive-credentials.json</code>.
+      <strong>Note: This option is not recommended due to being insecure.</strong>
+
+   ```json
+   {
+     "clientId" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+     "clientSecret" : "xxxxxxxxxxxxxxxxxxxxxxxxxxx"
+   }
+   ```
+
+   3. Pass the recorded client ID and secret to the client connection:
+   ```java
+   OneDrive oneDrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
+      .clientId(MY_CLIENT_ID)
+      .clientSecret(MY_CLIENT_SECRET)
+      .redirectUrl(redirectUrl) // Your custom redirect URL that was used to obtain the authCode
+      .build(authCode)); // Your OAuth authorization code.
+   ```
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
 
 <a name="main-objects"></a>
@@ -129,7 +163,7 @@ The primary classes used to interact with a OneDrive account is modeled as a tre
 ```java
 // Used to initiate the OAuth flow, persist refreshed tokens, or use persisted refresh tokens.
 OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
-        .stateFile(Paths.get("./OneDriveUserState.json")) // Path to save/read user auth tokens
+        .stateFile(Paths.get("./MyOneDriveUserState.json")) // Path to save/read user auth tokens
         .build();
 try {
     OneDrive oneDrive = factoryStateManager.getInstance();
