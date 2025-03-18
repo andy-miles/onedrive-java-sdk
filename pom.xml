@@ -25,7 +25,7 @@
 
     <groupId>com.amilesend</groupId>
     <artifactId>onedrive-java-sdk</artifactId>
-    <version>0.2.12</version>
+    <version>0.2.13-SNAPSHOT</version>
 
     <name>onedrive-java-sdk</name>
     <description>A Java SDK to access OneDrive drives and files.</description>
