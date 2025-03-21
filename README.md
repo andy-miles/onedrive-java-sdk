@@ -93,12 +93,12 @@ documented APIs are implemented.
 ## Getting Started
 
 1. Per the [App Registration](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/app-registration) documentation, your application 
-needs to be registered via the [Azure Apps Registration Page](https://aka.ms/AppRegistrations/).
-   2. Key configuration  to note:
-      1. The following <strong>delegated</strong> API permissions are recommended: <code>Files.ReadWrite.All</code> <code>User.Read</code> <code>offline_access</code>
-      2. The following <strong>delegated</strong> API permission are recommended for business accounts in order to access SharePoint sites: <code>Sites.ReadWrite.All</code> <code>Sites.Manage.All</code> <code>Sites.FullControl.All</code>
-      3. If using the default OAuth receiver to handle the redirect for auth code grants, then set the redirect URL to <code>http://localhost:8890/Callback </code>
-2. Generate your own client secret, and record your application's client ID and client secret value.
+needs to be registered via the [Azure Apps Registration Page](https://aka.ms/AppRegistrations/). 
+    1. Key configuration  to note:
+        1. The following <strong>delegated</strong> API permissions are recommended: <code>Files.ReadWrite.All</code> <code>User.Read</code> <code>offline_access</code>
+        2. The following <strong>delegated</strong> API permission are recommended for business accounts in order to access SharePoint sites: <code>Sites.ReadWrite.All</code> <code>Sites.Manage.All</code> <code>Sites.FullControl.All</code>
+        3. If using the default OAuth receiver to handle the redirect for auth code grants, then set the redirect URL to <code>http://localhost:8890/Callback </code>
+    2. Generate your own client secret, and record your application's client ID and client secret value.
 3. Include this package as a dependency in your project. Note: This package is published to both
    [GitHub](https://github.com/andy-miles/onedrive-java-sdk/packages/1935485) and Maven Central repositories.
 
