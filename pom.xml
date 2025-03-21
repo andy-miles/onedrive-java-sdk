@@ -173,7 +173,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.4.0-jre</version>
+            <version>33.4.5-jre</version>
         </dependency>
         <!-- Apache Commons -->
         <dependency>
@@ -392,7 +392,7 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>4.6</version>
+                <version>5.0.0</version>
                 <configuration>
                     <properties>
                         <owner>Andy Miles</owner>
