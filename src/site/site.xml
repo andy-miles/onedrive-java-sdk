@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     onedrive-java-sdk - A Java SDK to access OneDrive drives and files.
@@ -17,7 +18,10 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project>
+<site xmlns="http://maven.apache.org/SITE/2.0.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd"
+      name="Doxia">
     <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
@@ -27,4 +31,4 @@
         <menu ref="reports"/>
         <footer><![CDATA[Copyright &#169; 2023-2025 <a href="https://www.amilesend.com">Andy Miles</a>. All rights reserved.]]></footer>
     </body>
-</project>
+</site>
