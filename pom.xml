@@ -116,11 +116,11 @@
         <maven.resolver.transport>wagon</maven.resolver.transport>
         <lombok.version>1.18.38</lombok.version>
         <maven.javadoc.plugin.version>3.11.2</maven.javadoc.plugin.version>
-        <mockito.version>5.16.1</mockito.version>
+        <mockito.version>5.17.0</mockito.version>
         <slf4j.version>2.0.16</slf4j.version>
         <spotbugs.version>4.9.3</spotbugs.version>
         <spotbugs.maven.plugin.version>4.9.3.0</spotbugs.maven.plugin.version>
-        <jacoco.plugin.version>0.8.12</jacoco.plugin.version>
+        <jacoco.plugin.version>0.8.13</jacoco.plugin.version>
         <okhttp.version>4.12.0</okhttp.version>
     </properties>
 
@@ -171,7 +171,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.4.6-jre</version>
+            <version>33.4.7-jre</version>
         </dependency>
         <!-- Apache Commons -->
         <dependency>
@@ -199,7 +199,7 @@
         <dependency>
             <groupId>com.squareup.okio</groupId>
             <artifactId>okio</artifactId>
-            <version>3.10.2</version>
+            <version>3.11.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.spotbugs</groupId>
