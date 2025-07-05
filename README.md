@@ -106,7 +106,7 @@ needs to be registered via the [Azure Apps Registration Page](https://aka.ms/App
    <dependency>
        <groupId>com.amilesend</groupId>
        <artifactId>onedrive-java-sdk</artifactId>
-       <version>0.2.13</version>
+       <version>1.0</version>
    </dependency>
    ```
 4. Instantiate your client instance per the options described below:
