@@ -28,9 +28,9 @@ import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.Site;
 import com.amilesend.onedrive.resource.discovery.Service;
 import lombok.SneakyThrows;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
 import okhttp3.OkHttpClient;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
 import okio.Buffer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +76,7 @@ public class BusinessOneDriveFunctionalTest {
     @SneakyThrows
     @AfterEach
     public void cleanUp() {
-        mockWebServer.shutdown();
+        mockWebServer.close();
     }
 
     //////////////////////
@@ -387,10 +387,11 @@ public class BusinessOneDriveFunctionalTest {
     }
 
     private void setUpSuccessfulMockResponse(final String responseBodyJson) {
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(SUCCESS_STATUS_CODE)
+        mockWebServer.enqueue(new MockResponse.Builder()
+                .code(SUCCESS_STATUS_CODE)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
-                .setBody(responseBodyJson));
+                .body(responseBodyJson)
+                .build());
     }
 
     private void setUpMockResponse(final int responseCode) {
@@ -400,13 +401,16 @@ public class BusinessOneDriveFunctionalTest {
     @SneakyThrows
     private void setUpMockResponse(final int responseCode, final SerializedResource responseBodyResource) {
         if (responseBodyResource == null) {
-            mockWebServer.enqueue(new MockResponse().setResponseCode(responseCode));
+            mockWebServer.enqueue(new MockResponse.Builder()
+                    .code(responseCode)
+                    .build());
             return;
         }
 
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(responseCode)
+        mockWebServer.enqueue(new MockResponse.Builder()
+                .code(responseCode)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
-                .setBody(new Buffer().write(responseBodyResource.toGzipCompressedBytes())));
+                .body(new Buffer().write(responseBodyResource.toGzipCompressedBytes()))
+                .build());
     }
 }

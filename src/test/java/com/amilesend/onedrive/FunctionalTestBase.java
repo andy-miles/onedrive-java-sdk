@@ -26,9 +26,9 @@ import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.parse.GsonFactory;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
 import okhttp3.OkHttpClient;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
 import okio.Buffer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,7 +74,7 @@ public class FunctionalTestBase {
     @SneakyThrows
     @AfterEach
     public void cleanUp() {
-        mockWebServer.shutdown();
+        mockWebServer.close();
     }
 
     protected void setUpMockResponse(final int responseCode) {
@@ -84,27 +84,32 @@ public class FunctionalTestBase {
     @SneakyThrows
     protected void setUpMockResponse(final int responseCode, final SerializedResource responseBodyResource) {
         if (responseBodyResource == null) {
-            mockWebServer.enqueue(new MockResponse().setResponseCode(responseCode));
+            mockWebServer.enqueue(new MockResponse.Builder()
+                    .code(responseCode)
+                    .build());
             return;
         }
 
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(responseCode)
+        mockWebServer.enqueue(new MockResponse.Builder()
+                .code(responseCode)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
-                .setBody(new Buffer().write(responseBodyResource.toGzipCompressedBytes())));
+                .body(new Buffer().write(responseBodyResource.toGzipCompressedBytes()))
+                .build());
     }
 
     @SneakyThrows
     protected void setUpMockResponse(final int responseCode, final String locationHeaderValue) {
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(responseCode)
-                .addHeader("Location", locationHeaderValue));
+        mockWebServer.enqueue(new MockResponse.Builder()
+                .code(responseCode)
+                .addHeader("Location", locationHeaderValue)
+                .build());
     }
 
     protected void setUpMockResponse(final int responseCode, final byte[] bytesForDownload) {
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(responseCode)
-                .setBody(new Buffer().write(bytesForDownload)));
+        mockWebServer.enqueue(new MockResponse.Builder()
+                .code(responseCode)
+                .body(new Buffer().write(bytesForDownload))
+                .build());
     }
 
     @SneakyThrows
@@ -119,10 +124,11 @@ public class FunctionalTestBase {
     }
 
     private void setUpAuthManager() {
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(SUCCESS_STATUS_CODE)
+        mockWebServer.enqueue(new MockResponse.Builder()
+                .code(SUCCESS_STATUS_CODE)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
-                .setBody(TOKEN_JSON_RESPONSE));
+                .body(TOKEN_JSON_RESPONSE)
+                .build());
         final String authUrl = mockWebServer.url(TOKEN_URL_PATH).toString();
 
         authManager = PersonalAccountAuthManager.builderWithAuthCode()

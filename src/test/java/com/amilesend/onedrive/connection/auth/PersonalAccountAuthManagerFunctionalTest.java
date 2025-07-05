@@ -19,9 +19,9 @@ package com.amilesend.onedrive.connection.auth;
 
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import lombok.SneakyThrows;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
 import okhttp3.OkHttpClient;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,10 +57,11 @@ public class PersonalAccountAuthManagerFunctionalTest {
     @BeforeEach
     public void setUp() {
         mockWebServer = new MockWebServer();
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(200)
+        mockWebServer.enqueue(new MockResponse.Builder()
+                .code(200)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
-                .setBody(TOKEN_JSON_RESPONSE));
+                .body(TOKEN_JSON_RESPONSE)
+                .build());
         mockWebServer.start();
 
         httpClient = new OkHttpClientBuilder().isForTest(true).build();
@@ -70,7 +71,7 @@ public class PersonalAccountAuthManagerFunctionalTest {
     @SneakyThrows
     @AfterEach
     public void cleanUp() {
-        mockWebServer.shutdown();
+        mockWebServer.close();
     }
 
     @SneakyThrows

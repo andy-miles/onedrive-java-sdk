@@ -21,9 +21,9 @@ import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.resource.discovery.Service;
 import lombok.SneakyThrows;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
 import okhttp3.OkHttpClient;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,7 +69,7 @@ public class BusinessAccountAuthManagerFunctionalTest {
     @SneakyThrows
     @AfterEach
     public void cleanUp() {
-        mockWebServer.shutdown();
+        mockWebServer.close();
     }
 
     @SneakyThrows
@@ -145,9 +145,10 @@ public class BusinessAccountAuthManagerFunctionalTest {
     }
 
     private void enqueueSuccessfulResponse(final String responseBodyJson) {
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(200)
+        mockWebServer.enqueue(new MockResponse.Builder()
+                .code(200)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
-                .setBody(responseBodyJson));
+                .body(responseBodyJson)
+                .build());
     }
 }
