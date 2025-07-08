@@ -121,7 +121,7 @@
         <spotbugs.version>4.9.3</spotbugs.version>
         <spotbugs.maven.plugin.version>4.9.3.2</spotbugs.maven.plugin.version>
         <jacoco.plugin.version>0.8.13</jacoco.plugin.version>
-        <okhttp.version>5.0.0</okhttp.version>
+        <okhttp.version>5.1.0</okhttp.version>
     </properties>
 
     <dependencies>
