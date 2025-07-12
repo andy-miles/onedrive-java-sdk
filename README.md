@@ -113,9 +113,10 @@ needs to be registered via the [Azure Apps Registration Page](https://aka.ms/App
    1. Pass the recorded client ID and secret to the state manager:
    ```java
      // Manage your own secure client credentials
-     OneDriveFactoryStateManager.CredentialConfig config = new OneDriveFactoryStateManager.CredentialConfig();
-     config.setClientId(MY_CLIENT_ID);
-     config.setClientSecret(MY_CLIENT_SECRET);
+     OneDriveFactoryStateManager.CredentialConfig config = 
+             new OneDriveFactoryStateManager.CredentialConfig();
+                     config.setClientId(MY_CLIENT_ID);
+                     config.setClientSecret(MY_CLIENT_SECRET);
 
      // Use the state manager to automatically persist user auth tokens
      OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
