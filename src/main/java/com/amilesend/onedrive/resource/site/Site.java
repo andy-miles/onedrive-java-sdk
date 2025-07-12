@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.resource.site;
 
+import com.amilesend.client.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.drive.Drive;
 import com.amilesend.onedrive.resource.item.BaseItem;
 import com.amilesend.onedrive.resource.item.type.SharePointIds;
@@ -79,7 +79,7 @@ public class Site extends BaseItem {
      */
     public Drive getDefaultDocumentLibrary() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(SITE_BASE_URL_PATH)
                                 .append(getId())
@@ -99,7 +99,7 @@ public class Site extends BaseItem {
      */
     public java.util.List<Drive> getDocumentLibraries() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(SITE_BASE_URL_PATH)
                                 .append(getId())
@@ -120,7 +120,7 @@ public class Site extends BaseItem {
     public java.util.List<List> getLists() {
         final String siteId = getId();
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(SITE_BASE_URL_PATH)
                                 .append(siteId)

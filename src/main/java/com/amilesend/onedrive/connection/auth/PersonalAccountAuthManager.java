@@ -59,9 +59,9 @@ import static com.google.common.net.MediaType.FORM_DATA;
  *         .buildWithAuthInfo();
  * </pre>
  *
- * @see AuthInfo
+ * @see OneDriveAuthInfo
  */
-public class PersonalAccountAuthManager implements AuthManager {
+public class PersonalAccountAuthManager implements OneDriveAuthManager {
     private static final String PERSONAL_ENDPOINT_URL = "https://graph.microsoft.com/v1.0/me";
 
     private final Object lock = new Object();
@@ -84,7 +84,7 @@ public class PersonalAccountAuthManager implements AuthManager {
     /** The current authentication information. */
     @Setter(AccessLevel.PACKAGE)
     @VisibleForTesting
-    protected volatile AuthInfo authInfo;
+    protected volatile OneDriveAuthInfo authInfo;
 
     /** Used to initialize and manage authentication for a given auth code. */
     @Builder(builderClassName = "BuilderWithAuthCode",
@@ -120,7 +120,7 @@ public class PersonalAccountAuthManager implements AuthManager {
             final String clientId,
             final String clientSecret,
             final String redirectUrl,
-            @NonNull final AuthInfo authInfo) {
+            @NonNull final OneDriveAuthInfo authInfo) {
         Validate.notBlank(clientId, "clientId must not be blank");
         Validate.notBlank(clientSecret, "clientSecret must not be blank");
         Validate.notBlank(redirectUrl, "redirectUrl must not be blank");
@@ -149,7 +149,7 @@ public class PersonalAccountAuthManager implements AuthManager {
     }
 
     @Override
-    public AuthInfo getAuthInfo() {
+    public OneDriveAuthInfo getAuthInfo() {
         refreshIfExpired();
         return authInfo;
     }
@@ -160,10 +160,10 @@ public class PersonalAccountAuthManager implements AuthManager {
     }
 
     @Override
-    public AuthInfo redeemToken(final String authCode) {
+    public OneDriveAuthInfo redeemToken(final String authCode) {
         Validate.notBlank(authCode, "authCode must not be blank");
         synchronized (lock) {
-            authInfo = AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
+            authInfo = OneDriveAuthManager.fetchAuthInfo(httpClient, new Request.Builder()
                     .url(baseTokenUrl)
                     .header(CONTENT_TYPE, FORM_DATA.toString())
                     .post(new FormBody.Builder()
@@ -179,9 +179,9 @@ public class PersonalAccountAuthManager implements AuthManager {
     }
 
     @Override
-    public AuthInfo refreshToken() {
+    public OneDriveAuthInfo refreshToken() {
         synchronized (lock) {
-            authInfo = AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
+            authInfo = OneDriveAuthManager.fetchAuthInfo(httpClient, new Request.Builder()
                     .url(baseTokenUrl)
                     .header(CONTENT_TYPE, FORM_DATA_CONTENT_TYPE)
                     .post(new FormBody.Builder()

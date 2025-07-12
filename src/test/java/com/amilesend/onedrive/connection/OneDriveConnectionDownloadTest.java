@@ -17,8 +17,11 @@
  */
 package com.amilesend.onedrive.connection;
 
-import com.amilesend.onedrive.connection.file.TransferFileWriter;
-import com.amilesend.onedrive.connection.file.TransferProgressCallback;
+import com.amilesend.client.connection.ConnectionException;
+import com.amilesend.client.connection.RequestException;
+import com.amilesend.client.connection.ResponseException;
+import com.amilesend.client.connection.file.TransferFileWriter;
+import com.amilesend.client.connection.file.TransferProgressCallback;
 import lombok.SneakyThrows;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -147,7 +150,7 @@ public class OneDriveConnectionDownloadTest extends OneDriveConnectionTestBase {
     @SneakyThrows
     @Test
     public void download_withOneDriveConnectionException_shouldThrowException() {
-        doThrow(new OneDriveConnectionException("Exception"))
+        doThrow(new ConnectionException("Exception"))
                 .when(connectionUnderTest)
                 .processDownloadResponse(
                         any(Response.class),
@@ -162,7 +165,7 @@ public class OneDriveConnectionDownloadTest extends OneDriveConnectionTestBase {
         setUpHttpClientMock(mockResponse);
         final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
 
-        assertThrows(OneDriveConnectionException.class, () -> connectionUnderTest.download(
+        assertThrows(ConnectionException.class, () -> connectionUnderTest.download(
                 mock(Request.class),
                 mock(Path.class),
                 "filename",
@@ -308,7 +311,7 @@ public class OneDriveConnectionDownloadTest extends OneDriveConnectionTestBase {
     @SneakyThrows
     @Test
     public void downloadAsync_withOneDriveConnectionException_shouldThrowException() {
-        doThrow(new OneDriveConnectionException("Exception"))
+        doThrow(new ConnectionException("Exception"))
                 .when(connectionUnderTest)
                 .processDownloadResponse(
                         any(Response.class),
@@ -330,12 +333,12 @@ public class OneDriveConnectionDownloadTest extends OneDriveConnectionTestBase {
                 mockTransferProgressCallback);
         final Callback callback = getCallbackFromCallMock(mockCall);
 
-        assertThrows(OneDriveConnectionException.class, () -> callback.onResponse(mockCall, mock(Response.class)));
+        assertThrows(ConnectionException.class, () -> callback.onResponse(mockCall, mock(Response.class)));
 
-        verify(mockTransferProgressCallback).onFailure(isA(OneDriveConnectionException.class));
+        verify(mockTransferProgressCallback).onFailure(isA(ConnectionException.class));
 
         final Throwable thrownFromFuture = assertThrows(ExecutionException.class, () -> future.get());
-        assertInstanceOf(OneDriveConnectionException.class, thrownFromFuture.getCause());
+        assertInstanceOf(ConnectionException.class, thrownFromFuture.getCause());
     }
 
     @SneakyThrows

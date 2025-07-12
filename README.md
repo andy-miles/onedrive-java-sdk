@@ -106,7 +106,7 @@ needs to be registered via the [Azure Apps Registration Page](https://aka.ms/App
    <dependency>
        <groupId>com.amilesend</groupId>
        <artifactId>onedrive-java-sdk</artifactId>
-       <version>1.0.1</version>
+       <version>2.0</version>
    </dependency>
    ```
 4. Instantiate your client instance per the options described below:
@@ -119,9 +119,10 @@ needs to be registered via the [Azure Apps Registration Page](https://aka.ms/App
 
      // Use the state manager to automatically persist user auth tokens
      OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
-           .credentialConfig(config)
-           .stateFile(Paths.get("./MyOneDriveUserState.json")) // Path to save/read user auth tokens
-           .build();
+             .userAgent("MyUserAgent/1.0")
+             .credentialConfig(config)
+             .stateFile(Paths.get("./MyOneDriveUserState.json")) // Path to save/read user auth tokens
+             .build();
 
      OneDrive oneDrive = factoryStateManager.getInstance();
      ```
@@ -138,10 +139,11 @@ needs to be registered via the [Azure Apps Registration Page](https://aka.ms/App
    3. Pass the recorded client ID and secret to the client connection:
    ```java
    OneDrive oneDrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
-      .clientId(MY_CLIENT_ID)
-      .clientSecret(MY_CLIENT_SECRET)
-      .redirectUrl(redirectUrl) // Your custom redirect URL that was used to obtain the authCode
-      .build(authCode)); // Your OAuth authorization code.
+           .userAgent("MyUserAgent/1.0")
+           .clientId(MY_CLIENT_ID)
+           .clientSecret(MY_CLIENT_SECRET)
+           .redirectUrl(redirectUrl) // Your custom redirect URL that was used to obtain the authCode
+           .build(authCode)); // Your OAuth authorization code.
    ```
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
 
@@ -163,6 +165,7 @@ The primary classes used to interact with a OneDrive account is modeled as a tre
 ```java
 // Used to initiate the OAuth flow, persist refreshed tokens, or use persisted refresh tokens.
 OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
+        .userAgent("MyUserAgent/1.0")        
         .stateFile(Paths.get("./MyOneDriveUserState.json")) // Path to save/read user auth tokens
         .build();
 try {
@@ -201,8 +204,9 @@ public class MyAuthInfoStore implements AuthInfoStore {
 }
 
 OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
-           .authInfoStore(new MyAuthInfoStore()))
-           .build();
+        .userAgent("MyUserAgent/1.0")
+        .authInfoStore(new MyAuthInfoStore()))
+        .build();
 try {
     OneDrive oneDrive = factoryStateManager.getInstance();
     // Access drives, folders, and files
@@ -241,6 +245,7 @@ SingleUserEncryptedFileBasedAuthInfoStore authInfoStore =
         new SingleUserEncryptedFileBasedAuthInfoStore(myOneDriveUserState, cryptoHelper);
 
 OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
+        .userAgent("MyUserAgent/1.0")
         .authInfoStore(authInfoStore)
         .build();
 ```
@@ -269,6 +274,7 @@ OkHttpClient httpClient = OkHttpClientBuilder.builder()
         .writeTimeout(5000L) // write timeout in milliseconds
         .build();
 OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
+        .userAgent("MyUserAgent/1.0")
         .httpClient(httpClient)
         .stateFile(Paths.get("./OneDriveUserState.json")) // Path to save/read user auth tokens
         .build();
@@ -292,10 +298,11 @@ try {
 Once you obtain the <code>authCode</code>, you can initialize a new <code>OneDrive</code> directly via:
 ```java
 OneDrive oneDrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
-      .clientId(clientId) // Your application's client identifier
-      .clientSecret(clientSecret) // Your application's client secret
-      .redirectUrl(redirectUrl) // Your custom redirect URL that was used to obtain the authCode
-      .build(authCode));
+        .userAgent("MyUserAgent/1.0") // Your application's user agent
+        .clientId(clientId) // Your application's client identifier
+        .clientSecret(clientSecret) // Your application's client secret
+        .redirectUrl(redirectUrl) // Your custom redirect URL that was used to obtain the authCode
+        .build(authCode));
 ```
 
 While token refresh is automated during the runtime lifecycle of the <code>OneDrive</code> object, persisting
@@ -304,6 +311,7 @@ authorization each time an instance is created until the user explicitly revokes
 ```java
 AuthInfo authInfo = getAuthInfo(); // Obtain the persisted AuthInfo from your application
 OneDrive oneDrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
+        .userAgent("MyUserAgent/1.0") // Your application's user agent
         .clientId(clientId) // Your application's client identifier
         .clientSecret(clientSecret) // Your application's client secret
         // Your custom redirect URL that was used to obtain the authCode
@@ -336,10 +344,11 @@ authManager.authenticateService(services.get(0));
 
 // Create a new BusinessOneDrive instance
 BusinessOneDrive oneDrive = new BusinessOneDrive(
-    OneDriveConnectionBuilder.newInstance()
-        .httpClient(httpClient)
-        .authManager(authManager)
-        .build(authManager.getAuthInfo()));
+        OneDriveConnectionBuilder.newInstance()
+                .userAgent("MyUserAgent/1.0") // Your application's user agent
+                .httpClient(httpClient)
+                .authManager(authManager)
+                .build(authManager.getAuthInfo()));
 
 // Access business related resources
 Site rootSite = oneDrive.getRootSite();
@@ -433,11 +442,6 @@ DriveFileDownloadExecution downloadExec =
 
 <!-- ROADMAP -->
 ## Roadmap
-- [x] ~~Add functional test coverage (use of a MockWebServer)~~
-- [ ] Add integration test coverage
-- [x] ~~Group and Site based access for non-personal accounts~~
-- [X] ~~Add an interface to access and persist tokens for the OneDriveFactoryStateManager (e.g., tokens stored via a database or service)~~ (v0.1.1)
-- [X] ~~Obtaining [embeddable file previews](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_preview)~~ (v0.1.2)
 - [ ] [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
 - [ ] [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)
 - [ ] Add configuration of a retry policy + strategy to support automatic retries for retriable errors

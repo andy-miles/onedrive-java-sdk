@@ -17,10 +17,11 @@
  */
 package com.amilesend.onedrive.resource.item;
 
+import com.amilesend.client.connection.file.LogProgressCallback;
+import com.amilesend.client.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.connection.file.LogProgressCallback;
-import com.amilesend.onedrive.connection.file.TransferProgressCallback;
 import okhttp3.Request;
+import okhttp3.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,7 +64,7 @@ public class DriveItemVersionTest {
     @BeforeEach
     public void setUp() {
         lenient().when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
-        lenient().when(mockConnection.newSignedForRequestBuilder()).thenReturn(new Request.Builder());
+        lenient().when(mockConnection.newRequestBuilder()).thenReturn(new Request.Builder());
         versionUnderTest = DriveItemVersion.builder()
                 .connection(mockConnection)
                 .driveItemId(DRIVE_ITEM_ID)
@@ -217,7 +218,9 @@ public class DriveItemVersionTest {
 
     @Test
     public void restore_withValidResponseCode_shouldReturnTrue() {
-        when(mockConnection.execute(any(Request.class))).thenReturn(NO_CONTENT_RESPONSE_HTTP_CODE);
+        final Response mockResponse = mock(Response.class);
+        when(mockResponse.code()).thenReturn(NO_CONTENT_RESPONSE_HTTP_CODE);
+        when(mockConnection.execute(any(Request.class))).thenReturn(mockResponse);
 
         final boolean actual = versionUnderTest.restore();
 
@@ -233,7 +236,9 @@ public class DriveItemVersionTest {
 
     @Test
     public void restore_withInvalidResponseCode_shouldReturnFalse() {
-        when(mockConnection.execute(any(Request.class))).thenReturn(400);
+        final Response mockResponse = mock(Response.class);
+        when(mockResponse.code()).thenReturn(400);
+        when(mockConnection.execute(any(Request.class))).thenReturn(mockResponse);
 
         final boolean actual = versionUnderTest.restore();
 

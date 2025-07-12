@@ -18,7 +18,7 @@
 package com.amilesend.onedrive;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.connection.auth.AuthInfo;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.identity.Identity;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
@@ -69,7 +69,7 @@ public class OneDrive {
      */
     public Drive getUserDrive() {
         return new Drive(connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(connection.getBaseUrl() + DRIVE_URL_PATH_SUFFIX)
                         .build(),
                 DRIVE_PARSER));
@@ -83,7 +83,7 @@ public class OneDrive {
      */
     public List<Drive> getAvailableDrives() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(connection.getBaseUrl() + DRIVES_URL_PATH_SUFFIX)
                         .build(),
                 DRIVE_LIST_PARSER)
@@ -102,7 +102,7 @@ public class OneDrive {
     public Drive getDrive(final String driveId) {
         final String encodedDriveId = validateIdAndUrlEncode(driveId, "driveId");
         return new Drive(connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVES_BASE_URL_PATH)
                                 .append(encodedDriveId)
@@ -131,8 +131,8 @@ public class OneDrive {
      *
      * @return the authentication information
      */
-    public AuthInfo getAuthInfo() {
-        return connection.getAuthManager().getAuthInfo();
+    public OneDriveAuthInfo getAuthInfo() {
+        return (OneDriveAuthInfo) connection.getAuthManager().getAuthInfo();
     }
 
     protected String validateIdAndUrlEncode(final String id, final String name) {

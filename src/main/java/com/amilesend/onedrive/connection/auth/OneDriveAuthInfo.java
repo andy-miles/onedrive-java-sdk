@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.connection.auth;
 
+import com.amilesend.client.connection.auth.AuthInfo;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -34,7 +35,6 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-
 /**
  * Represents the authentication information for OAuth (OBO) access to a user's MS OneDrive account.
  * This is returned in response when making calls to acquire the initial token or when refreshing the token.
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 @Builder
 @Getter
 @EqualsAndHashCode
-public class AuthInfo {
+public class OneDriveAuthInfo implements AuthInfo {
     private static final String STANDARD_SPACE = " ";
     private static final String URL_ENCODED_SPACE = "%20";
 
@@ -80,10 +80,10 @@ public class AuthInfo {
      * @return the new {@code AuthInfo} object
      * @throws JsonSyntaxException if there is an error while deserializing the JSON string
      */
-    public static AuthInfo fromJson(final String authInfoJson) {
-        final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
+    public static OneDriveAuthInfo fromJson(final String authInfoJson) {
+        final Gson gson = GsonFactory.getInstanceForAuthManager();
         final AuthInfoInternal internalAuthInfo = gson.fromJson(authInfoJson, AuthInfoInternal.class);
-        return AuthInfo.builder()
+        return OneDriveAuthInfo.builder()
                 .accessToken(internalAuthInfo.getAccessToken())
                 .expiresIn(internalAuthInfo.getExpiresIn())
                 .extExpiresIn(internalAuthInfo.getExtExpiresIn())
@@ -113,7 +113,7 @@ public class AuthInfo {
      * @return the JSON formatted {@code AuthInfo}
      */
     public String toJson() {
-        final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
+        final Gson gson = GsonFactory.getInstanceForAuthManager();
         final AuthInfoInternal internalAuthInfo = AuthInfoInternal.builder()
                 .accessToken(accessToken)
                 .expiresIn(expiresIn)
@@ -132,8 +132,8 @@ public class AuthInfo {
      * @param resourceId the resource identifier associated with the auth tokens
      * @return the copy
      */
-    public AuthInfo copyWithResourceId(final String resourceId) {
-        return AuthInfo.builder()
+    public OneDriveAuthInfo copyWithResourceId(final String resourceId) {
+        return OneDriveAuthInfo.builder()
                 .accessToken(getAccessToken())
                 .expiresIn(getExpiresIn())
                 .extExpiresIn(getExtExpiresIn())

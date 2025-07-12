@@ -17,7 +17,7 @@
  */
 package com.amilesend.onedrive.connection.http;
 
-import com.amilesend.onedrive.connection.OneDriveConnectionException;
+import com.amilesend.client.connection.ConnectionException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Authenticator;
@@ -207,7 +207,7 @@ public class OkHttpClientBuilder {
             sslContext.init(null, new TrustManager[]{ trustManager }, new SecureRandom());
             builder = builder.sslSocketFactory(sslContext.getSocketFactory(), trustManager);
         } catch (final KeyManagementException | NoSuchAlgorithmException ex) {
-            throw new OneDriveConnectionException("Unable to create HttpClient: " + ex.getMessage(), ex);
+            throw new ConnectionException("Unable to create HttpClient: " + ex.getMessage(), ex);
         }
 
         if (hostnameVerifier == null) {

@@ -68,11 +68,11 @@ public class PersonalAccountAuthManagerTest {
 
     @Test
     public void builderWithAuthCode_withValidParameters_shouldRedeemToken() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
 
             authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
@@ -106,8 +106,8 @@ public class PersonalAccountAuthManagerTest {
     public void builderWithAuthCode_withJsonSyntaxException_shouldThrowException() {
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString()))
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString()))
                     .thenThrow(new JsonSyntaxException("Exception"));
 
             final Throwable thrown = assertThrows(AuthManagerException.class,
@@ -200,11 +200,11 @@ public class PersonalAccountAuthManagerTest {
 
     @Test
     public void builderWithAuthInfo_withValidParameters_shouldRefreshToken() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
 
             authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthInfo()
                     .authInfo(expected)
@@ -236,7 +236,7 @@ public class PersonalAccountAuthManagerTest {
 
     @Test
     public void builderWithAuthInfo_withInvalidParameters_shouldThrowException() {
-        final AuthInfo authInfo = newAuthInfo();
+        final OneDriveAuthInfo authInfo = newAuthInfo();
         assertAll(
                 () -> assertThrows(NullPointerException.class, () -> PersonalAccountAuthManager.builderWithAuthInfo()
                         .authInfo(null) // Null authInfo
@@ -314,11 +314,11 @@ public class PersonalAccountAuthManagerTest {
     }
 
     private void isAuthenticated_shouldReturn(final boolean isAuthenticated) {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
             authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -356,11 +356,11 @@ public class PersonalAccountAuthManagerTest {
     }
 
     private void isExpired_shouldReturn(final boolean isExpired, final boolean isAuthenticated) {
-        final AuthInfo expected = newAuthInfo(isExpired);
+        final OneDriveAuthInfo expected = newAuthInfo(isExpired);
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
             authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -398,11 +398,11 @@ public class PersonalAccountAuthManagerTest {
     }
 
     private void refreshIfExpired_shouldRefresh(final boolean isExpired) {
-        final AuthInfo expected = newAuthInfo(isExpired);
+        final OneDriveAuthInfo expected = newAuthInfo(isExpired);
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
             authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -427,11 +427,11 @@ public class PersonalAccountAuthManagerTest {
 
     @Test
     public void refreshIfExpiredAndFetchFullToken_withValidAuth_shouldReturnFullToken() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
             authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -450,11 +450,11 @@ public class PersonalAccountAuthManagerTest {
 
     @Test
     public void getAuthInfo_withValidAuth_shouldReturnAuthInfo() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
             authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -473,11 +473,11 @@ public class PersonalAccountAuthManagerTest {
 
     @Test
     public void getAuthenticatedEndpoint_shouldReturnPersonalEndpointUrl() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
             authManagerUnderTest = PersonalAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -514,15 +514,15 @@ public class PersonalAccountAuthManagerTest {
         return mockResponse;
     }
 
-    static AuthInfo newAuthInfo() {
+    static OneDriveAuthInfo newAuthInfo() {
         return newAuthInfo(false);
     }
 
-    static AuthInfo newAuthInfo(final boolean isExpired) {
+    static OneDriveAuthInfo newAuthInfo(final boolean isExpired) {
         final long expires = isExpired
                 ? System.currentTimeMillis() - Duration.ofHours(2L).toMillis()
                 : System.currentTimeMillis() + Duration.ofHours(2L).toMillis();
-        return AuthInfo.builder()
+        return OneDriveAuthInfo.builder()
                 .accessToken("accessTokenValue")
                 .expiresIn(expires)
                 .extExpiresIn(expires)

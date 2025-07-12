@@ -17,7 +17,7 @@
  */
 package com.amilesend.onedrive.connection.http;
 
-import com.amilesend.onedrive.connection.OneDriveConnectionException;
+import com.amilesend.client.connection.ConnectionException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import okhttp3.Authenticator;
@@ -100,7 +100,7 @@ public class OkHttpClientBuilderTest {
             sslContextMockedStatic.when(() -> SSLContext.getInstance(anyString()))
                     .thenThrow(new NoSuchAlgorithmException("Exception"));
 
-            final Throwable thrown = assertThrows(OneDriveConnectionException.class,
+            final Throwable thrown = assertThrows(ConnectionException.class,
                     () -> new OkHttpClientBuilder()
                             .trustManager(new NoOpTrustManager())
                             .build());
@@ -121,7 +121,7 @@ public class OkHttpClientBuilderTest {
             sslContextMockedStatic.when(() -> SSLContext.getInstance(anyString()))
                     .thenReturn(mockContext);
 
-            final Throwable thrown = assertThrows(OneDriveConnectionException.class,
+            final Throwable thrown = assertThrows(ConnectionException.class,
                     () -> new OkHttpClientBuilder()
                             .trustManager(new NoOpTrustManager())
                             .build());

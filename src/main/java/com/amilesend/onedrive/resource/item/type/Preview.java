@@ -17,7 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
-import com.amilesend.onedrive.parse.strategy.GsonExclude;
+import com.amilesend.client.parse.strategy.GsonExclude;
 import lombok.Builder;
 import lombok.Data;
 

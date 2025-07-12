@@ -17,9 +17,10 @@
  */
 package com.amilesend.onedrive.resource.site;
 
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.parse.resource.parser.ListItemParser;
 import okhttp3.Request;
+import okhttp3.Response;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -57,7 +58,8 @@ public class ListItemCrudTest extends ListItemTestBase {
 
     @Test
     public void delete_shouldDeleteListItem() {
-        when(mockConnection.execute(any(Request.class))).thenReturn(SUCCESS_RESPONSE_CODE);
+        final Response mockResponse = mock(Response.class);
+        when(mockConnection.execute(any(Request.class))).thenReturn(mockResponse);
 
         listItemUnderTest.delete();
 

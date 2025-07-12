@@ -17,23 +17,22 @@
  */
 package com.amilesend.onedrive.resource.item;
 
-import com.amilesend.onedrive.connection.file.ProgressReportingFileRequestBody;
-import com.amilesend.onedrive.connection.file.TransferProgressCallback;
-import com.amilesend.onedrive.parse.resource.parser.BasicParser;
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
+import com.amilesend.client.connection.file.ProgressReportingRequestBody;
+import com.amilesend.client.connection.file.TransferProgressCallback;
+import com.amilesend.client.parse.parser.BasicParser;
+import com.amilesend.client.parse.parser.GsonParser;
 import lombok.SneakyThrows;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
+import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
+import static com.amilesend.onedrive.resource.DriveFileTest.newMockFilePath;
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,8 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,115 +52,157 @@ public class DriveItemUploadTest extends DriveItemTestBase {
     @SneakyThrows
     @Test
     public void upload_withValidFileAndCallback_shouldReturnDriveItem() {
+        final ProgressReportingRequestBody mockRequestBody = newMockRequestBody();
+        final ProgressReportingRequestBody.Builder mockBuilder =
+                newRequestBodyBuilderMock(mockRequestBody);
         final DriveItem expected = mock(DriveItem.class);
         when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(expected);
-        final File mockFile = setUpFileMock();
 
-        final DriveItem actual = driveItemUnderTest.upload(mockFile, mock(TransferProgressCallback.class));
+        try (final MockedStatic<ProgressReportingRequestBody> bodyMockedStatic =
+                     mockStatic(ProgressReportingRequestBody.class)) {
+            bodyMockedStatic.when(() -> ProgressReportingRequestBody.builder()).thenReturn(mockBuilder);
 
-        final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-        assertAll(
-                () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
-                () -> assertEquals("http://localhost/me/drive/items/DriveItemId/content",
-                        requestCaptor.getValue().url().toString()),
-                () -> assertEquals(FILE_CONTENT_TYPE, requestCaptor.getValue().header(CONTENT_TYPE)),
-                () -> assertEquals("PUT", requestCaptor.getValue().method()),
-                () -> assertInstanceOf(ProgressReportingFileRequestBody.class, requestCaptor.getValue().body()));
+            final DriveItem actual = driveItemUnderTest.upload(newMockFilePath(), mock(TransferProgressCallback.class));
+
+            final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+            assertAll(
+                    () -> assertEquals(expected, actual),
+                    () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
+                    () -> assertEquals("http://localhost/me/drive/items/DriveItemId/content",
+                            requestCaptor.getValue().url().toString()),
+                    () -> assertEquals(FILE_CONTENT_TYPE, requestCaptor.getValue().header(CONTENT_TYPE)),
+                    () -> assertEquals("PUT", requestCaptor.getValue().method()),
+                    () -> assertInstanceOf(ProgressReportingRequestBody.class, requestCaptor.getValue().body()));
+        }
     }
 
     @SneakyThrows
     @Test
     public void upload_withIOException_shouldThrowException() {
-        final File mockFile = setUpFileMockToThrowIOException();
-        assertThrows(IOException.class,
-                () -> driveItemUnderTest.upload(mockFile, mock(TransferProgressCallback.class)));
+        final ProgressReportingRequestBody.Builder mockBuilder =
+                newRequestBodyBuilderMock(new IOException("Exception"));
+
+        try (final MockedStatic<ProgressReportingRequestBody> bodyMockedStatic =
+                     mockStatic(ProgressReportingRequestBody.class)) {
+            bodyMockedStatic.when(() -> ProgressReportingRequestBody.builder()).thenReturn(mockBuilder);
+
+            assertThrows(IOException.class,
+                    () -> driveItemUnderTest.upload(newMockFilePath(), mock(TransferProgressCallback.class)));
+        }
     }
 
     @SneakyThrows
     @Test
     public void upload_withInvalidParameters_shouldThrowException() {
-        final File mockFile = mock(File.class);
+        final Path mockFilePath = newMockFilePath();
         final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
 
         assertAll(
                 () -> assertThrows(NullPointerException.class,
-                        () -> driveItemUnderTest.upload(null, mockCallback)),
+                        () -> driveItemUnderTest.upload((Path) null, mockCallback)),
                 () -> assertThrows(NullPointerException.class,
-                        () -> driveItemUnderTest.upload(mockFile, null)));
+                        () -> driveItemUnderTest.upload(mockFilePath, null)));
     }
 
     @SneakyThrows
     @Test
     public void uploadAsync_withValidFileAndCallback_shouldReturnFuture() {
+        final ProgressReportingRequestBody mockRequestBody = newMockRequestBody();
+        final ProgressReportingRequestBody.Builder mockBuilder =
+                newRequestBodyBuilderMock(mockRequestBody);
         final DriveItem expected = mock(DriveItem.class);
         final CompletableFuture<DriveItem> mockFuture = mock(CompletableFuture.class);
         when(mockFuture.get()).thenReturn(expected);
         when(mockConnection.executeAsync(any(Request.class), any(GsonParser.class))).thenReturn(mockFuture);
-        final File mockFile = setUpFileMock();
 
-        final CompletableFuture<DriveItem> actual =
-                driveItemUnderTest.uploadAsync(mockFile, mock(TransferProgressCallback.class));
+        try (final MockedStatic<ProgressReportingRequestBody> bodyMockedStatic =
+                     mockStatic(ProgressReportingRequestBody.class)) {
+            bodyMockedStatic.when(() -> ProgressReportingRequestBody.builder()).thenReturn(mockBuilder);
+            final CompletableFuture<DriveItem> actual =
+                    driveItemUnderTest.uploadAsync(newMockFilePath(), mock(TransferProgressCallback.class));
 
-        final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-        assertAll(
-                () -> assertEquals(expected, actual.get()),
-                () -> verify(mockConnection).executeAsync(requestCaptor.capture(), isA(BasicParser.class)),
-                () -> assertEquals("http://localhost/me/drive/items/DriveItemId/content",
-                        requestCaptor.getValue().url().toString()),
-                () -> assertEquals(FILE_CONTENT_TYPE, requestCaptor.getValue().header(CONTENT_TYPE)),
-                () -> assertEquals("PUT", requestCaptor.getValue().method()),
-                () -> assertInstanceOf(ProgressReportingFileRequestBody.class, requestCaptor.getValue().body()));
+            final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+            assertAll(
+                    () -> assertEquals(expected, actual.get()),
+                    () -> verify(mockConnection).executeAsync(requestCaptor.capture(), isA(BasicParser.class)),
+                    () -> assertEquals("http://localhost/me/drive/items/DriveItemId/content",
+                            requestCaptor.getValue().url().toString()),
+                    () -> assertEquals(FILE_CONTENT_TYPE, requestCaptor.getValue().header(CONTENT_TYPE)),
+                    () -> assertEquals("PUT", requestCaptor.getValue().method()),
+                    () -> assertInstanceOf(ProgressReportingRequestBody.class, requestCaptor.getValue().body()));
+        }
     }
 
     @SneakyThrows
     @Test
     public void uploadAsync_withIOException_shouldThrowException() {
-        final File mockFile = setUpFileMockToThrowIOException();
-        assertThrows(IOException.class,
-                () -> driveItemUnderTest.uploadAsync(mockFile, mock(TransferProgressCallback.class)));
+        final ProgressReportingRequestBody.Builder mockBuilder =
+                newRequestBodyBuilderMock(new IOException("Exception"));
+
+        try (final MockedStatic<ProgressReportingRequestBody> bodyMockedStatic =
+                     mockStatic(ProgressReportingRequestBody.class)) {
+            bodyMockedStatic.when(() -> ProgressReportingRequestBody.builder()).thenReturn(mockBuilder);
+
+            assertThrows(IOException.class,
+                    () -> driveItemUnderTest.uploadAsync(newMockFilePath(), mock(TransferProgressCallback.class)));
+        }
     }
 
     @SneakyThrows
     @Test
     public void uploadAsync_withInvalidParameters_shouldThrowException() {
-        final File mockFile = mock(File.class);
+        final Path mockFilePath = newMockFilePath();
         final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
 
         assertAll(
                 () -> assertThrows(NullPointerException.class,
-                        () -> driveItemUnderTest.uploadAsync(null, mockCallback)),
+                        () -> driveItemUnderTest.uploadAsync((Path) null, mockCallback)),
                 () -> assertThrows(NullPointerException.class,
-                        () -> driveItemUnderTest.uploadAsync(mockFile, null)));
+                        () -> driveItemUnderTest.uploadAsync(mockFilePath, null)));
     }
 
     @SneakyThrows
     @Test
     public void uploadNew_withValidFileAndCallback_shouldReturnDriveItem() {
+        final ProgressReportingRequestBody mockRequestBody = newMockRequestBody();
+        final ProgressReportingRequestBody.Builder mockBuilder =
+                newRequestBodyBuilderMock(mockRequestBody);
         final DriveItem expected = mock(DriveItem.class);
         when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(expected);
-        final File mockFile = setUpFileMock();
 
-        final DriveItem actual = driveItemUnderTest.uploadNew(mockFile, mock(TransferProgressCallback.class));
+        try (final MockedStatic<ProgressReportingRequestBody> bodyMockedStatic =
+                     mockStatic(ProgressReportingRequestBody.class)) {
+            bodyMockedStatic.when(() -> ProgressReportingRequestBody.builder()).thenReturn(mockBuilder);
 
-        final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-        assertAll(
-                () -> assertEquals(expected, actual),
-                () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
-                () -> assertEquals("http://localhost/me/drive/items/DriveItemId:/"
-                                + FILENAME + ":/content",
-                        requestCaptor.getValue().url().toString()),
-                () -> assertEquals(FILE_CONTENT_TYPE, requestCaptor.getValue().header(CONTENT_TYPE)),
-                () -> assertEquals("PUT", requestCaptor.getValue().method()),
-                () -> assertInstanceOf(ProgressReportingFileRequestBody.class, requestCaptor.getValue().body()));
+            final DriveItem actual =
+                    driveItemUnderTest.uploadNew(newMockFilePath(), mock(TransferProgressCallback.class));
+
+            final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+            assertAll(
+                    () -> assertEquals(expected, actual),
+                    () -> verify(mockConnection).execute(requestCaptor.capture(), isA(BasicParser.class)),
+                    () -> assertEquals("http://localhost/me/drive/items/DriveItemId:/"
+                                    + FILENAME + ":/content",
+                            requestCaptor.getValue().url().toString()),
+                    () -> assertEquals(FILE_CONTENT_TYPE, requestCaptor.getValue().header(CONTENT_TYPE)),
+                    () -> assertEquals("PUT", requestCaptor.getValue().method()),
+                    () -> assertInstanceOf(ProgressReportingRequestBody.class, requestCaptor.getValue().body()));
+        }
     }
 
     @SneakyThrows
     @Test
     public void uploadNew_withIOException_shouldThrowException() {
-        final File mockFile = setUpFileMockToThrowIOException();
-        assertThrows(IOException.class,
-                () -> driveItemUnderTest.uploadNew(mockFile, mock(TransferProgressCallback.class)));
+        final ProgressReportingRequestBody.Builder mockBuilder =
+                newRequestBodyBuilderMock(new IOException("Exception"));
+
+        try (final MockedStatic<ProgressReportingRequestBody> bodyMockedStatic =
+                     mockStatic(ProgressReportingRequestBody.class)) {
+            bodyMockedStatic.when(() -> ProgressReportingRequestBody.builder()).thenReturn(mockBuilder);
+
+            assertThrows(IOException.class,
+                    () -> driveItemUnderTest.uploadNew(newMockFilePath(), mock(TransferProgressCallback.class)));
+        }
     }
 
     @SneakyThrows
@@ -169,40 +210,54 @@ public class DriveItemUploadTest extends DriveItemTestBase {
     public void uploadNew_withInvalidParameters_shouldThrowException() {
         assertAll(
                 () -> assertThrows(NullPointerException.class,
-                        () -> driveItemUnderTest.uploadNew(null, mock(TransferProgressCallback.class))),
+                        () -> driveItemUnderTest.uploadNew((Path) null, mock(TransferProgressCallback.class))),
                 () -> assertThrows(NullPointerException.class,
-                        () -> driveItemUnderTest.uploadNew(mock(File.class), null)));
+                        () -> driveItemUnderTest.uploadNew(mock(Path.class), null)));
     }
 
     @SneakyThrows
     @Test
     public void uploadNewAsync_withValidFileAndCallback_shouldReturnDriveItem() {
+        final ProgressReportingRequestBody mockRequestBody = newMockRequestBody();
+        final ProgressReportingRequestBody.Builder mockBuilder =
+                newRequestBodyBuilderMock(mockRequestBody);
         final DriveItem expected = mock(DriveItem.class);
         final CompletableFuture<DriveItem> mockFuture = mock(CompletableFuture.class);
         when(mockFuture.get()).thenReturn(expected);
         when(mockConnection.executeAsync(any(Request.class), any(GsonParser.class))).thenReturn(mockFuture);
-        final File mockFile = setUpFileMock();
 
-        final CompletableFuture<DriveItem> actual =
-                driveItemUnderTest.uploadNewAsync(mockFile, mock(TransferProgressCallback.class));
+        try (final MockedStatic<ProgressReportingRequestBody> bodyMockedStatic =
+                     mockStatic(ProgressReportingRequestBody.class)) {
+            bodyMockedStatic.when(() -> ProgressReportingRequestBody.builder()).thenReturn(mockBuilder);
 
-        final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-        assertAll(
-                () -> assertEquals(expected, actual.get()),
-                () -> verify(mockConnection).executeAsync(requestCaptor.capture(), isA(BasicParser.class)),
-                () -> assertEquals("http://localhost/me/drive/items/DriveItemId:/" + FILENAME + ":/content",
-                        requestCaptor.getValue().url().toString()),
-                () -> assertEquals(FILE_CONTENT_TYPE, requestCaptor.getValue().header(CONTENT_TYPE)),
-                () -> assertEquals("PUT", requestCaptor.getValue().method()),
-                () -> assertInstanceOf(ProgressReportingFileRequestBody.class, requestCaptor.getValue().body()));
+            final CompletableFuture<DriveItem> actual =
+                    driveItemUnderTest.uploadNewAsync(newMockFilePath(), mock(TransferProgressCallback.class));
+
+            final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+            assertAll(
+                    () -> assertEquals(expected, actual.get()),
+                    () -> verify(mockConnection).executeAsync(requestCaptor.capture(), isA(BasicParser.class)),
+                    () -> assertEquals("http://localhost/me/drive/items/DriveItemId:/" + FILENAME + ":/content",
+                            requestCaptor.getValue().url().toString()),
+                    () -> assertEquals(FILE_CONTENT_TYPE, requestCaptor.getValue().header(CONTENT_TYPE)),
+                    () -> assertEquals("PUT", requestCaptor.getValue().method()),
+                    () -> assertInstanceOf(ProgressReportingRequestBody.class, requestCaptor.getValue().body()));
+        }
     }
 
     @SneakyThrows
     @Test
     public void uploadNewAsync_withIOException_shouldThrowException() {
-        final File mockFile = setUpFileMockToThrowIOException();
-        assertThrows(IOException.class,
-                () -> driveItemUnderTest.uploadNewAsync(mockFile, mock(TransferProgressCallback.class)));
+        final ProgressReportingRequestBody.Builder mockBuilder =
+                newRequestBodyBuilderMock(new IOException("Exception"));
+
+        try (final MockedStatic<ProgressReportingRequestBody> bodyMockedStatic =
+                     mockStatic(ProgressReportingRequestBody.class)) {
+            bodyMockedStatic.when(() -> ProgressReportingRequestBody.builder()).thenReturn(mockBuilder);
+
+            assertThrows(IOException.class,
+                    () -> driveItemUnderTest.uploadNewAsync(newMockFilePath(), mock(TransferProgressCallback.class)));
+        }
     }
 
     @SneakyThrows
@@ -210,42 +265,35 @@ public class DriveItemUploadTest extends DriveItemTestBase {
     public void uploadNewAsync_withInvalidParameters_shouldThrowException() {
         assertAll(
                 () -> assertThrows(NullPointerException.class,
-                        () -> driveItemUnderTest.uploadNewAsync(null, mock(TransferProgressCallback.class))),
+                        () -> driveItemUnderTest.uploadNewAsync((Path) null, mock(TransferProgressCallback.class))),
                 () -> assertThrows(NullPointerException.class,
-                        () -> driveItemUnderTest.uploadNewAsync(mock(File.class), null)));
+                        () -> driveItemUnderTest.uploadNewAsync(mock(Path.class), null)));
+    }
+
+    private ProgressReportingRequestBody newMockRequestBody() {
+        final ProgressReportingRequestBody mockRequestBody = mock(ProgressReportingRequestBody.class);
+        when(mockRequestBody.contentType()).thenReturn(MediaType.parse(FILE_CONTENT_TYPE));
+        return mockRequestBody;
     }
 
     @SneakyThrows
-    private File setUpFileMock() {
-        final URLConnection mockConnection = mock(URLConnection.class);
-        when(mockConnection.getInputStream()).thenReturn(mock(InputStream.class));
-        when(mockConnection.getContentType()).thenReturn(FILE_CONTENT_TYPE);
+    private ProgressReportingRequestBody.Builder newRequestBodyBuilderMock(
+            final ProgressReportingRequestBody mockBody) {
+        final ProgressReportingRequestBody.Builder mockBuilder = mock(ProgressReportingRequestBody.Builder.class);
+        when(mockBuilder.file(any(Path.class))).thenReturn(mockBuilder);
+        when(mockBuilder.callback(any(TransferProgressCallback.class))).thenReturn(mockBuilder);
+        when(mockBuilder.build()).thenReturn(mockBody);
 
-        final URL mockURL = mock(URL.class);
-        when(mockURL.openConnection()).thenReturn(mockConnection);
-
-        final URI mockURI = mock(URI.class);
-        when(mockURI.toURL()).thenReturn(mockURL);
-
-        final File mockFile = mock(File.class);
-        when(mockFile.toURI()).thenReturn(mockURI);
-        lenient().when(mockFile.getName()).thenReturn(FILENAME);
-
-        return mockFile;
+        return mockBuilder;
     }
 
     @SneakyThrows
-    private File setUpFileMockToThrowIOException() {
-        final URL mockURL = mock(URL.class);
-        when(mockURL.openConnection()).thenThrow(new IOException("Exception"));
+    private ProgressReportingRequestBody.Builder newRequestBodyBuilderMock(final IOException ex) {
+        final ProgressReportingRequestBody.Builder mockBuilder = mock(ProgressReportingRequestBody.Builder.class);
+        when(mockBuilder.file(any(Path.class))).thenReturn(mockBuilder);
+        when(mockBuilder.callback(any(TransferProgressCallback.class))).thenReturn(mockBuilder);
+        when(mockBuilder.build()).thenThrow(ex);
 
-        final URI mockURI = mock(URI.class);
-        when(mockURI.toURL()).thenReturn(mockURL);
-
-        final File mockFile = mock(File.class);
-        when(mockFile.toURI()).thenReturn(mockURI);
-        lenient().when(mockFile.getName()).thenReturn(FILENAME);
-
-        return mockFile;
+        return mockBuilder;
     }
 }

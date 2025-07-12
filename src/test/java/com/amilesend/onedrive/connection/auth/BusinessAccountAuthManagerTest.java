@@ -69,12 +69,12 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void builderWithAuthCode_withValidParameters_shouldRedeemToken() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
 
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
@@ -110,8 +110,8 @@ public class BusinessAccountAuthManagerTest {
     public void builderWithAuthCode_withJsonSyntaxException_shouldThrowException() {
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString()))
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString()))
                     .thenThrow(new JsonSyntaxException("Exception"));
 
             final Throwable thrown = assertThrows(AuthManagerException.class,
@@ -204,12 +204,12 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void builderWithAuthInfo_withValidParameters_shouldRefreshToken() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
 
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthInfo()
                     .authInfo(expected)
@@ -242,7 +242,7 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void builderWithAuthInfo_withInvalidParameters_shouldThrowException() {
-        final AuthInfo authInfo = newAuthInfo();
+        final OneDriveAuthInfo authInfo = newAuthInfo();
         assertAll(
                 () -> assertThrows(NullPointerException.class, () -> BusinessAccountAuthManager.builderWithAuthInfo()
                         .authInfo(null) // Null authInfo
@@ -320,12 +320,12 @@ public class BusinessAccountAuthManagerTest {
     }
 
     private void isAuthenticated_shouldReturn(final boolean isAuthenticated) {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -363,12 +363,12 @@ public class BusinessAccountAuthManagerTest {
     }
 
     private void isExpired_shouldReturn(final boolean isExpired, final boolean isAuthenticated) {
-        final AuthInfo expected = newAuthInfo(isExpired);
+        final OneDriveAuthInfo expected = newAuthInfo(isExpired);
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -406,12 +406,12 @@ public class BusinessAccountAuthManagerTest {
     }
 
     private void refreshIfExpired_shouldRefresh(final boolean isExpired) {
-        final AuthInfo expected = newAuthInfo(isExpired);
+        final OneDriveAuthInfo expected = newAuthInfo(isExpired);
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -436,12 +436,12 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void refreshIfExpiredAndFetchFullToken_withValidAuth_shouldReturnFullToken() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -460,12 +460,12 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void getAuthInfo_withValidAuth_shouldReturnAuthInfo() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -484,12 +484,12 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void getAuthenticatedEndpoint_withValidResourceId_shouldReturnEndpointUrl() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -505,12 +505,12 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void getAuthenticatedEndpoint_withInvalidResourceId_shouldThrowException() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -540,7 +540,7 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void getServices_withAuthenticatedManager_shouldReturnServiceList() {
-        final AuthInfo authInfo = newAuthInfo();
+        final OneDriveAuthInfo authInfo = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
         final DiscoverServiceResponse response = DiscoverServiceResponse.builder()
@@ -548,14 +548,12 @@ public class BusinessAccountAuthManagerTest {
                 .build();
         final Gson mockGson = mock(Gson.class);
         when(mockGson.fromJson(anyString(), eq(DiscoverServiceResponse.class))).thenReturn(response);
-        final GsonFactory mockGsonFactory = mock(GsonFactory.class);
-        when(mockGsonFactory.getInstanceForServiceDiscovery()).thenReturn(mockGson);
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class);
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class);
             final MockedStatic<GsonFactory> gsonMockedStatic = mockStatic(GsonFactory.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(authInfo);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
-            gsonMockedStatic.when(() -> GsonFactory.getInstance()).thenReturn(mockGsonFactory);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(authInfo);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
+            gsonMockedStatic.when(() -> GsonFactory.getInstanceForServiceDiscovery()).thenReturn(mockGson);
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -573,12 +571,12 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void getServices_withUnsuccessfulResponse_shouldThrowException() {
-        final AuthInfo authInfo = newAuthInfo();
+        final OneDriveAuthInfo authInfo = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(authInfo);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(authInfo);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -594,7 +592,7 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void getServices_withJsonSyntaxException_shouldThrowException() {
-        final AuthInfo authInfo = newAuthInfo();
+        final OneDriveAuthInfo authInfo = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
         final DiscoverServiceResponse response = DiscoverServiceResponse.builder()
@@ -603,14 +601,12 @@ public class BusinessAccountAuthManagerTest {
         final Gson mockGson = mock(Gson.class);
         when(mockGson.fromJson(anyString(), eq(DiscoverServiceResponse.class)))
                 .thenThrow(new JsonSyntaxException("Exception"));
-        final GsonFactory mockGsonFactory = mock(GsonFactory.class);
-        when(mockGsonFactory.getInstanceForServiceDiscovery()).thenReturn(mockGson);
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class);
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class);
             final MockedStatic<GsonFactory> gsonMockedStatic = mockStatic(GsonFactory.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(authInfo);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
-            gsonMockedStatic.when(() -> GsonFactory.getInstance()).thenReturn(mockGsonFactory);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(authInfo);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
+            gsonMockedStatic.when(() -> GsonFactory.getInstanceForServiceDiscovery()).thenReturn(mockGson);
             authManagerUnderTest = BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -631,12 +627,12 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void authenticateService_withValidService_shouldSetResourceIdAndRefreshToken() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
             authManagerUnderTest = spy(BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)
@@ -657,12 +653,12 @@ public class BusinessAccountAuthManagerTest {
 
     @Test
     public void authenticateService_withInvalidService_shouldThrowException() {
-        final AuthInfo expected = newAuthInfo();
+        final OneDriveAuthInfo expected = newAuthInfo();
         setUpCall(mockHttpClient, newResponse(true));
 
-        try(final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            authInfoMockedStatic.when(() -> AuthInfo.builder()).thenCallRealMethod();
+        try(final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.builder()).thenCallRealMethod();
             authManagerUnderTest = spy(BusinessAccountAuthManager.builderWithAuthCode()
                     .authCode(AUTH_CODE)
                     .clientId(CLIENT_ID)

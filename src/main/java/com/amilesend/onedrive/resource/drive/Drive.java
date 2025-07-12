@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.resource.drive;
 
+import com.amilesend.client.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import com.amilesend.onedrive.resource.item.BaseItem;
@@ -96,7 +96,7 @@ public class Drive extends BaseItem {
      */
     public List<ItemActivity> getActivities() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(getActivitiesUrl(getId()))
                         .build(),
                 ITEM_ACTIVITY_LIST_PARSER);
@@ -111,7 +111,7 @@ public class Drive extends BaseItem {
      */
     public DriveItem getRootFolder() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(connection.getBaseUrl() + ROOT_FOLDER_URL_PATH)
                         .build(),
                 DRIVE_ITEM_PARSER);
@@ -131,7 +131,7 @@ public class Drive extends BaseItem {
         DriveItemPage currentPage = null;
         do {
             currentPage = connection.execute(
-                    connection.newSignedForApiRequestBuilder()
+                    connection.newRequestBuilder()
                             .url(getChangesUrl(currentPage))
                             .build(),
                     DRIVE_ITEM_PAGE_PARSER);
@@ -161,7 +161,7 @@ public class Drive extends BaseItem {
         DriveItemPage currentPage = null;
         do {
             currentPage = connection.execute(
-                    connection.newSignedForApiRequestBuilder()
+                    connection.newRequestBuilder()
                             .url(getSearchUrl(currentPage, encodedQuery))
                             .build(),
                     DRIVE_ITEM_PAGE_PARSER);
@@ -180,7 +180,7 @@ public class Drive extends BaseItem {
      */
     public SpecialDriveItem getSpecialFolder(@NonNull final SpecialFolder.Type type) {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(getSpecialFolderUrl(type))
                         .build(),
                 newSpecialDriveItemParser(type));

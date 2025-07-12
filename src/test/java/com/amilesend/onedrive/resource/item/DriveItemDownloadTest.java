@@ -17,7 +17,7 @@
  */
 package com.amilesend.onedrive.resource.item;
 
-import com.amilesend.onedrive.connection.file.TransferProgressCallback;
+import com.amilesend.client.connection.file.TransferProgressCallback;
 import lombok.SneakyThrows;
 import okhttp3.Request;
 import org.junit.jupiter.api.Test;

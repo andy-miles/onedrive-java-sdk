@@ -68,7 +68,7 @@ public class AsyncJob {
      */
     public AsyncJobStatus getStatus() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(monitorUrl)
                         .build(),
                 ASYNC_JOB_STATUS_PARSER);

@@ -17,6 +17,9 @@
  */
 package com.amilesend.onedrive.connection.parse.resource.parser;
 
+import com.amilesend.client.parse.parser.GsonParser;
+import com.amilesend.client.parse.strategy.AnnotationBasedExclusionStrategy;
+import com.amilesend.client.parse.strategy.AnnotationBasedSerializationExclusionStrategy;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.parse.resource.creator.DriveInstanceCreator;
@@ -27,9 +30,6 @@ import com.amilesend.onedrive.parse.resource.creator.ListItemVersionInstanceCrea
 import com.amilesend.onedrive.parse.resource.creator.PermissionInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.SiteInstanceCreator;
 import com.amilesend.onedrive.parse.resource.creator.SpecialDriveItemInstanceCreator;
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
-import com.amilesend.onedrive.parse.strategy.AnnotationBasedExclusionStrategy;
-import com.amilesend.onedrive.parse.strategy.AnnotationBasedSerializationExclusionStrategy;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.drive.Drive;
 import com.amilesend.onedrive.resource.item.DriveItem;
@@ -49,6 +49,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -555,9 +556,9 @@ public class GsonParserTest {
                 () -> assertThrows(NullPointerException.class, () -> parserUnderTest.parse(
                         null,
                         SerializedResource.DRIVE_ITEM_ZIP_FILE.getResource())),
-                () -> assertThrows(NullPointerException.class, () ->parserUnderTest.parse(
+                () -> assertThrows(NullPointerException.class, () -> parserUnderTest.parse(
                         gson,
-                        null)));
+                        (InputStream) null)));
     }
 
     private static Gson newInstanceForTest(final OneDriveConnection connection) {

@@ -17,6 +17,8 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
+import com.amilesend.client.parse.parser.BasicParser;
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.resource.site.ListItem;
 import com.google.gson.Gson;
 import lombok.AccessLevel;

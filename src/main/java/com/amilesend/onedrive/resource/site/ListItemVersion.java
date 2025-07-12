@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.resource.site;
 
+import com.amilesend.client.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import com.amilesend.onedrive.resource.item.type.PublicationFacet;
 import com.google.common.annotations.VisibleForTesting;
@@ -91,7 +91,7 @@ public class ListItemVersion {
      * @return {@code true} if successful; else, {@code false}
      */
     public boolean restore() {
-        final int responseCode = connection.execute(connection.newSignedForRequestBuilder()
+        final int responseCode = connection.execute(connection.newRequestBuilder()
                 .url(new StringBuilder(connection.getBaseUrl())
                         .append(SITE_BASE_URL_PATH)
                         .append(getSiteId())
@@ -104,7 +104,8 @@ public class ListItemVersion {
                         .append("/restoreVersion")
                         .toString())
                 .post(RequestBody.create(StringUtils.EMPTY, JSON_MEDIA_TYPE))
-                .build());
+                .build())
+                .code();
         return responseCode == NO_CONTENT_RESPONSE_HTTP_CODE;
     }
 }

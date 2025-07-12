@@ -17,6 +17,8 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
+import com.amilesend.client.parse.parser.BasicParser;
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.resource.item.SpecialDriveItem;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import com.google.gson.Gson;

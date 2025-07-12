@@ -17,7 +17,7 @@
  */
 package com.amilesend.onedrive.connection.auth.store;
 
-import com.amilesend.onedrive.connection.auth.AuthInfo;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +31,7 @@ import java.nio.file.Path;
  * A simple {@link AuthInfoStore} implementation that stores and retrieves user authentication information
  * to the filesystem. This assumes a single user associated with the specified file path, which means
  * that any provided keyed identifiers are ignored.
- * @see AuthInfo
+ * @see OneDriveAuthInfo
  * @see AuthInfoStore
  */
 @RequiredArgsConstructor
@@ -48,7 +48,7 @@ public class SingleUserFileBasedAuthInfoStore implements AuthInfoStore {
      * @throws AuthInfoStoreException if an error occurred while saving the authentication info to the file system
      */
     @Override
-    public void store(final String id, @NonNull final AuthInfo authInfo) throws AuthInfoStoreException {
+    public void store(final String id, @NonNull final OneDriveAuthInfo authInfo) throws AuthInfoStoreException {
         try {
             Files.write(stateFilePath, authInfo.toJson().getBytes(StandardCharsets.UTF_8));
         } catch (final IOException ex) {
@@ -57,14 +57,14 @@ public class SingleUserFileBasedAuthInfoStore implements AuthInfoStore {
     }
 
     /**
-     * Retrieves the {@link AuthInfo} from the file system.
+     * Retrieves the {@link OneDriveAuthInfo} from the file system.
      *
      * @param id is ignored for this implementation
      * @return the authentication information, or {@code null}
      * @throws AuthInfoStoreException if an error occurred while retrieving the authentication info from the file system
      */
     @Override
-    public AuthInfo retrieve(final String id) throws AuthInfoStoreException {
+    public OneDriveAuthInfo retrieve(final String id) throws AuthInfoStoreException {
         if (!Files.exists(stateFilePath) || !Files.isReadable(stateFilePath)) {
             return null;
         }
@@ -76,7 +76,7 @@ public class SingleUserFileBasedAuthInfoStore implements AuthInfoStore {
                 return null;
             }
 
-            return AuthInfo.fromJson(jsonState);
+            return OneDriveAuthInfo.fromJson(jsonState);
         } catch (final IOException ex) {
             throw new AuthInfoStoreException("Unable to retrieve AuthInfo: " + ex.getMessage(), ex);
         }

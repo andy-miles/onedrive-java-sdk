@@ -17,9 +17,9 @@
  */
 package com.amilesend.onedrive.resource.item;
 
+import com.amilesend.client.parse.parser.BasicParser;
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.resource.parser.BasicParser;
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.amilesend.onedrive.resource.item.type.AsyncJobStatus;
 import okhttp3.Request;
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +51,7 @@ public class AsyncJobTest {
 
     @BeforeEach
     public void setUp() {
-        lenient().when(mockConnection.newSignedForApiRequestBuilder()).thenReturn(new Request.Builder());
+        lenient().when(mockConnection.newRequestBuilder()).thenReturn(new Request.Builder());
         jobUnderTest = new AsyncJob(MONITOR_URL, mockConnection);
     }
 

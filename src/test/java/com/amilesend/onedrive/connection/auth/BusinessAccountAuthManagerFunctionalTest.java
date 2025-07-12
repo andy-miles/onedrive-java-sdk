@@ -87,7 +87,7 @@ public class BusinessAccountAuthManagerFunctionalTest {
                 .buildWithAuthCode();
         // Validate that the current auth info is for discovery
         assertEquals(
-                AuthInfo.builder()
+                OneDriveAuthInfo.builder()
                         .accessToken("AccessToken")
                         .expiresIn(EXPIRES_TIME_MILLIS)
                         .refreshToken("RefreshToken")
@@ -107,7 +107,7 @@ public class BusinessAccountAuthManagerFunctionalTest {
 
         // Validate that current auth info is now associated with the resource
         assertEquals(
-                AuthInfo.builder()
+                OneDriveAuthInfo.builder()
                         .accessToken("AccessToken")
                         .expiresIn(EXPIRES_TIME_MILLIS)
                         .refreshToken("RefreshToken")
@@ -118,7 +118,7 @@ public class BusinessAccountAuthManagerFunctionalTest {
 
     @Test
     public void authenticateFlowWithAuthInfo_shouldRefreshTokensForExistingResource() {
-        final AuthInfo authInfoForResource = AuthInfo.builder()
+        final OneDriveAuthInfo authInfoForResource = OneDriveAuthInfo.builder()
                 .accessToken("AccessToken")
                 .expiresIn(EXPIRES_TIME_MILLIS)
                 .refreshToken("RefreshToken")
@@ -135,7 +135,7 @@ public class BusinessAccountAuthManagerFunctionalTest {
                 .buildWithAuthInfo();
 
         assertEquals(
-                AuthInfo.builder()
+                OneDriveAuthInfo.builder()
                         .accessToken("AccessToken")
                         .expiresIn(EXPIRES_TIME_MILLIS)
                         .refreshToken("RefreshToken")

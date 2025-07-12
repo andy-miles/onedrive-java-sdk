@@ -17,7 +17,11 @@
  */
 package com.amilesend.onedrive.connection;
 
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
+import com.amilesend.client.connection.RequestException;
+import com.amilesend.client.connection.ResponseException;
+import com.amilesend.client.connection.ResponseParseException;
+import com.amilesend.client.connection.ThrottledException;
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.resource.item.DriveItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
@@ -87,7 +91,7 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
         final Throwable thrown = assertThrows(ThrottledException.class,
                 () -> connectionUnderTest.execute(mock(Request.class), mock(GsonParser.class)));
 
-        assertNull(((ThrottledException) thrown).getRetryAfterSeconds());
+        assertEquals(DEFAULT_RETRY, ((ThrottledException) thrown).getRetryAfterSeconds());
     }
 
     @Test
@@ -144,8 +148,9 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
 
     @Test
     public void executeNoResponse_withValidRequest_shouldReturnResponseCode() {
-        setUpHttpClientMock(newMockedResponse(SUCCESS_RESPONSE_CODE));
-        assertEquals(SUCCESS_RESPONSE_CODE, connectionUnderTest.execute(mock(Request.class)));
+        final Response expected = newMockedResponse(SUCCESS_RESPONSE_CODE);
+        setUpHttpClientMock(expected);
+        assertEquals(expected, connectionUnderTest.execute(mock(Request.class)));
     }
 
     @Test
@@ -166,7 +171,7 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
         final Throwable thrown = assertThrows(ThrottledException.class,
                 () -> connectionUnderTest.execute(mock(Request.class)));
 
-        assertNull(((ThrottledException) thrown).getRetryAfterSeconds());
+        assertEquals(DEFAULT_RETRY, ((ThrottledException) thrown).getRetryAfterSeconds());
     }
 
     @Test
@@ -231,7 +236,7 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
         final Throwable thrown = assertThrows(ThrottledException.class,
                 () -> connectionUnderTest.executeRemoteAsync(mock(Request.class)));
 
-        assertNull(((ThrottledException) thrown).getRetryAfterSeconds());
+        assertEquals(DEFAULT_RETRY, ((ThrottledException) thrown).getRetryAfterSeconds());
     }
 
     @Test
@@ -332,7 +337,7 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
         final Throwable thrown = assertThrows(ExecutionException.class, () -> future.get());
         assertAll(
                 () -> assertInstanceOf(ThrottledException.class, thrown.getCause()),
-                () -> assertNull(((ThrottledException) thrown.getCause()).getRetryAfterSeconds()));
+                () -> assertEquals(DEFAULT_RETRY, ((ThrottledException) thrown.getCause()).getRetryAfterSeconds()));
     }
 
     @SneakyThrows

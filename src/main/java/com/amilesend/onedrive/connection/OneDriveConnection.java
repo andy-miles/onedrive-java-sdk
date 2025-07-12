@@ -17,20 +17,22 @@
  */
 package com.amilesend.onedrive.connection;
 
-import com.amilesend.onedrive.connection.auth.AuthManager;
-import com.amilesend.onedrive.connection.file.TransferFileWriter;
-import com.amilesend.onedrive.connection.file.TransferProgressCallback;
+import com.amilesend.client.connection.Connection;
+import com.amilesend.client.connection.ConnectionException;
+import com.amilesend.client.connection.RequestException;
+import com.amilesend.client.connection.ResponseException;
+import com.amilesend.client.connection.file.TransferFileWriter;
+import com.amilesend.client.connection.file.TransferProgressCallback;
+import com.amilesend.client.parse.parser.GsonParser;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthManager;
 import com.amilesend.onedrive.parse.GsonFactory;
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-import lombok.Getter;
 import lombok.NonNull;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -38,145 +40,35 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPInputStream;
 
-import static com.google.common.net.HttpHeaders.ACCEPT;
-import static com.google.common.net.HttpHeaders.ACCEPT_ENCODING;
-import static com.google.common.net.HttpHeaders.AUTHORIZATION;
+import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
-import static com.google.common.net.MediaType.JSON_UTF_8;
 
 /**
  * Wraps a {@link OkHttpClient} that manages authentication refresh and parsing responses to corresponding POJO types.
  * Construct a new instance via the {@link OneDriveConnectionBuilder} that simplifies configuration of the
- * {@link AuthManager} and automatically sets a pre-configured {@link Gson} instance for proper request/response
+ * {@link OneDriveAuthManager} and automatically sets a pre-configured {@link Gson} instance for proper request/response
  * serialization.
  *
  * @see OneDriveConnectionBuilder
- * @see AuthManager
+ * @see OneDriveAuthManager
  */
+@SuperBuilder
 @Slf4j
-public class OneDriveConnection {
-    public static final String JSON_CONTENT_TYPE = JSON_UTF_8.toString();
-    public static final MediaType JSON_MEDIA_TYPE = MediaType.parse(JSON_CONTENT_TYPE);
-    private static final String GZIP_ENCODING = "gzip";
-    private static final String THROTTLED_RETRY_AFTER_HEADER = "Retry-After";
-    private static int THROTTLED_RESPONSE_CODE = 429;
-
-    private final OkHttpClient httpClient;
-    /** The authorization manager used to manage auth tokens. */
-    @Getter
-    private final AuthManager authManager;
-    /** The configured GSON instance used for marshalling request and responses to/from JSON. */
-    @Getter
-    private final Gson gson;
-    /** The base URL for the Graph API. */
-    @Getter
-    private final String baseUrl;
-
-    /**
-     * Creates a new {@code OneDriveConnection} object. It is recommended to use the {@link OneDriveConnectionBuilder}
-     * instead.
-     *
-     * @param httpClient the configured HTTP client
-     * @param authManager the authorization manager used to manage auth and refresh tokens
-     * @param gsonFactory the factory used to vend configured GSON instances for request/reply serialization
-     * @param baseUrl the base URL to use for Graph API invocations
-     * @see OneDriveConnectionBuilder
-     */
-    public OneDriveConnection(
-            @NonNull final OkHttpClient httpClient,
-            @NonNull final AuthManager authManager,
-            @NonNull final GsonFactory gsonFactory,
-            final String baseUrl) {
-        this.httpClient = httpClient;
-        this.authManager = authManager;
-        this.gson = gsonFactory.newInstanceForConnection(this);
-        this.baseUrl = StringUtils.isBlank(baseUrl) ? authManager.getAuthenticatedEndpoint() : baseUrl;
-    }
-
-    /**
-     * Creates a new {@link Request.Builder} with pre-configured headers for requests that expect no responses in
-     * the body (e.g., post or upload/download operations).
-     *
-     * @return the request builder.
-     */
-    public Request.Builder newSignedForRequestBuilder() {
-        return new Request.Builder()
-                .addHeader(AUTHORIZATION, authManager.refreshIfExpiredAndFetchFullToken());
-    }
-
-    /**
-     * Creates a new {@link Request.Builder} with pre-configured headers for request that expect a JSON-formatted
-     * response body.
-     *
-     * @return the request builder
-     */
-    public Request.Builder newSignedForApiRequestBuilder() {
-        return newSignedForRequestBuilder()
-                .addHeader(ACCEPT_ENCODING, GZIP_ENCODING)
-                .addHeader(ACCEPT, JSON_CONTENT_TYPE);
-    }
-
+public class OneDriveConnection extends Connection<GsonFactory> {
     /**
      * Creates a new {@link Request.Builder} with pre-configured headers for a request that contains both a
      * JSON-formatted request and response body.
      *
      * @return the request builder
      */
-    public Request.Builder newSignedForApiWithBodyRequestBuilder() {
-        return newSignedForApiRequestBuilder()
-                .addHeader(CONTENT_TYPE,  JSON_CONTENT_TYPE);
-    }
-
-    /**
-     * Executes the given {@link Request} and parses the JSON-formatted response with given {@link GsonParser}.
-     *
-     * @param request the request
-     * @param parser the parser to decode the response body
-     * @return the response as a POJO resource type
-     * @param <T> the POJO resource type
-     * @throws OneDriveConnectionException if an error occurred during the transaction
-     */
-    public <T> T execute(@NonNull final Request request, @NonNull final GsonParser<T> parser)
-            throws OneDriveConnectionException {
-        try {
-            try (final Response response = httpClient.newCall(request).execute()) {
-                if (log.isDebugEnabled())
-                    log.debug("Received response: {}", response);
-                validateResponse(response);
-
-                return parser.parse(getGson(), new GZIPInputStream(response.body().byteStream()));
-            }
-        } catch (final IOException ex) {
-            throw new RequestException("Unable to execute request: " + ex.getMessage(), ex);
-        } catch (final JsonParseException ex) {
-            throw new ResponseParseException("Error parsing response: " + ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * Executes the given {@link Request} and returns the associated HTTP response code. This is used for
-     * transactions that do not expect a response in the body.
-     *
-     * @param request the request
-     * @return the HTTP response code
-     * @throws OneDriveConnectionException if an error occurred during the transaction
-     */
-    public int execute(@NonNull final Request request) throws OneDriveConnectionException {
-        try {
-            try (final Response response = httpClient.newCall(request).execute()) {
-                if (log.isDebugEnabled())
-                    log.debug("Received response: {}", response);
-                validateResponse(response);
-                return response.code();
-            }
-        } catch (final IOException ex) {
-            throw new RequestException("Unable to execute request: " + ex.getMessage(), ex);
-        }
+    public Request.Builder newWithBodyRequestBuilder() {
+        return newRequestBuilder().addHeader(CONTENT_TYPE,  JSON_CONTENT_TYPE);
     }
 
     /**
@@ -184,14 +76,12 @@ public class OneDriveConnection {
      *
      * @param request the request
      * @return the monitoring URL to track the remote asynchronous operation
-     * @throws OneDriveConnectionException if an error occurred during the transaction
+     * @throws ConnectionException if an error occurred during the transaction
      */
-    public String executeRemoteAsync(@NonNull final Request request) throws OneDriveConnectionException {
+    public String executeRemoteAsync(@NonNull final Request request) throws ConnectionException {
         try {
-            try (final Response response = httpClient.newCall(request).execute()) {
-                if (log.isDebugEnabled())
-                    log.debug("Received response: {}", response);
-                validateResponse(response);
+            try (final Response response = getHttpClient().newCall(request).execute()) {
+                validateResponseCode(response);
                 final int code = response.code();
                 // Specific to remote async operations
                 if (code != 202) {
@@ -216,8 +106,9 @@ public class OneDriveConnection {
     public <T> CompletableFuture<T> executeAsync(
             @NonNull final Request request,
             @NonNull final GsonParser<T> parser) {
+        final OneDriveConnection connectionRef = this;
         final CompletableFuture<T> future = new CompletableFuture<>();
-        httpClient.newCall(request).enqueue(new Callback() {
+        getHttpClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull final Call call, @NonNull final IOException ex) {
                 future.completeExceptionally(ex);
@@ -226,10 +117,12 @@ public class OneDriveConnection {
             @Override
             public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
                 try {
-                    if (log.isDebugEnabled())
-                        log.debug("Received response: {}", response);
-                    validateResponse(response);
-                    future.complete(parser.parse(getGson(), new GZIPInputStream(response.body().byteStream())));
+                    validateResponseCode(response);
+                    final InputStream responseBodyInputStream =
+                            StringUtils.equalsIgnoreCase("gzip", response.header(CONTENT_ENCODING))
+                                    ? new GZIPInputStream(response.body().byteStream())
+                                    : response.body().byteStream();
+                    future.complete(parser.parse(getGsonFactory().getInstance(connectionRef), responseBodyInputStream));
                 } catch (final Exception ex) {
                     future.completeExceptionally(ex);
                 } finally {
@@ -250,14 +143,14 @@ public class OneDriveConnection {
      * @param sizeBytes the total size of the expected file in bytes
      * @param callback the {@link TransferProgressCallback} call to invoke to report download transfer progress
      * @return the size of the downloaded file in bytes
-     * @throws OneDriveConnectionException if an error occurred while downloading the content for the request
+     * @throws ConnectionException if an error occurred while downloading the content for the request
      */
     public long download(
             @NonNull final Request request,
             @NonNull final Path folderPath,
             final String name,
             final long sizeBytes,
-            @NonNull final TransferProgressCallback callback) throws OneDriveConnectionException {
+            @NonNull final TransferProgressCallback callback) throws ConnectionException {
         Validate.notBlank(name, "name must not be blank");
 
         final Path downloadPath;
@@ -268,9 +161,9 @@ public class OneDriveConnection {
             throw new RequestException("Unable to determine download path:" + ex.getMessage(), ex);
         }
 
-        try (final Response response = httpClient.newCall(request).execute()) {
+        try (final Response response = getHttpClient().newCall(request).execute()) {
                 return processDownloadResponse(response, downloadPath, sizeBytes, callback);
-        } catch (final OneDriveConnectionException ex) {
+        } catch (final ConnectionException ex) {
             // Response failed validation, notify the callback
             callback.onFailure(ex);
             throw ex;
@@ -300,7 +193,7 @@ public class OneDriveConnection {
         Validate.notBlank(name, "name must not be blank");
         final CompletableFuture<Long> future = new CompletableFuture<>();
 
-        httpClient.newCall(request).enqueue(new Callback() {
+        getHttpClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull final Call call, @NonNull final IOException ex) {
                 callback.onFailure(ex);
@@ -321,7 +214,7 @@ public class OneDriveConnection {
                 try {
                     final long totalBytes = processDownloadResponse(response, downloadPath, sizeBytes, callback);
                     future.complete(Long.valueOf(totalBytes));
-                } catch (final OneDriveConnectionException ex) {
+                } catch (final ConnectionException ex) {
                     // Response failed validation, notify the callback
                     callback.onFailure(ex);
                     future.completeExceptionally(ex);
@@ -345,10 +238,7 @@ public class OneDriveConnection {
             final Path downloadPath,
             final long sizeBytes,
             final TransferProgressCallback callback) throws IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("Received response: {}", response);
-        }
-        validateResponse(response);
+        validateResponseCode(response);
 
         final long totalBytes = TransferFileWriter.builder()
                 .output(downloadPath)
@@ -371,36 +261,5 @@ public class OneDriveConnection {
 
         Files.createDirectories(normalizedFolderPath);
         return normalizedFolderPath.resolve(name);
-    }
-
-    private static void validateResponse(final Response response) {
-        final int code = response.code();
-        if (code == THROTTLED_RESPONSE_CODE) {
-            final Long retryAfterSeconds = extractRetryAfterHeaderValue(response);
-            final String msg = retryAfterSeconds != null
-                    ? "Request throttled. Retry after " + retryAfterSeconds + " seconds"
-                    : "Request throttled";
-            throw new ThrottledException(msg, retryAfterSeconds);
-        }
-
-        final boolean isRequestError = String.valueOf(code).startsWith("4");
-        if (isRequestError) {
-            throw new RequestException(new StringBuilder("Error with request (")
-                    .append(code)
-                    .append("): ")
-                    .append(response)
-                    .toString());
-        } else if (!response.isSuccessful()) {
-            throw new ResponseException(new StringBuilder("Unsuccessful response (")
-                    .append(code)
-                    .append("): ")
-                    .append(response)
-                    .toString());
-        }
-    }
-
-    private static Long extractRetryAfterHeaderValue(final Response response) {
-        final String retryAfterHeaderValue = response.header(THROTTLED_RETRY_AFTER_HEADER);
-        return StringUtils.isNotBlank(retryAfterHeaderValue) ? Long.valueOf(retryAfterHeaderValue) : null;
     }
 }

@@ -19,9 +19,9 @@ package com.amilesend.onedrive;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.OneDriveConnectionBuilder;
-import com.amilesend.onedrive.connection.auth.AuthInfo;
-import com.amilesend.onedrive.connection.auth.AuthManager;
 import com.amilesend.onedrive.connection.auth.BusinessAccountAuthManager;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthManager;
 import com.amilesend.onedrive.connection.auth.oauth.OAuthReceiver;
 import com.amilesend.onedrive.connection.auth.oauth.OAuthReceiverException;
 import com.amilesend.onedrive.connection.auth.oauth.OneDriveOAuthReceiver;
@@ -94,6 +94,7 @@ public class OneDriveFactoryStateManagerTest {
         lenient().when(mockConfig.getClientSecret()).thenReturn("ClientSecret");
 
         managerUnderTest = spy(OneDriveFactoryStateManager.builder()
+                .userAgent("TestAgent/1.0")
                 .httpClient(mockHttpClient)
                 .receiverPort(PORT)
                 .redirectUrl(REDIRECT_URL)
@@ -128,7 +129,7 @@ public class OneDriveFactoryStateManagerTest {
     @Test
     public void saveState_withDefaultAuthInfoStore_shouldWriteState() {
         managerUnderTest.setOnedrive(mockOneDrive);
-        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final OneDriveAuthInfo mockAuthInfo = mock(OneDriveAuthInfo.class);
         when(mockAuthInfo.toJson()).thenReturn("StateContents");
         when(mockOneDrive.getAuthInfo()).thenReturn(mockAuthInfo);
 
@@ -152,7 +153,7 @@ public class OneDriveFactoryStateManagerTest {
                 .authInfoStore(mockAuthInfoStore)
                 .build());
         managerUnderTest.setOnedrive(mockOneDrive);
-        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final OneDriveAuthInfo mockAuthInfo = mock(OneDriveAuthInfo.class);
         when(mockOneDrive.getAuthInfo()).thenReturn(mockAuthInfo);
 
         managerUnderTest.saveState();
@@ -164,7 +165,7 @@ public class OneDriveFactoryStateManagerTest {
     @Test
     public void saveState_withAuthInfoStoreException_shouldThrowException() {
         managerUnderTest.setOnedrive(mockOneDrive);
-        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final OneDriveAuthInfo mockAuthInfo = mock(OneDriveAuthInfo.class);
         when(mockAuthInfo.toJson()).thenReturn("StateContents");
         when(mockOneDrive.getAuthInfo()).thenReturn(mockAuthInfo);
 
@@ -193,9 +194,9 @@ public class OneDriveFactoryStateManagerTest {
                 .authInfoStore(mockAuthInfoStore)
                 .build());
         managerUnderTest.setOnedrive(mockOneDrive);
-        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final OneDriveAuthInfo mockAuthInfo = mock(OneDriveAuthInfo.class);
         when(mockOneDrive.getAuthInfo()).thenReturn(mockAuthInfo);
-        doThrow(new AuthInfoStoreException("Exception")).when(mockAuthInfoStore).store(anyString(), any(AuthInfo.class));
+        doThrow(new AuthInfoStoreException("Exception")).when(mockAuthInfoStore).store(anyString(), any(OneDriveAuthInfo.class));
 
         final Throwable thrown = assertThrows(OneDriveException.class, () -> managerUnderTest.saveState());
         assertInstanceOf(AuthInfoStoreException.class, thrown.getCause());
@@ -285,7 +286,7 @@ public class OneDriveFactoryStateManagerTest {
     @Test
     public void fetchOneDrive_withAuthInfo_shouldReturnOneDrive() {
         doReturn(mockConfig).when(managerUnderTest).loadCredentialConfig();
-        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final OneDriveAuthInfo mockAuthInfo = mock(OneDriveAuthInfo.class);
         doReturn(Optional.of(mockAuthInfo)).when(managerUnderTest).loadState();
         doNothing().when(managerUnderTest).saveState();
         final OneDriveConnectionBuilder builderMock = setUpOneDriveConnectionBuilderMock();
@@ -340,14 +341,14 @@ public class OneDriveFactoryStateManagerTest {
     @SneakyThrows
     @Test
     public void loadState_withValidState_shouldReturnAuthInfo() {
-        final AuthInfo expected = mock(AuthInfo.class);
+        final OneDriveAuthInfo expected = mock(OneDriveAuthInfo.class);
 
         try (final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class);
-             final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
+             final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
             filesMockedStatic.when(() -> Files.exists(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.isReadable(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.readString(any(Path.class))).thenReturn("JsonState");
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
 
             assertEquals(expected, managerUnderTest.loadState().get());
         }
@@ -366,7 +367,7 @@ public class OneDriveFactoryStateManagerTest {
                 .credentialConfig(mockConfig)
                 .authInfoStore(mockAuthInfoStore)
                 .build());
-        final AuthInfo expected = mock(AuthInfo.class);
+        final OneDriveAuthInfo expected = mock(OneDriveAuthInfo.class);
         doReturn(expected).when(mockAuthInfoStore).retrieve(anyString());
 
         assertEquals(expected, managerUnderTest.loadState().get());
@@ -580,14 +581,14 @@ public class OneDriveFactoryStateManagerTest {
 
     private static OneDriveConnectionBuilder setUpOneDriveConnectionBuilderMock(final OneDriveConnection expected) {
         final OneDriveConnectionBuilder mockConnectionBuilder = mock(OneDriveConnectionBuilder.class);
-        when(mockConnectionBuilder.authManager(any(AuthManager.class))).thenReturn(mockConnectionBuilder);
-        when(mockConnectionBuilder.build(any(AuthInfo.class))).thenReturn(expected);
+        when(mockConnectionBuilder.authManager(any(OneDriveAuthManager.class))).thenReturn(mockConnectionBuilder);
+        when(mockConnectionBuilder.build(any(OneDriveAuthInfo.class))).thenReturn(expected);
 
         return mockConnectionBuilder;
     }
 
     private static BusinessAccountAuthManager setUpBusinessAccountAuthManagerMock() {
-        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final OneDriveAuthInfo mockAuthInfo = mock(OneDriveAuthInfo.class);
         final List<Service> mockServices = List.of(mock(Service.class));
 
         final BusinessAccountAuthManager mockAuthManager = mock(BusinessAccountAuthManager.class);
@@ -630,9 +631,10 @@ public class OneDriveFactoryStateManagerTest {
         when(builder.clientId(anyString())).thenReturn(builder);
         when(builder.clientSecret(anyString())).thenReturn(builder);
         when(builder.redirectUrl(anyString())).thenReturn(builder);
+        when(builder.userAgent(anyString())).thenReturn(builder);
         final OneDriveConnection mockConnection = mock(OneDriveConnection.class);
         lenient().when(builder.build(anyString())).thenReturn(mockConnection);
-        lenient().when(builder.build(any(AuthInfo.class))).thenReturn(mockConnection);
+        lenient().when(builder.build(any(OneDriveAuthInfo.class))).thenReturn(mockConnection);
 
         return builder;
     }

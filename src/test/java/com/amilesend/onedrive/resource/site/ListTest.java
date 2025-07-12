@@ -17,8 +17,9 @@
  */
 package com.amilesend.onedrive.resource.site;
 
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
+import com.amilesend.onedrive.parse.GsonFactory;
 import com.amilesend.onedrive.parse.resource.parser.ListItemParser;
 import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
@@ -56,6 +57,8 @@ public class ListTest {
     private static final String LIST_ID = "ListIdValue";
 
     @Mock
+    private GsonFactory mockGsonFactory;
+    @Mock
     private Gson mockGson;
     @Mock
     private OneDriveConnection mockConnection;
@@ -63,11 +66,12 @@ public class ListTest {
 
     @BeforeEach
     public void setUp() {
+        lenient().when(mockGsonFactory.getInstance(any(OneDriveConnection.class))).thenReturn(mockGson);
         lenient().when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
-        lenient().when(mockConnection.getGson()).thenReturn(mockGson);
+        lenient().when(mockConnection.getGsonFactory()).thenReturn(mockGsonFactory);
         final Request.Builder requestBuilder = new Request.Builder();
-        lenient().when(mockConnection.newSignedForApiRequestBuilder()).thenReturn(requestBuilder);
-        lenient().when(mockConnection.newSignedForApiWithBodyRequestBuilder()).thenReturn(requestBuilder);
+        lenient().when(mockConnection.newRequestBuilder()).thenReturn(requestBuilder);
+        lenient().when(mockConnection.newWithBodyRequestBuilder()).thenReturn(requestBuilder);
 
         listUnderTest = List.builder()
                 .connection(mockConnection)

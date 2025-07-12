@@ -17,11 +17,11 @@
  */
 package com.amilesend.onedrive.resource.item;
 
-import com.amilesend.onedrive.parse.resource.parser.BasicParser;
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
+import com.amilesend.client.parse.parser.BasicParser;
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.resource.item.type.ItemReference;
-import com.google.gson.Gson;
 import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -220,7 +220,8 @@ public class DriveItemCrudTest extends DriveItemTestBase {
 
     @Test
     public void delete_shouldDelete() {
-        when(mockConnection.execute(any(Request.class))).thenReturn(200);
+        final Response mockResponse = mock(Response.class);
+        when(mockConnection.execute(any(Request.class))).thenReturn(mockResponse);
 
         driveItemUnderTest.delete();
 
@@ -259,10 +260,7 @@ public class DriveItemCrudTest extends DriveItemTestBase {
 
     @Test
     public void toJson_shouldReturnJsonString() {
-        final Gson mockGson = mock(Gson.class);
         when(mockGson.toJson(any(DriveItem.class))).thenReturn("JsonStringValue");
-        when(mockConnection.getGson()).thenReturn(mockGson);
-
         assertEquals("JsonStringValue", driveItemUnderTest.toJson());
     }
 }

@@ -19,8 +19,8 @@ package com.amilesend.onedrive;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.OneDriveConnectionBuilder;
-import com.amilesend.onedrive.connection.auth.AuthInfo;
 import com.amilesend.onedrive.connection.auth.BusinessAccountAuthManager;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import com.amilesend.onedrive.connection.auth.oauth.OAuthReceiverException;
 import com.amilesend.onedrive.connection.auth.oauth.OneDriveOAuthReceiver;
 import com.amilesend.onedrive.connection.auth.store.AuthInfoStore;
@@ -95,6 +95,8 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
     /** The http client. */
     // Optional for custom configuration (e.g., SSL, proxy, etc.).
     private OkHttpClient httpClient;
+    /** The user agent. */
+    private String userAgent;
     /** The port for the OAUTH redirect receiver to listen on. */
     private int receiverPort;
     /** The list of scopes (permissions) for accessing the Graph API. */
@@ -137,8 +139,9 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
     private OneDriveFactoryStateManager(final Builder builder) {
         this.onedriveType = builder.onedriveType == null ? OneDrive.class : builder.onedriveType;
         this.httpClient = builder.httpClient == null ? new OkHttpClientBuilder().build() : builder.httpClient;
+        this.userAgent = builder.userAgent;
         this.stateGson = builder.stateGson == null
-                ? GsonFactory.getInstance().getInstanceForStateManager()
+                ? GsonFactory.getInstanceForStateManager()
                 : builder.stateGson;
         this.redirectUrl = StringUtils.isBlank(builder.redirectUrl) ? DEFAULT_REDIRECT_URL : builder.redirectUrl;
         this.callbackPath = builder.callbackPath == null ? DEFAULT_CALLBACK_PATH : builder.callbackPath;
@@ -197,9 +200,10 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
 
         try {
             final CredentialConfig config = loadCredentialConfig();
-            final Optional<AuthInfo> authInfoOpt = loadState();
+            final Optional<OneDriveAuthInfo> authInfoOpt = loadState();
             final OneDriveConnectionBuilder connectionBuilder = OneDriveConnectionBuilder.newInstance()
                     .httpClient(httpClient)
+                    .userAgent(userAgent)
                     .clientId(config.getClientId())
                     .clientSecret(config.getClientSecret())
                     .redirectUrl(redirectUrl);
@@ -249,7 +253,7 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
     }
 
     @VisibleForTesting
-    Optional<AuthInfo> loadState() throws OneDriveException {
+    Optional<OneDriveAuthInfo> loadState() throws OneDriveException {
         try {
             return Optional.ofNullable(authInfoStore.retrieve(DEFAULT_USER_AUTH_KEY));
         } catch (final AuthInfoStoreException ex) {
@@ -293,6 +297,8 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
         private final Class<? extends OneDrive> onedriveType;
         /** The http client. */
         private OkHttpClient httpClient;
+        /** The user agent. */
+        private String userAgent;
         /** The port for the OAUTH redirect receiver to listen on. */
         private Integer receiverPort;
         /** The redirect URL for the OAUTH redirect receiver. */
@@ -417,6 +423,17 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
          */
         public Builder authInfoStore(final AuthInfoStore authInfoStore) {
             this.authInfoStore = authInfoStore;
+            return this;
+        }
+
+        /**
+         * Sets the user agent used for requests to the service.
+         *
+         * @param userAgent the user agent
+         * @return this builder
+         */
+        public Builder userAgent(final String userAgent) {
+            this.userAgent = userAgent;
             return this;
         }
 

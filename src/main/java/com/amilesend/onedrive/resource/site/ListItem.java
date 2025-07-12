@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.resource.site;
 
+import com.amilesend.client.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.item.BaseItem;
 import com.amilesend.onedrive.resource.item.DriveItem;
 import com.amilesend.onedrive.resource.item.type.SharePointIds;
@@ -104,7 +104,7 @@ public class ListItem extends BaseItem {
      */
     public GetColumnValuesResponse getColumnValues() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(newStringBuilderForListItemUrl()
                                 .append("?expand=fields")
                                 .toString())
@@ -125,7 +125,7 @@ public class ListItem extends BaseItem {
     public GetColumnValuesResponse getColumnValues(final java.util.List<String> columnsToSelect) {
         final String selectedColumns = validateAndJoinColumns(columnsToSelect);
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(newStringBuilderForListItemUrl()
                                 .append("?expand=fields(select=")
                                 .append(selectedColumns)
@@ -148,11 +148,13 @@ public class ListItem extends BaseItem {
     public Map<String, Object> updateColumnValues(final Map<String, Object> fields) {
         Validate.notEmpty(fields, "fields must not be blank");
         return connection.execute(
-                connection.newSignedForApiWithBodyRequestBuilder()
+                connection.newWithBodyRequestBuilder()
                         .url(newStringBuilderForListItemUrl()
                                 .append("/fields")
                                 .toString())
-                        .patch(RequestBody.create(connection.getGson().toJson(fields), JSON_MEDIA_TYPE))
+                        .patch(RequestBody.create(
+                                connection.getGsonFactory().getInstance(connection).toJson(fields),
+                                JSON_MEDIA_TYPE))
                         .build(),
                 FIELD_VALUE_SET_PARSER);
     }
@@ -175,7 +177,7 @@ public class ListItem extends BaseItem {
         final String listItemId = getId();
 
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(newStringBuilderForListItemUrl()
                                 .append(LIST_ITEM_VERSIONS_URL_SUFFIX)
                                 .toString())
@@ -200,7 +202,7 @@ public class ListItem extends BaseItem {
         final String listItemId = getId();
 
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(newStringBuilderForListItemUrl()
                                 .append(LIST_ITEM_VERSION_BASE_URL_PATH)
                                 .append(versionId)
@@ -225,7 +227,7 @@ public class ListItem extends BaseItem {
         final String siteId = getSiteId();
         final String listId = getListId();
         return connection.execute(
-                connection.newSignedForApiWithBodyRequestBuilder()
+                connection.newWithBodyRequestBuilder()
                         .url(newStringBuilderForListItemUrl().toString())
                         .patch(RequestBody.create(toJson(), JSON_MEDIA_TYPE))
                         .build(),
@@ -240,7 +242,7 @@ public class ListItem extends BaseItem {
      */
     public void delete() {
         connection.execute(
-                connection.newSignedForRequestBuilder()
+                connection.newRequestBuilder()
                         .url(newStringBuilderForListItemUrl().toString())
                         .delete()
                         .build());
@@ -255,7 +257,7 @@ public class ListItem extends BaseItem {
      */
     @VisibleForTesting
     String toJson() {
-        return connection.getGson().toJson(this);
+        return connection.getGsonFactory().getInstance(connection).toJson(this);
     }
 
     private String validateAndJoinColumns(final java.util.List<String> columns) {

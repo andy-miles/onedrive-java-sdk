@@ -19,6 +19,7 @@ package com.amilesend.onedrive.resource.item.type;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import okhttp3.Request;
+import okhttp3.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,7 @@ import static com.amilesend.onedrive.data.TypeTestDataHelper.newPermission;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,13 +47,14 @@ public class PermissionTest {
     @BeforeEach
     public void setUp() {
         when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
-        when(mockConnection.newSignedForRequestBuilder()).thenReturn(new Request.Builder());
+        when(mockConnection.newRequestBuilder()).thenReturn(new Request.Builder());
         permissionUnderTest = newPermission(mockConnection, "DriveItemId");
     }
 
     @Test
     public void deletePermissions_shouldInvokeApi() {
-        when(mockConnection.execute(any(Request.class))).thenReturn(SUCCESS_RESPONSE_CODE);
+        final Response mockResponse = mock(Response.class);
+        when(mockConnection.execute(any(Request.class))).thenReturn(mockResponse);
 
         permissionUnderTest.deletePermission();
 

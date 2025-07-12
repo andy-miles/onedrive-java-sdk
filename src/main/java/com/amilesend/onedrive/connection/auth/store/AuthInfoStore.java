@@ -17,13 +17,13 @@
  */
 package com.amilesend.onedrive.connection.auth.store;
 
-import com.amilesend.onedrive.connection.auth.AuthInfo;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 
 import java.io.IOException;
 
 /**
  * Defines the interface used to store and load persisted user auth tokens.
- * @see AuthInfo
+ * @see OneDriveAuthInfo
  */
 public interface AuthInfoStore {
     /**
@@ -32,16 +32,16 @@ public interface AuthInfoStore {
      * @param id the identifier to associate the authentication information for a given user.
      * @param authInfo the authentication information
      * @throws IOException if an error occurred while saving the authentication information
-     * @see AuthInfo
+     * @see OneDriveAuthInfo
      */
-    void store(String id, AuthInfo authInfo) throws AuthInfoStoreException;
+    void store(String id, OneDriveAuthInfo authInfo) throws AuthInfoStoreException;
 
     /**
-     * Retrieves the {@link AuthInfo} for the given keyed identifier.
+     * Retrieves the {@link OneDriveAuthInfo} for the given keyed identifier.
      *
      * @param id the identifier associated with authentication information to fetch for
      * @return the authentication information
      * @throws IOException if an error occurred while retrieving the authentication information
      */
-    AuthInfo retrieve(String id) throws AuthInfoStoreException;
+    OneDriveAuthInfo retrieve(String id) throws AuthInfoStoreException;
 }

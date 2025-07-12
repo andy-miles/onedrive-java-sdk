@@ -17,9 +17,9 @@
  */
 package com.amilesend.onedrive.resource.site;
 
-import com.amilesend.onedrive.parse.resource.parser.BasicParser;
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
-import com.amilesend.onedrive.parse.resource.parser.MapParser;
+import com.amilesend.client.parse.parser.BasicParser;
+import com.amilesend.client.parse.parser.GsonParser;
+import com.amilesend.client.parse.parser.MapParser;
 import com.amilesend.onedrive.resource.site.response.GetColumnValuesResponse;
 import okhttp3.Request;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -106,7 +106,7 @@ public class ListItemColumnsTest extends ListItemTestBase {
     @Test
     public void getColumnValues_withOneTooLongSelectedColumn_shouldThrowException() {
         final java.util.List<String> selectedColumns =
-                java.util.List.of("Col1", RandomStringUtils.random(TOO_LARGE_COLUMN_LENGTH));
+                java.util.List.of("Col1", RandomStringUtils.secure().next(TOO_LARGE_COLUMN_LENGTH));
 
         assertThrows(IllegalArgumentException.class, () -> listItemUnderTest.getColumnValues(selectedColumns));
     }

@@ -17,11 +17,11 @@
  */
 package com.amilesend.onedrive.resource.item;
 
+import com.amilesend.client.connection.file.ProgressReportingRequestBody;
+import com.amilesend.client.connection.file.TransferProgressCallback;
+import com.amilesend.client.parse.strategy.GsonExclude;
+import com.amilesend.client.parse.strategy.GsonSerializeExclude;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.connection.file.ProgressReportingFileRequestBody;
-import com.amilesend.onedrive.connection.file.TransferProgressCallback;
-import com.amilesend.onedrive.parse.strategy.GsonExclude;
-import com.amilesend.onedrive.parse.strategy.GsonSerializeExclude;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.item.type.Audio;
 import com.amilesend.onedrive.resource.item.type.Deleted;
@@ -69,7 +69,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
-import static com.amilesend.onedrive.connection.file.TransferFileUtil.fetchMimeTypeFromFile;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PAGE_PARSER;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PARSER;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.ITEM_ACTIVITY_LIST_PARSER;
@@ -188,7 +187,7 @@ public class DriveItem extends BaseItem {
      */
     public void download(@NonNull final Path folderPath, @NonNull final TransferProgressCallback callback) {
         connection.download(
-                connection.newSignedForRequestBuilder()
+                connection.newRequestBuilder()
                         .url(getContentUrl(validateAndGetUrlEncodedId()))
                         .build(),
                 folderPath,
@@ -212,7 +211,7 @@ public class DriveItem extends BaseItem {
             @NonNull final Path folderPath,
             @NonNull final TransferProgressCallback callback) {
         return connection.downloadAsync(
-                connection.newSignedForRequestBuilder()
+                connection.newRequestBuilder()
                         .url(getContentUrl(validateAndGetUrlEncodedId()))
                         .build(),
                 folderPath,
@@ -232,18 +231,17 @@ public class DriveItem extends BaseItem {
      * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_put_content">
      * API Documentation</a>.
      *
-     * @param file the file to upload
+     * @param filePath the file to upload
      * @param callback the callback to inform of transfer progress
      * @return the updated drive item information
      * @throws IOException if unable to read or determine the file's content type
      */
-    public DriveItem upload(@NonNull final java.io.File file, @NonNull final TransferProgressCallback callback)
+    public DriveItem upload(@NonNull final Path filePath, @NonNull final TransferProgressCallback callback)
             throws IOException {
         return uploadInternal(
                 getContentUrl(validateAndGetUrlEncodedId()),
-                ProgressReportingFileRequestBody.builder()
-                        .file(file)
-                        .contentType(fetchMimeTypeFromFile(file))
+                ProgressReportingRequestBody.builder()
+                        .file(filePath)
                         .callback(callback)
                         .build());
     }
@@ -255,19 +253,18 @@ public class DriveItem extends BaseItem {
      * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_put_content">
      * API Documentation</a>.
      *
-     * @param file the file to upload
+     * @param filePath the file to upload
      * @param callback the callback to inform of transfer progress
      * @return the CompletableFuture to fetch the updated drive item information
      * @throws IOException if unable to read or determine the file's content type
      */
     public CompletableFuture<DriveItem> uploadAsync(
-            @NonNull final java.io.File file,
+            @NonNull final Path filePath,
             @NonNull final TransferProgressCallback callback) throws IOException {
         return uploadInternalAsync(
                 getContentUrl(validateAndGetUrlEncodedId()),
-                ProgressReportingFileRequestBody.builder()
-                        .file(file)
-                        .contentType(fetchMimeTypeFromFile(file))
+                ProgressReportingRequestBody.builder()
+                        .file(filePath)
                         .callback(callback)
                         .build());
     }
@@ -283,18 +280,17 @@ public class DriveItem extends BaseItem {
      * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_put_content">
      * API Documentation</a>.
      *
-     * @param file the file to upload
+     * @param filePath the file to upload
      * @param callback the callback to inform of transfer progress
      * @return the new child drive item associated with the uploaded file
      * @throws IOException if unable to read or determine the file's content type
      */
-    public DriveItem uploadNew(@NonNull final java.io.File file, @NonNull final TransferProgressCallback callback)
+    public DriveItem uploadNew(@NonNull final Path filePath, @NonNull final TransferProgressCallback callback)
             throws IOException {
         return uploadInternal(
-                getContentUrl(validateAndGetUrlEncodedId(), file.getName()),
-                ProgressReportingFileRequestBody.builder()
-                        .file(file)
-                        .contentType(fetchMimeTypeFromFile(file))
+                getContentUrl(validateAndGetUrlEncodedId(), filePath.getFileName().toString()),
+                ProgressReportingRequestBody.builder()
+                        .file(filePath)
                         .callback(callback)
                         .build());
     }
@@ -306,28 +302,27 @@ public class DriveItem extends BaseItem {
      * <a href="https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_put_content">
      * API Documentation</a>.
      *
-     * @param file the file to upload
+     * @param filePath the file to upload
      * @param callback the callback to inform of transfer progress
      * @return the completable future to fetch the updated drive item information
      * @throws IOException if unable to read or determine the file's content type
      */
     public CompletableFuture<DriveItem> uploadNewAsync(
-            @NonNull final java.io.File file,
+            @NonNull final Path filePath,
             @NonNull final TransferProgressCallback callback) throws IOException {
         return uploadInternalAsync(
-                getContentUrl(validateAndGetUrlEncodedId(), file.getName()),
-                ProgressReportingFileRequestBody.builder()
-                        .file(file)
-                        .contentType(fetchMimeTypeFromFile(file))
+                getContentUrl(validateAndGetUrlEncodedId(), filePath.getFileName().toString()),
+                ProgressReportingRequestBody.builder()
+                        .file(filePath)
                         .callback(callback)
                         .build());
     }
 
-    private DriveItem uploadInternal(final String url, final ProgressReportingFileRequestBody body) {
+    private DriveItem uploadInternal(final String url, final ProgressReportingRequestBody body) {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(url)
-                        .addHeader(CONTENT_TYPE, body.getContentTypeStringValue())
+                        .addHeader(CONTENT_TYPE, body.contentType().toString())
                         .put(body)
                         .build(),
                 DRIVE_ITEM_PARSER);
@@ -335,11 +330,11 @@ public class DriveItem extends BaseItem {
 
     private CompletableFuture<DriveItem> uploadInternalAsync(
             final String url,
-            final ProgressReportingFileRequestBody body) {
+            final ProgressReportingRequestBody body) {
         return connection.executeAsync(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(url)
-                        .addHeader(CONTENT_TYPE, body.getContentTypeStringValue())
+                        .addHeader(CONTENT_TYPE, body.contentType().toString())
                         .put(body)
                         .build(),
                 DRIVE_ITEM_PARSER);
@@ -360,7 +355,7 @@ public class DriveItem extends BaseItem {
      */
     public DriveItem create(@NonNull final DriveItem newChildDriveItem) {
         return connection.execute(
-                connection.newSignedForApiWithBodyRequestBuilder()
+                connection.newWithBodyRequestBuilder()
                         .url(getChildrenUrl(validateAndGetUrlEncodedId()))
                         .post(RequestBody.create(newChildDriveItem.toJson(), JSON_MEDIA_TYPE))
                         .build(),
@@ -377,7 +372,7 @@ public class DriveItem extends BaseItem {
      */
     public DriveItem update() {
         return connection.execute(
-                connection.newSignedForApiWithBodyRequestBuilder()
+                connection.newWithBodyRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(validateAndGetUrlEncodedId())
@@ -414,7 +409,7 @@ public class DriveItem extends BaseItem {
     public AsyncJob copy(final String destinationParentId, final String newName) {
         validateDestinationParentIdAndNewName(destinationParentId, newName);
         final String monitoringUrl = connection.executeRemoteAsync(
-                connection.newSignedForApiWithBodyRequestBuilder()
+                connection.newWithBodyRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(validateAndGetUrlEncodedId())
@@ -430,7 +425,7 @@ public class DriveItem extends BaseItem {
      */
     public void delete() {
         connection.execute(
-                connection.newSignedForRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(validateAndGetUrlEncodedId())
@@ -455,7 +450,7 @@ public class DriveItem extends BaseItem {
      */
     public List<ItemActivity> getActivities() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(validateAndGetUrlEncodedId())
@@ -480,7 +475,7 @@ public class DriveItem extends BaseItem {
         DriveItemPage currentPage = null;
         do {
             currentPage = connection.execute(
-                    connection.newSignedForApiRequestBuilder()
+                    connection.newRequestBuilder()
                             .url(getChildrenUrl(currentPage, urlEncodedId))
                             .build(),
                     DRIVE_ITEM_PAGE_PARSER);
@@ -501,7 +496,7 @@ public class DriveItem extends BaseItem {
      */
     public List<DriveItemVersion> getVersions() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(validateAndGetUrlEncodedId())
@@ -522,7 +517,7 @@ public class DriveItem extends BaseItem {
      */
     public List<Permission> getPermissions() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(validateAndGetUrlEncodedId())
@@ -543,13 +538,15 @@ public class DriveItem extends BaseItem {
      */
     public List<Permission> addPermission(@NonNull final AddPermissionRequest requestBody) {
         return connection.execute(
-                connection.newSignedForApiWithBodyRequestBuilder()
+                connection.newWithBodyRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(validateAndGetUrlEncodedId())
                                 .append("/invite")
                                 .toString())
-                        .post(RequestBody.create(connection.getGson().toJson(requestBody), JSON_MEDIA_TYPE))
+                        .post(RequestBody.create(
+                                connection.getGsonFactory().getInstance(connection).toJson(requestBody),
+                                JSON_MEDIA_TYPE))
                         .build(),
                 newPermissionListParser(getId()));
     }
@@ -565,13 +562,15 @@ public class DriveItem extends BaseItem {
      */
     public Permission createSharingLink(@NonNull final CreateSharingLinkRequest requestBody) {
         return connection.execute(
-                connection.newSignedForApiWithBodyRequestBuilder()
+                connection.newWithBodyRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(validateAndGetUrlEncodedId())
                                 .append("/createLink")
                                 .toString())
-                        .post(RequestBody.create(connection.getGson().toJson(requestBody), JSON_MEDIA_TYPE))
+                        .post(RequestBody.create(
+                                connection.getGsonFactory().getInstance(connection).toJson(requestBody),
+                                JSON_MEDIA_TYPE))
                         .build(),
                 newPermissionParser(getId()));
     }
@@ -588,13 +587,15 @@ public class DriveItem extends BaseItem {
      */
     public Preview previewItem(@NonNull final PreviewRequest requestBody) {
         return connection.execute(
-                connection.newSignedForApiWithBodyRequestBuilder()
+                connection.newWithBodyRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(validateAndGetUrlEncodedId())
                                 .append("/preview")
                                 .toString())
-                        .post(RequestBody.create(connection.getGson().toJson(requestBody), JSON_MEDIA_TYPE))
+                        .post(RequestBody.create(
+                                connection.getGsonFactory().getInstance(connection).toJson(requestBody),
+                                JSON_MEDIA_TYPE))
                         .build(),
                 newPreviewParser(getId()));
     }
@@ -607,7 +608,7 @@ public class DriveItem extends BaseItem {
      */
     public List<ThumbnailSet> getThumbnails() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(validateAndGetUrlEncodedId())
@@ -636,7 +637,7 @@ public class DriveItem extends BaseItem {
         DriveItemPage currentPage = null;
         do {
             currentPage = connection.execute(
-                    connection.newSignedForApiRequestBuilder()
+                    connection.newRequestBuilder()
                             .url(getSearchUrl(currentPage, validateAndGetUrlEncodedId(), query))
                             .build(),
                     DRIVE_ITEM_PAGE_PARSER);
@@ -713,7 +714,7 @@ public class DriveItem extends BaseItem {
 
     @VisibleForTesting
     String toJson() {
-        return connection.getGson().toJson(this);
+        return connection.getGsonFactory().getInstance(connection).toJson(this);
     }
 
     private String validateAndGetUrlEncodedId() {

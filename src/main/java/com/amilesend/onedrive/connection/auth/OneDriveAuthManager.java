@@ -17,10 +17,12 @@
  */
 package com.amilesend.onedrive.connection.auth;
 
+import com.amilesend.client.connection.auth.AuthManager;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 import static com.google.common.net.MediaType.FORM_DATA;
 
 /**
@@ -28,7 +30,7 @@ import static com.google.common.net.MediaType.FORM_DATA;
  *  to interact with a OneDrive account. Note: This does not manage the initial stages of the OAUTH request
  *  flow and instead relies on a provided auth code or a pre-existing refresh token.
  */
-public interface AuthManager {
+public interface OneDriveAuthManager extends AuthManager<OneDriveAuthInfo> {
     String AUTH_TOKEN_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
     String FORM_DATA_CONTENT_TYPE = FORM_DATA.toString();
     String CLIENT_ID_BODY_PARAM = "client_id";
@@ -40,12 +42,10 @@ public interface AuthManager {
     String AUTH_CODE_GRANT_TYPE_BODY_PARAM_VALUE = "authorization_code";
     String REFRESH_TOKEN_GRANT_TYPE_BODY_PARAM_VALUE = REFRESH_TOKEN_BODY_PARAM;
 
-    /**
-     * Determines if the current authentication information is up-to-date.
-     *
-     * @return {@code true} if authenticated; else, {@code false}
-     */
-    boolean isAuthenticated();
+    @Override
+    default Request.Builder addAuthentication(final Request.Builder requestBuilder) {
+        return requestBuilder.addHeader(AUTHORIZATION, refreshIfExpiredAndFetchFullToken());
+    }
 
     /**
      * Determines if the current authentication information is expired.
@@ -74,34 +74,26 @@ public interface AuthManager {
         return getAuthInfo().getFullToken();
     }
 
-    /**
-     * Retrieves the current authentication info.
-     *
-     * @return the authentication info
-     * @see AuthInfo
-     */
-    AuthInfo getAuthInfo();
-
     /** Retrieves the associated endpoint to use for OneDrive operations. */
     String getAuthenticatedEndpoint();
 
     /**
      * Issues a request to redeem the given {@code authCode} in order to retrieve access and refresh tokens as a
-     * {@link AuthInfo}.
+     * {@link OneDriveAuthInfo}.
      *
      * @param authCode the authorization code
      * @return the authorization information
-     * @see AuthInfo
+     * @see OneDriveAuthInfo
      */
-    AuthInfo redeemToken(String authCode);
+    OneDriveAuthInfo redeemToken(String authCode);
 
     /**
-     * Issues a request to refresh the auth tokens and returns the refreshed tokens as a {@link AuthInfo}.
+     * Issues a request to refresh the auth tokens and returns the refreshed tokens as a {@link OneDriveAuthInfo}.
      *
      * @return the authorization information
-     * @see AuthInfo
+     * @see OneDriveAuthInfo
      */
-    AuthInfo refreshToken();
+    OneDriveAuthInfo refreshToken();
 
     /**
      * Helper method to dispatch the request to redeem or refresh authorization tokens.
@@ -110,7 +102,7 @@ public interface AuthManager {
      * @param request the request
      * @return the authorization information
      */
-    static AuthInfo fetchAuthInfo(final OkHttpClient httpClient, final Request request) {
+    static OneDriveAuthInfo fetchAuthInfo(final OkHttpClient httpClient, final Request request) {
         try {
             try (final Response response = httpClient.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
@@ -118,7 +110,7 @@ public interface AuthManager {
                 }
 
                 final String json = response.body().string();
-                return AuthInfo.fromJson(json);
+                return OneDriveAuthInfo.fromJson(json);
             }
         } catch (final AuthManagerException ex) {
             throw ex;

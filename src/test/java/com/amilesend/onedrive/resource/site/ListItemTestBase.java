@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.resource.site;
 
 import com.amilesend.onedrive.connection.OneDriveConnection;
+import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
 import okhttp3.Request;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +38,8 @@ public class ListItemTestBase {
     protected static final String LIST_ITEM_NAME = "ListItemNameValue";
 
     @Mock
+    protected GsonFactory mockGsonFactory;
+    @Mock
     protected Gson mockGson;
     @Mock
     protected OneDriveConnection mockConnection;
@@ -43,12 +47,12 @@ public class ListItemTestBase {
 
     @BeforeEach
     public void setUp() {
+        lenient().when(mockGsonFactory.getInstance(any(OneDriveConnection.class))).thenReturn(mockGson);
         lenient().when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
-        lenient().when(mockConnection.getGson()).thenReturn(mockGson);
+        lenient().when(mockConnection.getGsonFactory()).thenReturn(mockGsonFactory);
         final Request.Builder requestBuilder = new Request.Builder();
-        lenient().when(mockConnection.newSignedForRequestBuilder()).thenReturn(requestBuilder);
-        lenient().when(mockConnection.newSignedForApiRequestBuilder()).thenReturn(requestBuilder);
-        lenient().when(mockConnection.newSignedForApiWithBodyRequestBuilder()).thenReturn(requestBuilder);
+        lenient().when(mockConnection.newRequestBuilder()).thenReturn(requestBuilder);
+        lenient().when(mockConnection.newWithBodyRequestBuilder()).thenReturn(requestBuilder);
 
         listItemUnderTest = ListItem.builder()
                 .connection(mockConnection)

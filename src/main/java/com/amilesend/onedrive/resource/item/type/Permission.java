@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import com.amilesend.client.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import lombok.Builder;
 import lombok.Data;
@@ -74,7 +74,7 @@ public class Permission {
      */
     public void deletePermission() {
         connection.execute(
-                connection.newSignedForRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(driveItemId)

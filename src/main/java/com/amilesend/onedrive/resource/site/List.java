@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.resource.site;
 
+import com.amilesend.client.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.drive.Drive;
 import com.amilesend.onedrive.resource.item.BaseItem;
@@ -88,12 +88,12 @@ public class List extends BaseItem {
     public ListItem createListItem(final Map<String, Object> fields) {
         final CreateListItemRequest request = CreateListItemRequest.builder()
                 .fields(fields)
-                .gson(connection.getGson())
+                .gson(connection.getGsonFactory().getInstance(connection))
                 .build();
         request.validate();
 
         return connection.execute(
-                connection.newSignedForApiWithBodyRequestBuilder()
+                connection.newWithBodyRequestBuilder()
                         .url(newStringBuilderForListUrl()
                                 .append(LIST_ITEM_URL_SUFFIX)
                                 .toString())
@@ -112,7 +112,7 @@ public class List extends BaseItem {
      */
     public java.util.List<ItemActivity> getActivities() {
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(newStringBuilderForListUrl()
                                 .append(ACTIVITIES_URL_SUFFIX)
                                 .toString())

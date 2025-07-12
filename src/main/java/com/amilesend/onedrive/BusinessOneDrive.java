@@ -76,7 +76,7 @@ public class BusinessOneDrive extends OneDrive {
     public Site getRootSite() {
         final OneDriveConnection connection = getConnection();
         return new Site(connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(SITE_BASE_URL_PATH)
                                 .append("root")
@@ -99,7 +99,7 @@ public class BusinessOneDrive extends OneDrive {
         final String encodedSiteId = validateIdAndUrlEncode(siteId, "siteId");
         final OneDriveConnection connection = getConnection();
         return new Site(connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(SITE_BASE_URL_PATH)
                                 .append(encodedSiteId)
@@ -121,7 +121,7 @@ public class BusinessOneDrive extends OneDrive {
         final String encodedGroupId = validateIdAndUrlEncode(groupId, "groupId");
         final OneDriveConnection connection = getConnection();
         return new Site(connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(GROUPS_BASE_URL_PATH)
                                 .append(encodedGroupId)
@@ -144,7 +144,7 @@ public class BusinessOneDrive extends OneDrive {
     public List<Site> getRootSites() {
         final OneDriveConnection connection = getConnection();
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(SITE_URL_PATH_SUFFIX)
                                 .append("?select=siteCollection,webUrl&filter=siteCollection/root%20ne%20null")
@@ -174,7 +174,7 @@ public class BusinessOneDrive extends OneDrive {
         final String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
         final OneDriveConnection connection = getConnection();
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(SITE_URL_PATH_SUFFIX)
                                 .append("?search=")
@@ -205,7 +205,7 @@ public class BusinessOneDrive extends OneDrive {
         final String encodedGroupId = validateIdAndUrlEncode(groupId, "groupId");
         final OneDriveConnection connection = getConnection();
         return new Drive(connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(GROUPS_BASE_URL_PATH)
                                 .append(encodedGroupId)
@@ -228,7 +228,7 @@ public class BusinessOneDrive extends OneDrive {
         final String encodedSiteId = validateIdAndUrlEncode(siteId, "siteId");
         final OneDriveConnection connection = getConnection();
         return new Drive(connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(SITE_BASE_URL_PATH)
                                 .append(encodedSiteId)
@@ -281,7 +281,7 @@ public class BusinessOneDrive extends OneDrive {
         final String encodedGroupId = validateIdAndUrlEncode(id, idName);
         final OneDriveConnection connection = getConnection();
         return connection.execute(
-                        connection.newSignedForApiRequestBuilder()
+                        connection.newRequestBuilder()
                                 .url(new StringBuilder(connection.getBaseUrl())
                                         .append(urlSubPath)
                                         .append(encodedGroupId)

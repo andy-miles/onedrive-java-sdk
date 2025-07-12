@@ -17,7 +17,7 @@
  */
 package com.amilesend.onedrive.connection.auth.store;
 
-import com.amilesend.onedrive.connection.auth.AuthInfo;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,7 +58,7 @@ public class SingleUserFileBasedAuthInfoStoreTest {
     @SneakyThrows
     @Test
     public void store_withAuthInfo_shouldWrite() {
-        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final OneDriveAuthInfo mockAuthInfo = mock(OneDriveAuthInfo.class);
         when(mockAuthInfo.toJson()).thenReturn("StateContents");
 
         try (final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)) {
@@ -74,7 +74,7 @@ public class SingleUserFileBasedAuthInfoStoreTest {
 
     @Test
     public void store_withIOException_shouldThrowException() {
-        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final OneDriveAuthInfo mockAuthInfo = mock(OneDriveAuthInfo.class);
         when(mockAuthInfo.toJson()).thenReturn("StateContents");
 
         try (final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)) {
@@ -93,14 +93,14 @@ public class SingleUserFileBasedAuthInfoStoreTest {
     @SneakyThrows
     @Test
     public void retrieve_withValidState_shouldReturnAuthInfo() {
-        final AuthInfo expected = mock(AuthInfo.class);
+        final OneDriveAuthInfo expected = mock(OneDriveAuthInfo.class);
 
         try (final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class);
-             final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class)) {
+             final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class)) {
             filesMockedStatic.when(() -> Files.exists(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.isReadable(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.readString(any(Path.class))).thenReturn("JsonState");
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
 
             assertEquals(expected, storeUnderTest.retrieve(ID));
         }

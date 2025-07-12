@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.connection;
 
-import com.amilesend.onedrive.connection.auth.AuthInfo;
-import com.amilesend.onedrive.connection.auth.AuthManager;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthManager;
 import com.amilesend.onedrive.connection.auth.PersonalAccountAuthManager;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import com.amilesend.onedrive.parse.GsonFactory;
@@ -32,8 +32,9 @@ public class OneDriveConnectionBuilder {
     private String clientId;
     private String clientSecret;
     private String redirectUrl;
+    private String userAgent;
     private OkHttpClient httpClient = new OkHttpClientBuilder().build();
-    private AuthManager authManager;
+    private OneDriveAuthManager authManager;
     private final GsonFactory gsonFactory;
 
     /**
@@ -42,12 +43,23 @@ public class OneDriveConnectionBuilder {
      * @return the builder
      */
     public static OneDriveConnectionBuilder newInstance() {
-        return new OneDriveConnectionBuilder(GsonFactory.getInstance());
+        return new OneDriveConnectionBuilder(new GsonFactory());
     }
 
     @VisibleForTesting
     OneDriveConnectionBuilder(@NonNull final GsonFactory gsonFactory) {
         this.gsonFactory = gsonFactory;
+    }
+
+    /**
+     * Sets the user-agent string that is included in requests.
+     *
+     * @param userAgent the user agent
+     * @return this builder
+     */
+    public OneDriveConnectionBuilder userAgent(final String userAgent) {
+        this.userAgent = userAgent;
+        return this;
     }
 
     /**
@@ -95,12 +107,12 @@ public class OneDriveConnectionBuilder {
     }
 
     /**
-     * The {@link AuthManager} used to manage authentication and access tokens.
+     * The {@link OneDriveAuthManager} used to manage authentication and access tokens.
      *
      * @param authManager the auth manager
      * @return this builder
      */
-    public OneDriveConnectionBuilder authManager(final AuthManager authManager) {
+    public OneDriveConnectionBuilder authManager(final OneDriveAuthManager authManager) {
         this.authManager = authManager;
         return this;
     }
@@ -112,8 +124,15 @@ public class OneDriveConnectionBuilder {
      * @return the connection
      */
     public OneDriveConnection build(final String authCode) {
-        final AuthManager authManager = getAuthManagerOrDefault(httpClient, authCode);
-        return new OneDriveConnection(httpClient, authManager, gsonFactory, authManager.getAuthenticatedEndpoint());
+        final OneDriveAuthManager authManager = getAuthManagerOrDefault(httpClient, authCode);
+        return OneDriveConnection.builder()
+                .httpClient(httpClient)
+                .authManager(authManager)
+                .gsonFactory(gsonFactory)
+                .baseUrl(authManager.getAuthenticatedEndpoint())
+                .userAgent(userAgent)
+                .isGzipContentEncodingEnabled(true)
+                .build();
     }
 
     /**
@@ -122,12 +141,19 @@ public class OneDriveConnectionBuilder {
      * @param authInfo the authorization information that contains the refresh token
      * @return the connection
      */
-    public OneDriveConnection build(final AuthInfo authInfo) {
-        final AuthManager authManager = getAuthManagerOrDefault(httpClient, authInfo);
-        return new OneDriveConnection(httpClient, authManager, gsonFactory, authManager.getAuthenticatedEndpoint());
+    public OneDriveConnection build(final OneDriveAuthInfo authInfo) {
+        final OneDriveAuthManager authManager = getAuthManagerOrDefault(httpClient, authInfo);
+        return OneDriveConnection.builder()
+                .httpClient(httpClient)
+                .authManager(authManager)
+                .gsonFactory(gsonFactory)
+                .baseUrl(authManager.getAuthenticatedEndpoint())
+                .userAgent(userAgent)
+                .isGzipContentEncodingEnabled(true)
+                .build();
     }
 
-    private AuthManager getAuthManagerOrDefault(final OkHttpClient httpClient, final String authCode) {
+    private OneDriveAuthManager getAuthManagerOrDefault(final OkHttpClient httpClient, final String authCode) {
         if (authManager != null) {
             return authManager;
         }
@@ -142,7 +168,7 @@ public class OneDriveConnectionBuilder {
                 .buildWithAuthCode();
     }
 
-    private AuthManager getAuthManagerOrDefault(final OkHttpClient httpClient, final AuthInfo authInfo) {
+    private OneDriveAuthManager getAuthManagerOrDefault(final OkHttpClient httpClient, final OneDriveAuthInfo authInfo) {
         if (authManager != null) {
             return authManager;
         }

@@ -17,10 +17,11 @@
  */
 package com.amilesend.onedrive;
 
+import com.amilesend.client.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.connection.auth.AuthManager;
+import com.amilesend.onedrive.connection.OneDriveConnectionBuilder;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthManager;
 import com.amilesend.onedrive.connection.auth.PersonalAccountAuthManager;
-import com.amilesend.onedrive.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.parse.GsonFactory;
@@ -44,18 +45,20 @@ import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerT
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerTest.CLIENT_ID;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerTest.CLIENT_SECRET;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerTest.REDIRECT_URL;
+import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
 
 public class FunctionalTestBase {
-    protected static final int SUCCESS_STATUS_CODE = 200;
-    protected static final int SUCCESS_ASYNC_JOB_CODE = 202;
-    protected static final int ERROR_STATUS_CODE = 404;
-    protected static final int SERVICE_ERROR_STATUS_CODE = 503;
+    public static final int SUCCESS_STATUS_CODE = 200;
+    public static final int SUCCESS_ASYNC_JOB_CODE = 202;
+    public static final int ERROR_STATUS_CODE = 404;
+    public static final int SERVICE_ERROR_STATUS_CODE = 503;
+
     protected static final TransferProgressCallback NO_OP_TRANSFER_PROGRESS_CALLBACK =
             new NoOpTransferProgressCallback();
 
     private MockWebServer mockWebServer = new MockWebServer();
     private OkHttpClient httpClient;
-    private AuthManager authManager;
+    private OneDriveAuthManager authManager;
     @Getter
     private OneDriveConnection oneDriveConnection;
     @Getter
@@ -93,6 +96,7 @@ public class FunctionalTestBase {
         mockWebServer.enqueue(new MockResponse.Builder()
                 .code(responseCode)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
+                .addHeader(CONTENT_ENCODING, "gzip")
                 .body(new Buffer().write(responseBodyResource.toGzipCompressedBytes()))
                 .build());
     }
@@ -142,11 +146,15 @@ public class FunctionalTestBase {
     }
 
     private void setUpOneDrive() {
-        oneDriveConnection = new OneDriveConnection(
-                httpClient,
-                authManager,
-                GsonFactory.getInstance(),
-                getMockWebServerUrl());
+        oneDriveConnection = OneDriveConnection.builder()
+                .httpClient(httpClient)
+                .authManager(authManager)
+                .gsonFactory(new GsonFactory())
+                .baseUrl(getMockWebServerUrl())
+                .userAgent("OneDriveTestJavaClient/1.0")
+                .isGzipContentEncodingEnabled(true)
+                .build();
+
         oneDriveUnderTest = new OneDrive(oneDriveConnection);
     }
 

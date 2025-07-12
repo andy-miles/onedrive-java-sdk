@@ -17,9 +17,11 @@
  */
 package com.amilesend.onedrive;
 
+import com.amilesend.client.connection.RequestException;
+import com.amilesend.client.connection.ResponseException;
+import com.amilesend.client.connection.auth.AuthManager;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.connection.RequestException;
-import com.amilesend.onedrive.connection.ResponseException;
+import com.amilesend.onedrive.connection.OneDriveConnectionBuilder;
 import com.amilesend.onedrive.connection.auth.BusinessAccountAuthManager;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import com.amilesend.onedrive.data.SerializedResource;
@@ -48,9 +50,9 @@ import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerF
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.TOKEN_URL_PATH;
 import static com.amilesend.onedrive.data.DriveTestDataHelper.newDrive;
 import static com.amilesend.onedrive.data.SiteTestDataHelper.newSite;
+import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 
 public class BusinessOneDriveFunctionalTest {
     protected static final int SUCCESS_STATUS_CODE = 200;
@@ -69,8 +71,7 @@ public class BusinessOneDriveFunctionalTest {
         httpClient = new OkHttpClientBuilder().isForTest(true).build();
         mockWebServer = new MockWebServer();
         mockWebServer.start();
-        setUpAuthManager();
-        setUpOneDrive();
+        setUpOneDrive(setUpAuthManager());
     }
 
     @SneakyThrows
@@ -347,11 +348,10 @@ public class BusinessOneDriveFunctionalTest {
     }
 
     @SneakyThrows
-    private void setUpAuthManager() {
+    private BusinessAccountAuthManager setUpAuthManager() {
         // Initial auth for discovery
         setUpSuccessfulMockResponse(TOKEN_JSON_RESPONSE);
         final String authUrl = mockWebServer.url(TOKEN_URL_PATH).toString();
-        final String discoveryUrl = mockWebServer.url(DISCOVERY_URL_PATH).toString();
         authManager = BusinessAccountAuthManager.builderWithAuthCode()
                 .authBaseTokenUrl(authUrl)
                 .authCode(AUTH_CODE)
@@ -371,14 +371,20 @@ public class BusinessOneDriveFunctionalTest {
         // Refresh tokens for the specific resource
         setUpSuccessfulMockResponse(TOKEN_JSON_RESPONSE);
         authManager.authenticateService(services.get(0));
+
+        return authManager;
     }
 
-    private void setUpOneDrive() {
-        oneDriveConnection = new OneDriveConnection(
-                httpClient,
-                authManager,
-                GsonFactory.getInstance(),
-                getMockWebServerUrl());
+    private void setUpOneDrive(final BusinessAccountAuthManager authManager) {
+        oneDriveConnection = OneDriveConnection.builder()
+                .httpClient(httpClient)
+                .authManager(authManager)
+                .gsonFactory(new GsonFactory())
+                .baseUrl(getMockWebServerUrl())
+                .userAgent("OneDriveTestJavaClient/1.0")
+                .isGzipContentEncodingEnabled(true)
+                .build();
+
         oneDriveUnderTest = new BusinessOneDrive(oneDriveConnection);
     }
 
@@ -410,6 +416,7 @@ public class BusinessOneDriveFunctionalTest {
         mockWebServer.enqueue(new MockResponse.Builder()
                 .code(responseCode)
                 .addHeader("Content-Type", "application/json; charset=utf-8")
+                .addHeader(CONTENT_ENCODING, "gzip")
                 .body(new Buffer().write(responseBodyResource.toGzipCompressedBytes()))
                 .build());
     }

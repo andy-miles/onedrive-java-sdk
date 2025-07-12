@@ -17,10 +17,10 @@
  */
 package com.amilesend.onedrive.connection.auth.store;
 
-import com.amilesend.onedrive.connection.auth.AuthInfo;
-import com.amilesend.onedrive.crypto.CryptoHelper;
-import com.amilesend.onedrive.crypto.CryptoHelperException;
-import com.amilesend.onedrive.crypto.EncryptedEnvelope;
+import com.amilesend.client.crypto.CryptoHelper;
+import com.amilesend.client.crypto.CryptoHelperException;
+import com.amilesend.client.crypto.EncryptedEnvelope;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
 import lombok.NonNull;
@@ -36,7 +36,7 @@ import java.nio.file.Path;
  * An {@link AuthInfoStore} implementation that stores and retrieves encrypted user authentication information
  * to the filesystem. This assumes a single user associated with the specified file path, which means
  * that any provided keyed identifiers are ignored.
- * @see AuthInfo
+ * @see OneDriveAuthInfo
  * @see AuthInfoStore
  */
 @RequiredArgsConstructor
@@ -56,12 +56,12 @@ public class SingleUserEncryptedFileBasedAuthInfoStore implements AuthInfoStore 
      * @throws AuthInfoStoreException if an error occurred while saving the authentication info to the file system
      */
     @Override
-    public void store(final String id, @NonNull final AuthInfo authInfo) throws AuthInfoStoreException {
+    public void store(final String id, @NonNull final OneDriveAuthInfo authInfo) throws AuthInfoStoreException {
         try {
             final EncryptedEnvelope encryptedEnvelope = cryptoHelper.encrypt(
                     authInfo.toJson().getBytes(StandardCharsets.UTF_8),
                     "OneDriveConnection AuthInfo");
-            final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
+            final Gson gson = GsonFactory.getInstanceForAuthManager();
             Files.write(stateFilePath, gson.toJson(encryptedEnvelope).getBytes(StandardCharsets.UTF_8));
         } catch (final CryptoHelperException ex) {
             throw new AuthInfoStoreException(
@@ -72,14 +72,14 @@ public class SingleUserEncryptedFileBasedAuthInfoStore implements AuthInfoStore 
     }
 
     /**
-     * Retrieves the {@link AuthInfo} from the file system.
+     * Retrieves the {@link OneDriveAuthInfo} from the file system.
      *
      * @param id is ignored for this implementation
      * @return the authentication information, or {@code null}
      * @throws AuthInfoStoreException if an error occurred while retrieving the authentication info from the file system
      */
     @Override
-    public AuthInfo retrieve(final String id) throws AuthInfoStoreException {
+    public OneDriveAuthInfo retrieve(final String id) throws AuthInfoStoreException {
         if (!Files.exists(stateFilePath) || !Files.isReadable(stateFilePath)) {
             return null;
         }
@@ -90,11 +90,11 @@ public class SingleUserEncryptedFileBasedAuthInfoStore implements AuthInfoStore 
                 return null;
             }
 
-            final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
+            final Gson gson = GsonFactory.getInstanceForAuthManager();
             final EncryptedEnvelope encryptedEnvelope = gson.fromJson(encryptedEnvelopeJson, EncryptedEnvelope.class);
             final String decryptedAuthInfoJson =
                     new String(cryptoHelper.decrypt(encryptedEnvelope), StandardCharsets.UTF_8);
-            return AuthInfo.fromJson(decryptedAuthInfoJson);
+            return OneDriveAuthInfo.fromJson(decryptedAuthInfoJson);
         } catch (final CryptoHelperException ex) {
             throw new AuthInfoStoreException("Unable to decrypt AuthInfo: " + ex.getMessage(), ex);
         } catch (final IOException ex) {

@@ -18,7 +18,6 @@
 package com.amilesend.onedrive.connection;
 
 import okhttp3.Request;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.net.HttpHeaders.ACCEPT;
@@ -28,74 +27,25 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.verify;
 
 
 public class OneDriveConnectionTest extends OneDriveConnectionTestBase {
     @Test
-    public void ctor_withInvalidParameters_shouldThrowException() {
-        assertAll(
-                () -> assertThrows(NullPointerException.class, () -> new OneDriveConnection(
-                        null,
-                        mockAuthManager,
-                        mockGsonFactory,
-                        StringUtils.EMPTY)),
-                () -> assertThrows(NullPointerException.class, () -> new OneDriveConnection(
-                        mockHttpClient,
-                        null,
-                        mockGsonFactory,
-                        StringUtils.EMPTY)),
-                () -> assertThrows(NullPointerException.class, () -> new OneDriveConnection(
-                        mockHttpClient,
-                        mockAuthManager,
-                        null,
-                        StringUtils.EMPTY)));
-    }
-
-    @Test
-    public void ctor_withNoBaseUrl_shouldUseDefault() {
-        final OneDriveConnection connection = new OneDriveConnection(
-                mockHttpClient,
-                mockAuthManager,
-                mockGsonFactory,
-                null);
-        assertEquals("https://graph.microsoft.com/v1.0/me", connection.getBaseUrl());
-    }
-
-    @Test
-    public void ctor_withBaseUrl_shouldUseConfiguredUrl() {
-        final OneDriveConnection connection = new OneDriveConnection(
-                mockHttpClient,
-                mockAuthManager,
-                mockGsonFactory,
-                "http://localhost");
-        assertEquals("http://localhost", connection.getBaseUrl());
-    }
-
-    @Test
-    public void newSignedForRequestBuilder_shouldReturnBuilderWithHeaderDefined() {
-        final Request actual = connectionUnderTest.newSignedForRequestBuilder().url(REQUEST_URL).build();
-
-        assertAll(
-                () -> assertEquals("FullAuthToken", actual.header(AUTHORIZATION)),
-                () -> verify(mockAuthManager).refreshIfExpiredAndFetchFullToken());
-    }
-
-    @Test
-    public void newSignedForApiRequestBuilder_shouldReturnBuilderWithHeadersDefined() {
-        final Request actual = connectionUnderTest.newSignedForApiRequestBuilder().url(REQUEST_URL).build();
+    public void newRequestBuilder_shouldReturnBuilderWithHeadersDefined() {
+        final Request actual = connectionUnderTest.newRequestBuilder().url(REQUEST_URL).build();
 
         assertAll(
                 () -> assertEquals("FullAuthToken", actual.header(AUTHORIZATION)),
                 () -> assertEquals("gzip", actual.header(ACCEPT_ENCODING)),
                 () -> assertEquals(JSON_UTF_8.toString(), actual.header(ACCEPT)),
-                () -> verify(mockAuthManager).refreshIfExpiredAndFetchFullToken());
+                () -> verify(mockAuthManager).addAuthentication(isA(Request.Builder.class)));
     }
 
     @Test
-    public void newSignedForApiWithBodyRequestBuilder_shouldReturnBuilderWithHeadersDefined() {
-        final Request actual = connectionUnderTest.newSignedForApiWithBodyRequestBuilder()
+    public void newWithBodyRequestBuilder_shouldReturnBuilderWithHeadersDefined() {
+        final Request actual = connectionUnderTest.newWithBodyRequestBuilder()
                 .url(REQUEST_URL)
                 .build();
 
@@ -104,6 +54,6 @@ public class OneDriveConnectionTest extends OneDriveConnectionTestBase {
                 () -> assertEquals("gzip", actual.header(ACCEPT_ENCODING)),
                 () -> assertEquals(JSON_UTF_8.toString(), actual.header(ACCEPT)),
                 () -> assertEquals(JSON_UTF_8.toString(), actual.header(CONTENT_TYPE)),
-                () -> verify(mockAuthManager).refreshIfExpiredAndFetchFullToken());
+                () -> verify(mockAuthManager).addAuthentication(isA(Request.Builder.class)));
     }
 }

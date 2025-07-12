@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.resource;
 
-import com.amilesend.onedrive.connection.file.LogProgressCallback;
-import com.amilesend.onedrive.connection.file.TransferProgressCallback;
+import com.amilesend.client.connection.file.LogProgressCallback;
+import com.amilesend.client.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.resource.item.DriveItem;
 import com.amilesend.onedrive.resource.item.type.Audio;
 import com.amilesend.onedrive.resource.item.type.GeoCoordinates;
@@ -35,7 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static com.amilesend.onedrive.connection.file.LogProgressCallback.formatPrefix;
+import static com.amilesend.client.connection.file.LogProgressCallback.formatPrefix;
 
 /** A wrapper around a {@link DriveItem} that represents a file. */
 public class DriveFile extends DriveItemType {
@@ -243,12 +243,26 @@ public class DriveFile extends DriveItemType {
      * @return a new drive file that represents this updated file
      * @throws IOException if unable to read the file.
      * @see DriveFile
+     * @deprecated use {@link #upload(Path)} instead
      */
+    @Deprecated
     public DriveFile upload(final File file) throws IOException {
+        return upload(file.toPath());
+    }
+
+    /**
+     * Uploads and replaces this drive file's contents with the given {@code file}.
+     *
+     * @param filePath the updated file contents
+     * @return a new drive file that represents this updated file
+     * @throws IOException if unable to read the file.
+     * @see DriveFile
+     */
+    public DriveFile upload(final Path filePath) throws IOException {
         return upload(
-                file,
+                filePath,
                 LogProgressCallback.builder()
-                        .prefix(formatPrefix(file.getName(), "OneDrive"))
+                        .prefix(formatPrefix(filePath.getFileName().toString(), "OneDrive"))
                         .transferType(LogProgressCallback.TransferType.UPLOAD)
                         .build());
     }
@@ -262,10 +276,25 @@ public class DriveFile extends DriveItemType {
      * @return a new drive file that represents this updated file
      * @throws IOException if unable to read the file.
      * @see DriveFile
+     * @deprecated use {@link #upload(Path, TransferProgressCallback)} instead
      */
-    public DriveFile upload(final File file, final TransferProgressCallback callback)
-        throws IOException {
-        return new DriveFile(getDelegate().upload(file, callback));
+    @Deprecated
+    public DriveFile upload(final File file, final TransferProgressCallback callback) throws IOException {
+        return upload(file.toPath(), callback);
+    }
+
+    /**
+     * Uploads and replaces this drive file's contents with the given {@code file} and reports transfer
+     * progress to the specified {@link TransferProgressCallback}.
+     *
+     * @param filePath the updated file contents
+     * @param callback the callback be notified of transfer progress
+     * @return a new drive file that represents this updated file
+     * @throws IOException if unable to read the file.
+     * @see DriveFile
+     */
+    public DriveFile upload(final Path filePath, final TransferProgressCallback callback) throws IOException {
+        return new DriveFile(getDelegate().upload(filePath, callback));
     }
 
     /**
@@ -276,12 +305,32 @@ public class DriveFile extends DriveItemType {
      * @return a new drive file that represents this updated file
      * @throws IOException if unable to read the file.
      * @see DriveFileUploadExecution
+     * @deprecated use {@link #uploadAsync(Path)} instead
      */
+    @Deprecated
     public DriveFileUploadExecution uploadAsync(final File file) throws IOException {
         return uploadAsync(
                 file,
                 LogProgressCallback.builder()
                         .prefix(formatPrefix(file.getName(), "OneDrive"))
+                        .transferType(LogProgressCallback.TransferType.UPLOAD)
+                        .build());
+    }
+
+    /**
+     * Uploads and replaces this drive file's contents asynchronously with the given {@code file}.
+     * Consumers can block on transfer completion by invoking {@link DriveFileUploadExecution#get()}.
+     *
+     * @param filePath the updated file contents
+     * @return a new drive file that represents this updated file
+     * @throws IOException if unable to read the file.
+     * @see DriveFileUploadExecution
+     */
+    public DriveFileUploadExecution uploadAsync(final Path filePath) throws IOException {
+        return uploadAsync(
+                filePath,
+                LogProgressCallback.builder()
+                        .prefix(formatPrefix(filePath.getFileName().toString(), "OneDrive"))
                         .transferType(LogProgressCallback.TransferType.UPLOAD)
                         .build());
     }
@@ -295,11 +344,29 @@ public class DriveFile extends DriveItemType {
      * @return the async execution used to obtain the drive file once it has completed
      * @throws IOException if unable to read the file.
      * @see TransferProgressCallback
+     * @deprecated use {@link #uploadAsync(Path, TransferProgressCallback)} instead
      */
+    @Deprecated
     public DriveFileUploadExecution uploadAsync(
             final File file,
             final TransferProgressCallback callback) throws IOException {
-        return new DriveFileUploadExecution(getDelegate().uploadAsync(file, callback));
+        return uploadAsync(file.toPath(), callback);
+    }
+
+    /**
+     * Uploads and replaces this drive file's contents asynchronously with the given {@code file} and reports transfer
+     * progress to the specified {@link TransferProgressCallback}.
+     *
+     * @param filePath the updated file contents
+     * @param callback the callback be notified of transfer progress
+     * @return the async execution used to obtain the drive file once it has completed
+     * @throws IOException if unable to read the file.
+     * @see TransferProgressCallback
+     */
+    public DriveFileUploadExecution uploadAsync(
+            final Path filePath,
+            final TransferProgressCallback callback) throws IOException {
+        return new DriveFileUploadExecution(getDelegate().uploadAsync(filePath, callback));
     }
 
     //////////////////////

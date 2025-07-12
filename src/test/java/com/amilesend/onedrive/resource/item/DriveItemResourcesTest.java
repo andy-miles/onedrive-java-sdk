@@ -17,9 +17,11 @@
  */
 package com.amilesend.onedrive.resource.item;
 
-import com.amilesend.onedrive.parse.resource.parser.BasicParser;
+import com.amilesend.client.parse.parser.BasicParser;
+import com.amilesend.client.parse.parser.GsonParser;
+import com.amilesend.onedrive.connection.OneDriveConnection;
+import com.amilesend.onedrive.parse.GsonFactory;
 import com.amilesend.onedrive.parse.resource.parser.DriveItemVersionListParser;
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionListParser;
 import com.amilesend.onedrive.parse.resource.parser.PermissionParser;
@@ -141,7 +143,9 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
         when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(expected);
         final Gson mockGson = mock(Gson.class);
         when(mockGson.toJson(any(AddPermissionRequest.class))).thenReturn("JsonPermissionRequestBody");
-        when(mockConnection.getGson()).thenReturn(mockGson);
+        final GsonFactory mockGsonFactory = mock(GsonFactory.class);
+        when(mockGsonFactory.getInstance(any(OneDriveConnection.class))).thenReturn(mockGson);
+        when(mockConnection.getGsonFactory()).thenReturn(mockGsonFactory);
 
         final List<Permission> actual = driveItemUnderTest.addPermission(mock(AddPermissionRequest.class));
 
@@ -170,7 +174,9 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
         when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(expected);
         final Gson mockGson = mock(Gson.class);
         when(mockGson.toJson(any(CreateSharingLinkRequest.class))).thenReturn("JsonPermissionRequestBody");
-        when(mockConnection.getGson()).thenReturn(mockGson);
+        final GsonFactory mockGsonFactory = mock(GsonFactory.class);
+        when(mockGsonFactory.getInstance(any(OneDriveConnection.class))).thenReturn(mockGson);
+        when(mockConnection.getGsonFactory()).thenReturn(mockGsonFactory);
 
         final Permission actual = driveItemUnderTest.createSharingLink(mock(CreateSharingLinkRequest.class));
 
@@ -199,7 +205,9 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
         when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(expected);
         final Gson mockGson = mock(Gson.class);
         when(mockGson.toJson(any(PreviewRequest.class))).thenReturn("JsonPreviewRequestBody");
-        when(mockConnection.getGson()).thenReturn(mockGson);
+        final GsonFactory mockGsonFactory = mock(GsonFactory.class);
+        when(mockGsonFactory.getInstance(any(OneDriveConnection.class))).thenReturn(mockGson);
+        when(mockConnection.getGsonFactory()).thenReturn(mockGsonFactory);
 
         final Preview actual = driveItemUnderTest.previewItem(mock(PreviewRequest.class));
 
@@ -258,7 +266,7 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
                 () -> assertThrows(NullPointerException.class, () -> driveItemUnderTest.search(null)),
                 () -> assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.search(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> driveItemUnderTest.search(RandomStringUtils.random(INVALID_QUERY_LENGTH))));
+                        () -> driveItemUnderTest.search(RandomStringUtils.secure().next(INVALID_QUERY_LENGTH))));
     }
 
     private void setUpPaginatedDriveItemResponseBehavior() {

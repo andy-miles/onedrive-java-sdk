@@ -17,10 +17,8 @@
  */
 package com.amilesend.onedrive.connection.auth;
 
-import com.amilesend.onedrive.connection.OneDriveConnectionException;
-
-/** Defines the exception thrown from {@link AuthManager}. */
-public class AuthManagerException extends OneDriveConnectionException {
+/** Defines the exception thrown from {@link OneDriveAuthManager}. */
+public class AuthManagerException extends RuntimeException {
     /**
      * Creates a new {@code AuthManagerException}.
      *

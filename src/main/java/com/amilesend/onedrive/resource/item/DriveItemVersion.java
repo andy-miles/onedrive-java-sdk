@@ -17,10 +17,10 @@
  */
 package com.amilesend.onedrive.resource.item;
 
+import com.amilesend.client.connection.file.LogProgressCallback;
+import com.amilesend.client.connection.file.TransferProgressCallback;
+import com.amilesend.client.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.connection.file.LogProgressCallback;
-import com.amilesend.onedrive.connection.file.TransferProgressCallback;
-import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.DriveFileDownloadExecution;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import com.amilesend.onedrive.resource.item.type.PublicationFacet;
@@ -34,8 +34,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
 
+import static com.amilesend.client.connection.file.LogProgressCallback.formatPrefix;
 import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
-import static com.amilesend.onedrive.connection.file.LogProgressCallback.formatPrefix;
 import static com.amilesend.onedrive.resource.item.DriveItem.DRIVE_ITEM_BASE_URL_PATH;
 
 /**
@@ -105,7 +105,7 @@ public class DriveItemVersion {
      */
     public void download(@NonNull final Path folderPath, @NonNull TransferProgressCallback callback) {
         connection.download(
-                connection.newSignedForRequestBuilder()
+                connection.newRequestBuilder()
                         .url(getContentUrl(getDriveItemId(), getId()))
                         .build(),
                 folderPath,
@@ -145,7 +145,7 @@ public class DriveItemVersion {
             @NonNull final Path folderPath,
             @NonNull TransferProgressCallback callback) {
         return new DriveFileDownloadExecution(connection.downloadAsync(
-                connection.newSignedForRequestBuilder()
+                connection.newRequestBuilder()
                         .url(getContentUrl(getDriveItemId(), getId()))
                         .build(),
                 folderPath,
@@ -163,10 +163,12 @@ public class DriveItemVersion {
      * @return {@code true} if successful; else, {@code false}
      */
     public boolean restore() {
-        final int responseCode = connection.execute(connection.newSignedForRequestBuilder()
-                .url(getRestoreUrl(getDriveItemId(), getId()))
-                .post(RequestBody.create(StringUtils.EMPTY, JSON_MEDIA_TYPE))
-                .build());
+        final int responseCode = connection.execute(
+                connection.newRequestBuilder()
+                        .url(getRestoreUrl(getDriveItemId(), getId()))
+                        .post(RequestBody.create(StringUtils.EMPTY, JSON_MEDIA_TYPE))
+                        .build())
+                .code();
         return responseCode == NO_CONTENT_RESPONSE_HTTP_CODE;
     }
 

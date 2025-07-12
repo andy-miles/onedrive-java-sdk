@@ -17,10 +17,10 @@
  */
 package com.amilesend.onedrive;
 
+import com.amilesend.client.connection.RequestException;
+import com.amilesend.client.connection.ResponseException;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.connection.RequestException;
-import com.amilesend.onedrive.connection.ResponseException;
-import com.amilesend.onedrive.connection.auth.AuthInfo;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.resource.Drive;
 import org.junit.jupiter.api.Test;
@@ -130,7 +130,7 @@ public class OneDriveFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void getAuthInfo_shouldReturnAuthInfo() {
-        final AuthInfo actual = getOneDriveUnderTest().getAuthInfo();
+        final OneDriveAuthInfo actual = getOneDriveUnderTest().getAuthInfo();
         validateAuthInfo(actual);
     }
 }

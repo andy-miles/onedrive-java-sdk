@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.resource.item;
 
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import okhttp3.Request;
@@ -56,7 +56,7 @@ public class SpecialDriveItemTest {
     @BeforeEach
     public void setUp() {
         lenient().when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
-        lenient().when(mockConnection.newSignedForApiRequestBuilder()).thenReturn(new Request.Builder());
+        lenient().when(mockConnection.newRequestBuilder()).thenReturn(new Request.Builder());
         itemUnderTest = SpecialDriveItem.builder()
                 .connection(mockConnection)
                 .specialFolderType(TYPE)

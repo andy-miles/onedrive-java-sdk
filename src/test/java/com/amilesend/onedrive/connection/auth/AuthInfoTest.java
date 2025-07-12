@@ -41,11 +41,11 @@ public class AuthInfoTest {
             "\"token_type\": \"Bearer\"" +
             "}";
 
-    final Gson gson = GsonFactory.getInstance().getInstanceForAuthManager();
+    final Gson gson = GsonFactory.getInstanceForAuthManager();
 
     @Test
     public void fromJson_withValidJson_shouldReturnAuthInfo() {
-        final AuthInfo actual = AuthInfo.fromJson(TOKEN_JSON_RESPONSE);
+        final OneDriveAuthInfo actual = OneDriveAuthInfo.fromJson(TOKEN_JSON_RESPONSE);
 
         assertAll(
                 () -> assertEquals("AccessToken", actual.getAccessToken()),
@@ -59,7 +59,7 @@ public class AuthInfoTest {
 
     @Test
     public void fromJson_withNoScopes_shouldReturnAuthInfo() {
-        final AuthInfo actual = AuthInfo.fromJson(TOKEN_NO_SCOPE_JSON_RESPONSE);
+        final OneDriveAuthInfo actual = OneDriveAuthInfo.fromJson(TOKEN_NO_SCOPE_JSON_RESPONSE);
 
         assertAll(
                 () -> assertEquals("AccessToken", actual.getAccessToken()),
@@ -73,7 +73,7 @@ public class AuthInfoTest {
 
     @Test
     public void toJson_withValidAuthInfo_shouldReturnJson() {
-        final String actual = AuthInfo.builder()
+        final String actual = OneDriveAuthInfo.builder()
                 .accessToken("AccessToken")
                 .expiresIn(EXPIRES_TIME_MILLIS)
                 .extExpiresIn(EXPIRES_TIME_MILLIS)
@@ -95,7 +95,7 @@ public class AuthInfoTest {
 
     @Test
     public void toJson_withNoScopes_shouldReturnJson() {
-        final String actual = AuthInfo.builder()
+        final String actual = OneDriveAuthInfo.builder()
                 .accessToken("AccessToken")
                 .expiresIn(EXPIRES_TIME_MILLIS)
                 .extExpiresIn(EXPIRES_TIME_MILLIS)

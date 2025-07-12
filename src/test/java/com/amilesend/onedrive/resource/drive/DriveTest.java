@@ -17,9 +17,9 @@
  */
 package com.amilesend.onedrive.resource.drive;
 
+import com.amilesend.client.parse.parser.BasicParser;
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.resource.parser.BasicParser;
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
 import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
 import com.amilesend.onedrive.parse.resource.parser.SpecialDriveItemParser;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
@@ -67,7 +67,7 @@ public class DriveTest {
     @BeforeEach
     public void setUp() {
         lenient().when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
-        lenient().when(mockConnection.newSignedForApiRequestBuilder()).thenReturn(new Request.Builder());
+        lenient().when(mockConnection.newRequestBuilder()).thenReturn(new Request.Builder());
         driveUnderTest = Drive.builder()
                 .connection(mockConnection)
                 .id(DRIVE_ID)

@@ -92,7 +92,7 @@ public class PersonalAccountAuthManagerFunctionalTest {
     @Test
     public void builderWithAuthInfo_withValidParameters_shouldRefreshToken() {
         final PersonalAccountAuthManager authManager = PersonalAccountAuthManager.builderWithAuthInfo()
-                .authInfo(AuthInfo.builder()
+                .authInfo(OneDriveAuthInfo.builder()
                         .accessToken("StaleAccessToken")
                         .expiresIn(EXPIRES_TIME_MILLIS)
                         .extExpiresIn(EXPIRES_TIME_MILLIS)
@@ -109,7 +109,7 @@ public class PersonalAccountAuthManagerFunctionalTest {
         validateAuthInfo(authManager.getAuthInfo());
     }
 
-    public static void validateAuthInfo(final AuthInfo actual) {
+    public static void validateAuthInfo(final OneDriveAuthInfo actual) {
         assertAll(
                 () -> assertEquals("AccessToken", actual.getAccessToken()),
                 () -> assertEquals(EXPIRES_TIME_MILLIS, actual.getExpiresIn()),

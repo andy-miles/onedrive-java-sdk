@@ -17,7 +17,7 @@
  */
 package com.amilesend.onedrive.resource.site;
 
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.parse.resource.parser.ListItemVersionListParser;
 import com.amilesend.onedrive.parse.resource.parser.ListItemVersionParser;
 import okhttp3.Request;

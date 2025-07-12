@@ -17,10 +17,10 @@
  */
 package com.amilesend.onedrive.resource;
 
+import com.amilesend.client.connection.RequestException;
+import com.amilesend.client.connection.ResponseException;
 import com.amilesend.onedrive.FunctionalTestBase;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.connection.RequestException;
-import com.amilesend.onedrive.connection.ResponseException;
 import com.amilesend.onedrive.data.SerializedResource;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.identity.DriveRecipient;
@@ -165,13 +165,6 @@ public class DriveFileFunctionalTest extends FunctionalTestBase {
                 () -> fileUnderTest.upload(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK));
     }
 
-    @Test
-    public void upload_withIOException_shouldThrowException(@TempDir final Path tempDir) {
-        final Path filePathToUpload = tempDir.resolve("testFileToUpload.txt");
-        assertThrows(IOException.class,
-                () -> fileUnderTest.upload(filePathToUpload.toFile(), NO_OP_TRANSFER_PROGRESS_CALLBACK));
-    }
-
     //////////////////
     // uploadAsync
     //////////////////
@@ -204,13 +197,6 @@ public class DriveFileFunctionalTest extends FunctionalTestBase {
                 ExecutionException.class,
                 () -> fileUnderTest.uploadAsync(createFile(tempDir), NO_OP_TRANSFER_PROGRESS_CALLBACK).get());
         assertInstanceOf(ResponseException.class, thrown.getCause());
-    }
-
-    @Test
-    public void uploadAsync_withIOException_shouldThrowException(@TempDir final Path tempDir) {
-        final Path filePathToUpload = tempDir.resolve("testFileToUpload.txt");
-        final Throwable thrown = assertThrows(IOException.class,
-                () -> fileUnderTest.uploadAsync(filePathToUpload.toFile(), NO_OP_TRANSFER_PROGRESS_CALLBACK).get());
     }
 
     ///////////////////

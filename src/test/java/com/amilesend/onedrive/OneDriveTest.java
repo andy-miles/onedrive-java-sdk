@@ -17,11 +17,11 @@
  */
 package com.amilesend.onedrive;
 
+import com.amilesend.client.connection.auth.AuthManager;
+import com.amilesend.client.parse.parser.BasicParser;
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.connection.auth.AuthInfo;
-import com.amilesend.onedrive.connection.auth.AuthManager;
-import com.amilesend.onedrive.parse.resource.parser.BasicParser;
-import com.amilesend.onedrive.parse.resource.parser.GsonParser;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
 import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.identity.Identity;
@@ -64,7 +64,7 @@ public class OneDriveTest {
     @BeforeEach
     public void setUp() {
         lenient().when(mockConnection.getBaseUrl()).thenReturn(BASE_URL);
-        lenient().when(mockConnection.newSignedForApiRequestBuilder()).thenReturn(new Request.Builder());
+        lenient().when(mockConnection.newRequestBuilder()).thenReturn(new Request.Builder());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class OneDriveTest {
                 () -> assertThrows(NullPointerException.class, () -> oneDriveUnderTest.getDrive(null)),
                 () -> assertThrows(IllegalArgumentException.class, () -> oneDriveUnderTest.getDrive(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> oneDriveUnderTest.getDrive(RandomStringUtils.random(1000))));
+                        () -> oneDriveUnderTest.getDrive(RandomStringUtils.secure().next(1000))));
     }
 
     @Test
@@ -139,7 +139,7 @@ public class OneDriveTest {
 
     @Test
     public void getAuthInfo_shouldReturnAuthInfo() {
-        final AuthInfo expected = mock(AuthInfo.class);
+        final OneDriveAuthInfo expected = mock(OneDriveAuthInfo.class);
         final AuthManager mockAuthManager = mock(AuthManager.class);
         when(mockAuthManager.getAuthInfo()).thenReturn(expected);
         when(mockConnection.getAuthManager()).thenReturn(mockAuthManager);

@@ -17,7 +17,7 @@
  */
 package com.amilesend.onedrive.connection;
 
-import com.amilesend.onedrive.connection.auth.AuthManager;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthManager;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
@@ -28,7 +28,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.BufferedSource;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -37,6 +36,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.InputStream;
 
+import static com.google.common.net.HttpHeaders.AUTHORIZATION;
+import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -55,11 +57,12 @@ public abstract class OneDriveConnectionTestBase {
     protected static final int THROTTLED_ERROR_CODE = 429;
     protected static final int SERVER_ERROR_RESPONSE_CODE = 503;
     protected static final long BYTES_TRANSFERRED = 1024L;
+    protected static final Long DEFAULT_RETRY = Long.valueOf(10L);
 
     @Mock
     protected OkHttpClient mockHttpClient;
     @Mock
-    protected AuthManager mockAuthManager;
+    protected OneDriveAuthManager mockAuthManager;
     @Mock
     protected Gson mockGson;
     @Mock
@@ -68,12 +71,22 @@ public abstract class OneDriveConnectionTestBase {
 
     @BeforeEach
     public void setUp() {
+        lenient().when(mockGsonFactory.getInstance(any(OneDriveConnection.class))).thenReturn(mockGson);
+        lenient().when(mockAuthManager.addAuthentication(any(Request.Builder.class)))
+                .thenAnswer(i -> {
+                    Request.Builder requestBuilder = i.getArgument(0);
+                    return requestBuilder.addHeader(AUTHORIZATION, "FullAuthToken");
+                });
         lenient().when(mockAuthManager.refreshIfExpiredAndFetchFullToken()).thenReturn("FullAuthToken");
         lenient().when(mockAuthManager.getAuthenticatedEndpoint()).thenReturn("https://graph.microsoft.com/v1.0/me");
-        when(mockGsonFactory.newInstanceForConnection(any(OneDriveConnection.class))).thenReturn(mockGson);
-        connectionUnderTest =
-                spy(new OneDriveConnection(mockHttpClient, mockAuthManager, mockGsonFactory, StringUtils.EMPTY));
-
+        connectionUnderTest = spy(OneDriveConnection.builder()
+                .baseUrl(REQUEST_URL)
+                .authManager(mockAuthManager)
+                .gsonFactory(mockGsonFactory)
+                .httpClient(mockHttpClient)
+                .userAgent("TestUserAgent/1.0")
+                .isGzipContentEncodingEnabled(true)
+                .build());
     }
     protected Callback getCallbackFromCallMock(final Call mockCall) {
         final ArgumentCaptor<Callback> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
@@ -90,6 +103,7 @@ public abstract class OneDriveConnectionTestBase {
         lenient().when(mockResponse.code()).thenReturn(code);
         lenient().when(mockResponse.isSuccessful()).thenReturn(code == SUCCESS_RESPONSE_CODE);
         lenient().when(mockResponse.body()).thenReturn(mockBody);
+        lenient().when(mockResponse.header(CONTENT_ENCODING)).thenReturn("gzip");
 
         return mockResponse;
     }

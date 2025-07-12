@@ -17,10 +17,10 @@
  */
 package com.amilesend.onedrive.connection.auth.store;
 
-import com.amilesend.onedrive.connection.auth.AuthInfo;
-import com.amilesend.onedrive.crypto.CryptoHelper;
-import com.amilesend.onedrive.crypto.CryptoHelperException;
-import com.amilesend.onedrive.crypto.EncryptedEnvelope;
+import com.amilesend.client.crypto.CryptoHelper;
+import com.amilesend.client.crypto.CryptoHelperException;
+import com.amilesend.client.crypto.EncryptedEnvelope;
+import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
@@ -77,18 +77,16 @@ public class SingleUserEncryptedFileBasedAuthInfoStoreTest {
     @SneakyThrows
     @Test
     public void store_withValidAuthInfo_shouldEncryptAndStore() {
-        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final OneDriveAuthInfo mockAuthInfo = mock(OneDriveAuthInfo.class);
         when(mockAuthInfo.toJson()).thenReturn("StateContents");
         final EncryptedEnvelope mockEnvelope = mock(EncryptedEnvelope.class);
         when(mockCryptoHelper.encrypt(any(byte[].class), anyString())).thenReturn(mockEnvelope);
         final Gson mockGson = mock(Gson.class);
         when(mockGson.toJson(any(EncryptedEnvelope.class))).thenReturn("EncryptedStateContents");
-        final GsonFactory mockGsonFactory = mock(GsonFactory.class);
-        when(mockGsonFactory.getInstanceForAuthManager()).thenReturn(mockGson);
 
         try (final MockedStatic<GsonFactory> gsonFactoryMockedStatic = mockStatic(GsonFactory.class);
              final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)) {
-            gsonFactoryMockedStatic.when(() -> GsonFactory.getInstance()).thenReturn(mockGsonFactory);
+            gsonFactoryMockedStatic.when(() -> GsonFactory.getInstanceForAuthManager()).thenReturn(mockGson);
 
             storeUnderTest.store(ID, mockAuthInfo);
 
@@ -101,7 +99,7 @@ public class SingleUserEncryptedFileBasedAuthInfoStoreTest {
     @SneakyThrows
     @Test
     public void store_withCryptoHelperException_shouldThrowException() {
-        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final OneDriveAuthInfo mockAuthInfo = mock(OneDriveAuthInfo.class);
         when(mockAuthInfo.toJson()).thenReturn("StateContents");
         final EncryptedEnvelope mockEnvelope = mock(EncryptedEnvelope.class);
         when(mockCryptoHelper.encrypt(any(byte[].class), anyString()))
@@ -115,18 +113,16 @@ public class SingleUserEncryptedFileBasedAuthInfoStoreTest {
     @SneakyThrows
     @Test
     public void store_withIOException_shouldThrowException() {
-        final AuthInfo mockAuthInfo = mock(AuthInfo.class);
+        final OneDriveAuthInfo mockAuthInfo = mock(OneDriveAuthInfo.class);
         when(mockAuthInfo.toJson()).thenReturn("StateContents");
         final EncryptedEnvelope mockEnvelope = mock(EncryptedEnvelope.class);
         when(mockCryptoHelper.encrypt(any(byte[].class), anyString())).thenReturn(mockEnvelope);
         final Gson mockGson = mock(Gson.class);
         when(mockGson.toJson(any(EncryptedEnvelope.class))).thenReturn("EncryptedStateContents");
-        final GsonFactory mockGsonFactory = mock(GsonFactory.class);
-        when(mockGsonFactory.getInstanceForAuthManager()).thenReturn(mockGson);
 
         try (final MockedStatic<GsonFactory> gsonFactoryMockedStatic = mockStatic(GsonFactory.class);
              final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class)) {
-            gsonFactoryMockedStatic.when(() -> GsonFactory.getInstance()).thenReturn(mockGsonFactory);
+            gsonFactoryMockedStatic.when(() -> GsonFactory.getInstanceForAuthManager()).thenReturn(mockGson);
             filesMockedStatic.when(() -> Files.write(any(Path.class), any(byte[].class)))
                             .thenThrow(new IOException("Exception)"));
 
@@ -148,23 +144,21 @@ public class SingleUserEncryptedFileBasedAuthInfoStoreTest {
     @SneakyThrows
     @Test
     public void retrieve_withValidStateFile_shouldReturnAuthInfo() {
-        final AuthInfo expected = mock(AuthInfo.class);
+        final OneDriveAuthInfo expected = mock(OneDriveAuthInfo.class);
         final EncryptedEnvelope mockEnvelope = mock(EncryptedEnvelope.class);
         when(mockCryptoHelper.decrypt(any(EncryptedEnvelope.class)))
                 .thenReturn("DecryptedStateContents".getBytes(StandardCharsets.UTF_8));
         final Gson mockGson = mock(Gson.class);
         when(mockGson.fromJson(anyString(), eq(EncryptedEnvelope.class))).thenReturn(mockEnvelope);
-        final GsonFactory mockGsonFactory = mock(GsonFactory.class);
-        when(mockGsonFactory.getInstanceForAuthManager()).thenReturn(mockGson);
 
         try (final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class);
-             final MockedStatic<AuthInfo> authInfoMockedStatic = mockStatic(AuthInfo.class);
+             final MockedStatic<OneDriveAuthInfo> authInfoMockedStatic = mockStatic(OneDriveAuthInfo.class);
              final MockedStatic<GsonFactory> gsonFactoryMockedStatic = mockStatic(GsonFactory.class)) {
             filesMockedStatic.when(() -> Files.exists(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.isReadable(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.readString(any(Path.class))).thenReturn("EncryptedJsonState");
-            authInfoMockedStatic.when(() -> AuthInfo.fromJson(anyString())).thenReturn(expected);
-            gsonFactoryMockedStatic.when(() -> GsonFactory.getInstance()).thenReturn(mockGsonFactory);
+            authInfoMockedStatic.when(() -> OneDriveAuthInfo.fromJson(anyString())).thenReturn(expected);
+            gsonFactoryMockedStatic.when(() -> GsonFactory.getInstanceForAuthManager()).thenReturn(mockGson);
 
             assertEquals(expected, storeUnderTest.retrieve(ID));
         }
@@ -211,15 +205,13 @@ public class SingleUserEncryptedFileBasedAuthInfoStoreTest {
                 .thenThrow(new CryptoHelperException("Exception"));
         final Gson mockGson = mock(Gson.class);
         when(mockGson.fromJson(anyString(), eq(EncryptedEnvelope.class))).thenReturn(mockEnvelope);
-        final GsonFactory mockGsonFactory = mock(GsonFactory.class);
-        when(mockGsonFactory.getInstanceForAuthManager()).thenReturn(mockGson);
 
         try (final MockedStatic<Files> filesMockedStatic = mockStatic(Files.class);
              final MockedStatic<GsonFactory> gsonFactoryMockedStatic = mockStatic(GsonFactory.class)) {
             filesMockedStatic.when(() -> Files.exists(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.isReadable(any(Path.class))).thenReturn(true);
             filesMockedStatic.when(() -> Files.readString(any(Path.class))).thenReturn("EncryptedJsonState");
-            gsonFactoryMockedStatic.when(() -> GsonFactory.getInstance()).thenReturn(mockGsonFactory);
+            gsonFactoryMockedStatic.when(() -> GsonFactory.getInstanceForAuthManager()).thenReturn(mockGson);
 
             final Throwable thrown = assertThrows(AuthInfoStoreException.class, () -> storeUnderTest.retrieve(ID));
             assertInstanceOf(CryptoHelperException.class, thrown.getCause());

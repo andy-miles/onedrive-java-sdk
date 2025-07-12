@@ -17,8 +17,8 @@
  */
 package com.amilesend.onedrive.resource.item;
 
+import com.amilesend.client.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.parse.strategy.GsonExclude;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import lombok.Getter;
 import lombok.Setter;
@@ -57,7 +57,7 @@ public class SpecialDriveItem extends DriveItem {
 
         final OneDriveConnection connection = getConnection();
         return connection.execute(
-                connection.newSignedForApiRequestBuilder()
+                connection.newRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_BASE_URL_PATH)
                                 .append("special/")

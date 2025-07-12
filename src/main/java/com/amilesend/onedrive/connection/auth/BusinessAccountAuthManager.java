@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static com.google.common.net.MediaType.FORM_DATA;
@@ -80,39 +81,27 @@ import static com.google.common.net.MediaType.FORM_DATA;
  * resource than the one that that is persisted with the auth tokens, then new access tokens are required and
  * should invoke the {@code builderWithAuthCode()} flow.
  *
- * @see AuthInfo
+ * @see OneDriveAuthInfo
  */
-public class BusinessAccountAuthManager implements AuthManager {
+public class BusinessAccountAuthManager implements OneDriveAuthManager {
     private static final String ENDPOINT_SUFFIX = "/_api/v2.0";
     private static final String RESOURCE_DISCOVERY_URL = "https://api.office.com/discovery/";
     private static final String SERVICE_INFO_URL_SUFFIX = "v2.0/me/services";
     private static final String RESOURCE_BODY_PARAM = "resource";
 
-    /**
-     * The client identifier.
-     */
+    /** The client identifier. */
     private final String clientId;
-    /**
-     * The client secret.
-     */
+    /** The client secret. */
     private final String clientSecret;
-    /**
-     * The redirect URL.
-     */
+    /** The redirect URL. */
     private final String redirectUrl;
-    /**
-     * The underlying HTTP client.
-     */
+    /** The underlying HTTP client. */
     private final OkHttpClient httpClient;
-    /**
-     * The GSON instance used for JSON serialization.
-     */
+    /** The GSON instance used for JSON serialization. */
     private final String authBaseTokenUrl;
-    /**
-     * The URL to query for a list of authorized services.
-     */
+    /** The URL to query for a list of authorized services. */
     private final String discoveryBaseTokenUrl;
-    private final Object lock = new Object();
+    private final ReentrantLock lock = new ReentrantLock();
 
     @Getter
     @Setter(AccessLevel.PACKAGE)
@@ -124,7 +113,7 @@ public class BusinessAccountAuthManager implements AuthManager {
      */
     @Setter(AccessLevel.PACKAGE)
     @VisibleForTesting
-    private volatile AuthInfo authInfo;
+    private volatile OneDriveAuthInfo authInfo;
 
     /**
      * Used to initialize and manage authentication for a given auth code.
@@ -170,7 +159,7 @@ public class BusinessAccountAuthManager implements AuthManager {
             final String clientId,
             final String clientSecret,
             final String redirectUrl,
-            @NonNull final AuthInfo authInfo) {
+            @NonNull final OneDriveAuthInfo authInfo) {
         Validate.notBlank(clientId, "clientId must not be blank");
         Validate.notBlank(clientSecret, "clientSecret must not be blank");
         Validate.notBlank(redirectUrl, "redirectUrl must not be blank");
@@ -204,7 +193,7 @@ public class BusinessAccountAuthManager implements AuthManager {
     }
 
     @Override
-    public AuthInfo getAuthInfo() {
+    public OneDriveAuthInfo getAuthInfo() {
         refreshIfExpired();
         return authInfo;
     }
@@ -220,11 +209,12 @@ public class BusinessAccountAuthManager implements AuthManager {
     }
 
     @Override
-    public AuthInfo redeemToken(final String authCode) {
+    public OneDriveAuthInfo redeemToken(final String authCode) {
         Validate.notBlank(authCode, "authCode must not be blank");
-        synchronized (lock) {
+        lock.lock();
+        try {
             return authInfo =
-                    AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
+                    OneDriveAuthManager.fetchAuthInfo(httpClient, new Request.Builder()
                                     .url(authBaseTokenUrl)
                                     .header(CONTENT_TYPE, FORM_DATA.toString())
                                     .post(new FormBody.Builder()
@@ -237,14 +227,17 @@ public class BusinessAccountAuthManager implements AuthManager {
                                             .build())
                                     .build())
                             .copyWithResourceId(resourceId);
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
-    public AuthInfo refreshToken() {
-        synchronized (lock) {
+    public OneDriveAuthInfo refreshToken() {
+        lock.lock();
+        try {
             return authInfo =
-                    AuthManager.fetchAuthInfo(httpClient, new Request.Builder()
+                    OneDriveAuthManager.fetchAuthInfo(httpClient, new Request.Builder()
                                     .url(authBaseTokenUrl)
                                     .header(CONTENT_TYPE, FORM_DATA_CONTENT_TYPE)
                                     .post(new FormBody.Builder()
@@ -257,6 +250,8 @@ public class BusinessAccountAuthManager implements AuthManager {
                                             .build())
                                     .build())
                             .copyWithResourceId(resourceId);
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -282,8 +277,7 @@ public class BusinessAccountAuthManager implements AuthManager {
                 }
 
                 final String json = response.body().string();
-                return GsonFactory.getInstance()
-                        .getInstanceForServiceDiscovery()
+                return GsonFactory.getInstanceForServiceDiscovery()
                         .fromJson(json, DiscoverServiceResponse.class)
                         .getServices();
             }

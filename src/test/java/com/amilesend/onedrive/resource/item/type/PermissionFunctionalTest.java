@@ -17,9 +17,9 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import com.amilesend.client.connection.RequestException;
+import com.amilesend.client.connection.ResponseException;
 import com.amilesend.onedrive.FunctionalTestBase;
-import com.amilesend.onedrive.connection.RequestException;
-import com.amilesend.onedrive.connection.ResponseException;
 import com.amilesend.onedrive.data.SerializedResource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

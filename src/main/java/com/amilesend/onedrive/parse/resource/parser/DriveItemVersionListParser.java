@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.parse.resource.parser;
 
+import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.onedrive.resource.item.DriveItemVersion;
 import com.google.gson.Gson;
 import lombok.AccessLevel;
