@@ -115,8 +115,8 @@
         <github.global.server>github</github.global.server>
         <maven.resolver.transport>wagon</maven.resolver.transport>
         <lombok.version>1.18.38</lombok.version>
-        <maven.javadoc.plugin.version>3.11.2</maven.javadoc.plugin.version>
-        <mockito.version>5.18.0</mockito.version>
+        <maven.javadoc.plugin.version>3.11.3</maven.javadoc.plugin.version>
+        <mockito.version>5.19.0</mockito.version>
         <slf4j.version>2.0.16</slf4j.version>
         <spotbugs.version>4.9.4</spotbugs.version>
         <spotbugs.maven.plugin.version>4.9.3.2</spotbugs.maven.plugin.version>
