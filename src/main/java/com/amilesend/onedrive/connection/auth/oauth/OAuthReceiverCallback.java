@@ -17,8 +17,9 @@
  */
 package com.amilesend.onedrive.connection.auth.oauth;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.io.CharStreams;
+import com.amilesend.client.util.Pair;
+import com.amilesend.client.util.StringUtils;
+import com.amilesend.client.util.VisibleForTesting;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -28,15 +29,15 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -183,10 +184,13 @@ public class OAuthReceiverCallback implements HttpHandler {
     }
 
     private static String getLandingHtml() {
-        try (final BufferedReader reader = new BufferedReader(new InputStreamReader
-                (OAuthReceiverCallback.class.getResourceAsStream(LANDING_HTML_RESOURCE), StandardCharsets.UTF_8))) {
-            return CharStreams.toString(reader);
-        } catch (final IOException ex) {
+        try {
+            final Path resourcePath = Paths.get(OAuthReceiverCallback.class
+                    .getClassLoader()
+                    .getResource(LANDING_HTML_RESOURCE)
+                    .toURI());
+            return Files.readString(resourcePath);
+        } catch (final IOException | URISyntaxException | NullPointerException ex) {
             log.warn("Error trying to load resource: {}", LANDING_HTML_RESOURCE);
             return LANDING_HTML_FALLBACK;
         }

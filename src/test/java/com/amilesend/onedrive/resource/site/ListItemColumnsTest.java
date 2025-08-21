@@ -22,7 +22,6 @@ import com.amilesend.client.parse.parser.GsonParser;
 import com.amilesend.client.parse.parser.MapParser;
 import com.amilesend.onedrive.resource.site.response.GetColumnValuesResponse;
 import okhttp3.Request;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -31,6 +30,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newRandomString;
 import static com.amilesend.onedrive.data.SiteTestDataHelper.newFieldValueSet;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -106,7 +106,7 @@ public class ListItemColumnsTest extends ListItemTestBase {
     @Test
     public void getColumnValues_withOneTooLongSelectedColumn_shouldThrowException() {
         final java.util.List<String> selectedColumns =
-                java.util.List.of("Col1", RandomStringUtils.secure().next(TOO_LARGE_COLUMN_LENGTH));
+                java.util.List.of("Col1", newRandomString(TOO_LARGE_COLUMN_LENGTH));
 
         assertThrows(IllegalArgumentException.class, () -> listItemUnderTest.getColumnValues(selectedColumns));
     }

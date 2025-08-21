@@ -26,6 +26,7 @@ import com.amilesend.onedrive.resource.item.SpecialDriveItem;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import lombok.experimental.UtilityClass;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 import static com.amilesend.onedrive.data.TypeTestDataHelper.newAudio;
@@ -261,5 +262,12 @@ public class DriveTestDataHelper {
                 .video(newVideo())
                 .webUrl("WebUrlValue")
                 .build();
+    }
+
+    public static String newRandomString(final int length) {
+        return new SecureRandom().ints(97, 122 + 1)
+                .limit(length)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 }

@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.connection.auth;
 
+import com.amilesend.client.util.StringUtils;
 import com.google.gson.JsonSyntaxException;
 import lombok.SneakyThrows;
 import okhttp3.Call;
@@ -24,7 +25,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

@@ -18,20 +18,20 @@
 package com.amilesend.onedrive.resource.site;
 
 import com.amilesend.client.parse.strategy.GsonExclude;
+import com.amilesend.client.util.Validate;
+import com.amilesend.client.util.VisibleForTesting;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.item.BaseItem;
 import com.amilesend.onedrive.resource.item.DriveItem;
 import com.amilesend.onedrive.resource.item.type.SharePointIds;
 import com.amilesend.onedrive.resource.site.response.GetColumnValuesResponse;
 import com.amilesend.onedrive.resource.site.type.ContentType;
-import com.google.common.annotations.VisibleForTesting;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import okhttp3.RequestBody;
-import org.apache.commons.lang3.Validate;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -268,7 +268,9 @@ public class ListItem extends BaseItem {
         final java.util.List<String> encodedColumns = new ArrayList<>(columns.size());
         for (final String column : columns) {
             Validate.notNull(column, "column name must not be null");
-            Validate.isTrue(column.length() < MAX_COLUMN_LENGTH);
+            Validate.isTrue(
+                    column.length() < MAX_COLUMN_LENGTH,
+                    "column length must be < " + MAX_COLUMN_LENGTH);
             encodedColumns.add(URLEncoder.encode(column, StandardCharsets.UTF_8));
         }
 

@@ -19,11 +19,10 @@ package com.amilesend.onedrive.connection.auth;
 
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.EXPIRES_TIME_MILLIS;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.TOKEN_JSON_RESPONSE;
@@ -67,7 +66,7 @@ public class AuthInfoTest {
                 () -> assertEquals(EXPIRES_TIME_MILLIS, actual.getExtExpiresIn()),
                 () -> assertEquals("Bearer AccessToken", actual.getFullToken()),
                 () -> assertEquals("RefreshToken", actual.getRefreshToken()),
-                () -> assertTrue(CollectionUtils.isEmpty(actual.getScopes())),
+                () -> assertTrue(Objects.isNull(actual.getScopes()) || actual.getScopes().isEmpty()),
                 () -> assertEquals("Bearer", actual.getTokenType()));
     }
 
@@ -84,12 +83,12 @@ public class AuthInfoTest {
 
         assertAll(
                 () -> assertTrue(actual.startsWith("{")),
-                () -> assertTrue(StringUtils.contains(actual, "\"token_type\":\"Bearer\"")),
-                () -> assertTrue(StringUtils.contains(actual, "\"scope\":\"Scope1%20Scope2%20Scope3\"")),
-                () -> assertTrue(StringUtils.contains(actual, "\"expires_in\":" + EXPIRES_TIME_MILLIS)),
-                () -> assertTrue(StringUtils.contains(actual, "\"ext_expires_in\":"+ EXPIRES_TIME_MILLIS)),
-                () -> assertTrue(StringUtils.contains(actual, "\"access_token\":\"AccessToken\"")),
-                () -> assertTrue(StringUtils.contains(actual, "\"refresh_token\":\"RefreshToken\"")),
+                () -> assertTrue(actual.contains("\"token_type\":\"Bearer\"")),
+                () -> assertTrue(actual.contains("\"scope\":\"Scope1%20Scope2%20Scope3\"")),
+                () -> assertTrue(actual.contains("\"expires_in\":" + EXPIRES_TIME_MILLIS)),
+                () -> assertTrue(actual.contains("\"ext_expires_in\":"+ EXPIRES_TIME_MILLIS)),
+                () -> assertTrue(actual.contains("\"access_token\":\"AccessToken\"")),
+                () -> assertTrue(actual.contains("\"refresh_token\":\"RefreshToken\"")),
                 () -> assertTrue(actual.endsWith("}")));
     }
 
@@ -105,11 +104,11 @@ public class AuthInfoTest {
 
         assertAll(
                 () -> assertTrue(actual.startsWith("{")),
-                () -> assertTrue(StringUtils.contains(actual, "\"token_type\":\"Bearer\"")),
-                () -> assertTrue(StringUtils.contains(actual, "\"expires_in\":" + EXPIRES_TIME_MILLIS)),
-                () -> assertTrue(StringUtils.contains(actual, "\"ext_expires_in\":"+ EXPIRES_TIME_MILLIS)),
-                () -> assertTrue(StringUtils.contains(actual, "\"access_token\":\"AccessToken\"")),
-                () -> assertTrue(StringUtils.contains(actual, "\"refresh_token\":\"RefreshToken\"")),
+                () -> assertTrue(actual.contains("\"token_type\":\"Bearer\"")),
+                () -> assertTrue(actual.contains("\"expires_in\":" + EXPIRES_TIME_MILLIS)),
+                () -> assertTrue(actual.contains("\"ext_expires_in\":"+ EXPIRES_TIME_MILLIS)),
+                () -> assertTrue(actual.contains("\"access_token\":\"AccessToken\"")),
+                () -> assertTrue(actual.contains("\"refresh_token\":\"RefreshToken\"")),
                 () -> assertTrue(actual.endsWith("}")));
     }
 }

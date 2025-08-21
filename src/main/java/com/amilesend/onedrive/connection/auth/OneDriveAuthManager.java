@@ -22,8 +22,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.google.common.net.HttpHeaders.AUTHORIZATION;
-import static com.google.common.net.MediaType.FORM_DATA;
+import static com.amilesend.client.connection.Connection.Headers.AUTHORIZATION;
 
 /**
  *  The interface that defines the manager that is responsible for obtaining and refreshing tokens
@@ -32,7 +31,6 @@ import static com.google.common.net.MediaType.FORM_DATA;
  */
 public interface OneDriveAuthManager extends AuthManager<OneDriveAuthInfo> {
     String AUTH_TOKEN_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
-    String FORM_DATA_CONTENT_TYPE = FORM_DATA.toString();
     String CLIENT_ID_BODY_PARAM = "client_id";
     String CLIENT_SECRET_BODY_PARAM = "client_secret";
     String REDIRECT_URI_BODY_PARAM = "redirect_uri";

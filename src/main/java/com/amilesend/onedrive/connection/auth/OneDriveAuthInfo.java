@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.connection.auth;
 
 import com.amilesend.client.connection.auth.AuthInfo;
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -26,12 +27,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
@@ -145,7 +145,7 @@ public class OneDriveAuthInfo implements AuthInfo {
     }
 
     private static String toScope(final List<String> scopes) {
-        if (CollectionUtils.isEmpty(scopes)) {
+        if (Objects.isNull(scopes) || scopes.isEmpty()) {
             return StringUtils.EMPTY;
         }
 

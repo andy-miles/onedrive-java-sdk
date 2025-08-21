@@ -18,11 +18,11 @@
 package com.amilesend.onedrive.resource.site.request;
 
 import com.amilesend.client.parse.strategy.GsonExclude;
+import com.amilesend.client.util.Validate;
 import com.google.gson.Gson;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-import org.apache.commons.lang3.Validate;
 
 import java.util.Map;
 

@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive;
 
+import com.amilesend.client.util.Validate;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import com.amilesend.onedrive.resource.Drive;
@@ -27,7 +28,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.Validate;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

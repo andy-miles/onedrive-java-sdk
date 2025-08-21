@@ -19,6 +19,7 @@ package com.amilesend.onedrive.resource.item;
 
 import com.amilesend.client.parse.parser.BasicParser;
 import com.amilesend.client.parse.parser.GsonParser;
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.amilesend.onedrive.parse.resource.parser.DriveItemVersionListParser;
@@ -35,8 +36,6 @@ import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
 import com.amilesend.onedrive.resource.request.PreviewRequest;
 import com.google.gson.Gson;
 import okhttp3.Request;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -45,6 +44,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newRandomString;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -266,7 +266,7 @@ public class DriveItemResourcesTest extends DriveItemTestBase {
                 () -> assertThrows(NullPointerException.class, () -> driveItemUnderTest.search(null)),
                 () -> assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.search(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> driveItemUnderTest.search(RandomStringUtils.secure().next(INVALID_QUERY_LENGTH))));
+                        () -> driveItemUnderTest.search(newRandomString(INVALID_QUERY_LENGTH))));
     }
 
     private void setUpPaginatedDriveItemResponseBehavior() {

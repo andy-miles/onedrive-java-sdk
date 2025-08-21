@@ -17,11 +17,11 @@
  */
 package com.amilesend.onedrive.resource.item;
 
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import com.amilesend.onedrive.resource.item.type.ItemReference;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Defines common attributes for drive items.

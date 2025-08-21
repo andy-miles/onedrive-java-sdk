@@ -17,7 +17,9 @@
  */
 package com.amilesend.onedrive.connection.auth;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.amilesend.client.util.StringUtils;
+import com.amilesend.client.util.Validate;
+import com.amilesend.client.util.VisibleForTesting;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,11 +28,9 @@ import lombok.Setter;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 
-import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
-import static com.google.common.net.MediaType.FORM_DATA;
+import static com.amilesend.client.connection.Connection.FORM_DATA_CONTENT_TYPE;
+import static com.amilesend.client.connection.Connection.Headers.CONTENT_TYPE;
 
 /**
  * Manager that is responsible for obtaining and refreshing tokens to interact with a personal
@@ -165,7 +165,7 @@ public class PersonalAccountAuthManager implements OneDriveAuthManager {
         synchronized (lock) {
             authInfo = OneDriveAuthManager.fetchAuthInfo(httpClient, new Request.Builder()
                     .url(baseTokenUrl)
-                    .header(CONTENT_TYPE, FORM_DATA.toString())
+                    .header(CONTENT_TYPE, FORM_DATA_CONTENT_TYPE)
                     .post(new FormBody.Builder()
                             .add(CLIENT_ID_BODY_PARAM, clientId)
                             .add(CLIENT_SECRET_BODY_PARAM, clientSecret)

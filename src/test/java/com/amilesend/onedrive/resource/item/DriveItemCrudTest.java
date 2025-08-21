@@ -19,10 +19,10 @@ package com.amilesend.onedrive.resource.item;
 
 import com.amilesend.client.parse.parser.BasicParser;
 import com.amilesend.client.parse.parser.GsonParser;
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.resource.item.type.ItemReference;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 

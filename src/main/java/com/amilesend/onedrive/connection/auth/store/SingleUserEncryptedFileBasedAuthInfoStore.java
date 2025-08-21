@@ -20,12 +20,12 @@ package com.amilesend.onedrive.connection.auth.store;
 import com.amilesend.client.crypto.CryptoHelper;
 import com.amilesend.client.crypto.CryptoHelperException;
 import com.amilesend.client.crypto.EncryptedEnvelope;
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

@@ -17,9 +17,9 @@
  */
 package com.amilesend.onedrive.resource.item.type;
 
+import com.amilesend.client.util.StringUtils;
 import lombok.Builder;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Indicates if an item was deleted.

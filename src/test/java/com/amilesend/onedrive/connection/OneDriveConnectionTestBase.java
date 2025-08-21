@@ -36,9 +36,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.InputStream;
 
-import static com.google.common.net.HttpHeaders.AUTHORIZATION;
-import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static com.amilesend.client.connection.Connection.Headers.AUTHORIZATION;
+import static com.amilesend.client.connection.Connection.Headers.CONTENT_ENCODING;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;

@@ -17,15 +17,15 @@
  */
 package com.amilesend.onedrive.resource.item;
 
+import com.amilesend.client.util.Validate;
+import com.amilesend.client.util.VisibleForTesting;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.item.type.AsyncJobStatus;
-import com.google.common.annotations.VisibleForTesting;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import org.apache.commons.lang3.Validate;
 
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.ASYNC_JOB_STATUS_PARSER;
 
@@ -40,7 +40,6 @@ import static com.amilesend.onedrive.parse.resource.parser.Parsers.ASYNC_JOB_STA
 @Builder
 @EqualsAndHashCode
 public class AsyncJob {
-
     @Getter(AccessLevel.PACKAGE)
     @VisibleForTesting
     private final String monitorUrl;

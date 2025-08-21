@@ -22,13 +22,13 @@ import com.amilesend.client.connection.RequestException;
 import com.amilesend.client.connection.ResponseException;
 import com.amilesend.client.connection.file.TransferFileWriter;
 import com.amilesend.client.connection.file.TransferProgressCallback;
+import com.amilesend.client.util.StringUtils;
 import lombok.SneakyThrows;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 import okio.BufferedSource;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 

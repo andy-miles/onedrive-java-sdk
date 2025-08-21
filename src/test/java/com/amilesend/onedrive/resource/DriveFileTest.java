@@ -19,6 +19,7 @@ package com.amilesend.onedrive.resource;
 
 import com.amilesend.client.connection.file.LogProgressCallback;
 import com.amilesend.client.connection.file.TransferProgressCallback;
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import com.amilesend.onedrive.resource.item.AsyncJob;
@@ -41,7 +42,6 @@ import com.amilesend.onedrive.resource.request.AddPermissionRequest;
 import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
 import com.amilesend.onedrive.resource.request.PreviewRequest;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -19,13 +19,12 @@ package com.amilesend.onedrive;
 
 import com.amilesend.client.parse.parser.BasicParser;
 import com.amilesend.client.parse.parser.GsonParser;
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
 import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.Site;
 import okhttp3.Request;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +38,7 @@ import java.util.List;
 
 import static com.amilesend.onedrive.OneDriveTest.newMockDrive;
 import static com.amilesend.onedrive.OneDriveTest.newMockDrives;
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newRandomString;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -117,7 +117,7 @@ public class BusinessOneDriveTest {
                 () -> assertThrows(NullPointerException.class, () -> oneDriveUnderTest.getSite(null)),
                 () -> assertThrows(IllegalArgumentException.class, () -> oneDriveUnderTest.getSite(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> oneDriveUnderTest.getSite(RandomStringUtils.secure().next(INVALID_ID_LENGTH))));
+                        () -> oneDriveUnderTest.getSite(newRandomString(INVALID_ID_LENGTH))));
     }
 
     //////////////////////
@@ -148,7 +148,7 @@ public class BusinessOneDriveTest {
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> oneDriveUnderTest.getSiteForGroup(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> oneDriveUnderTest.getSiteForGroup(RandomStringUtils.secure().next(INVALID_ID_LENGTH))));
+                        () -> oneDriveUnderTest.getSiteForGroup(newRandomString(INVALID_ID_LENGTH))));
     }
 
     //////////////////////
@@ -203,7 +203,7 @@ public class BusinessOneDriveTest {
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> oneDriveUnderTest.searchForSite(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> oneDriveUnderTest.searchForSite(RandomStringUtils.secure().next(INVALID_QUERY_LENGTH))));
+                        () -> oneDriveUnderTest.searchForSite(newRandomString(INVALID_QUERY_LENGTH))));
     }
 
     ////////////////////////////
@@ -234,7 +234,7 @@ public class BusinessOneDriveTest {
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> oneDriveUnderTest.getDefaultDriveForGroup(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> oneDriveUnderTest.getDefaultDriveForGroup(RandomStringUtils.secure().next(INVALID_ID_LENGTH))));
+                        () -> oneDriveUnderTest.getDefaultDriveForGroup(newRandomString(INVALID_ID_LENGTH))));
     }
 
     ////////////////////////////
@@ -265,7 +265,7 @@ public class BusinessOneDriveTest {
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> oneDriveUnderTest.getDefaultDriveForSite(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> oneDriveUnderTest.getDefaultDriveForSite(RandomStringUtils.secure().next(INVALID_ID_LENGTH))));
+                        () -> oneDriveUnderTest.getDefaultDriveForSite(newRandomString(INVALID_ID_LENGTH))));
     }
 
     //////////////////////
@@ -297,7 +297,7 @@ public class BusinessOneDriveTest {
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> oneDriveUnderTest.getDrivesForGroup(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> oneDriveUnderTest.getDrivesForGroup(RandomStringUtils.secure().next(512))));
+                        () -> oneDriveUnderTest.getDrivesForGroup(newRandomString(512))));
     }
 
     //////////////////////
@@ -330,7 +330,7 @@ public class BusinessOneDriveTest {
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> oneDriveUnderTest.getDrivesForSite(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> oneDriveUnderTest.getDrivesForSite(RandomStringUtils.secure().next(512))));
+                        () -> oneDriveUnderTest.getDrivesForSite(newRandomString(512))));
     }
 
     //////////////////////
@@ -363,7 +363,7 @@ public class BusinessOneDriveTest {
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> oneDriveUnderTest.getDrivesForUser(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> oneDriveUnderTest.getDrivesForUser(RandomStringUtils.secure().next(512))));
+                        () -> oneDriveUnderTest.getDrivesForUser(newRandomString(512))));
     }
 
     private static com.amilesend.onedrive.resource.site.Site newMockSite() {

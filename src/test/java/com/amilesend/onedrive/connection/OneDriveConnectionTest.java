@@ -20,11 +20,11 @@ package com.amilesend.onedrive.connection;
 import okhttp3.Request;
 import org.junit.jupiter.api.Test;
 
-import static com.google.common.net.HttpHeaders.ACCEPT;
-import static com.google.common.net.HttpHeaders.ACCEPT_ENCODING;
-import static com.google.common.net.HttpHeaders.AUTHORIZATION;
-import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
-import static com.google.common.net.MediaType.JSON_UTF_8;
+import static com.amilesend.client.connection.Connection.Headers.ACCEPT;
+import static com.amilesend.client.connection.Connection.Headers.ACCEPT_ENCODING;
+import static com.amilesend.client.connection.Connection.Headers.AUTHORIZATION;
+import static com.amilesend.client.connection.Connection.Headers.CONTENT_TYPE;
+import static com.amilesend.client.connection.Connection.JSON_CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
@@ -39,7 +39,7 @@ public class OneDriveConnectionTest extends OneDriveConnectionTestBase {
         assertAll(
                 () -> assertEquals("FullAuthToken", actual.header(AUTHORIZATION)),
                 () -> assertEquals("gzip", actual.header(ACCEPT_ENCODING)),
-                () -> assertEquals(JSON_UTF_8.toString(), actual.header(ACCEPT)),
+                () -> assertEquals(JSON_CONTENT_TYPE, actual.header(ACCEPT)),
                 () -> verify(mockAuthManager).addAuthentication(isA(Request.Builder.class)));
     }
 
@@ -52,8 +52,8 @@ public class OneDriveConnectionTest extends OneDriveConnectionTestBase {
         assertAll(
                 () -> assertEquals("FullAuthToken", actual.header(AUTHORIZATION)),
                 () -> assertEquals("gzip", actual.header(ACCEPT_ENCODING)),
-                () -> assertEquals(JSON_UTF_8.toString(), actual.header(ACCEPT)),
-                () -> assertEquals(JSON_UTF_8.toString(), actual.header(CONTENT_TYPE)),
+                () -> assertEquals(JSON_CONTENT_TYPE, actual.header(ACCEPT)),
+                () -> assertEquals(JSON_CONTENT_TYPE, actual.header(CONTENT_TYPE)),
                 () -> verify(mockAuthManager).addAuthentication(isA(Request.Builder.class)));
     }
 }

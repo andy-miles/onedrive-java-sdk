@@ -17,10 +17,10 @@
  */
 package com.amilesend.onedrive;
 
+import com.amilesend.client.util.Validate;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.Site;
-import org.apache.commons.lang3.Validate;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

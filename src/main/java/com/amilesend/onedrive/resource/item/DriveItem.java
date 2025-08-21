@@ -21,6 +21,9 @@ import com.amilesend.client.connection.file.ProgressReportingRequestBody;
 import com.amilesend.client.connection.file.TransferProgressCallback;
 import com.amilesend.client.parse.strategy.GsonExclude;
 import com.amilesend.client.parse.strategy.GsonSerializeExclude;
+import com.amilesend.client.util.StringUtils;
+import com.amilesend.client.util.Validate;
+import com.amilesend.client.util.VisibleForTesting;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.item.type.Audio;
@@ -46,7 +49,6 @@ import com.amilesend.onedrive.resource.item.type.Video;
 import com.amilesend.onedrive.resource.request.AddPermissionRequest;
 import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
 import com.amilesend.onedrive.resource.request.PreviewRequest;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.annotations.SerializedName;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -55,8 +57,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import okhttp3.RequestBody;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -68,6 +68,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import static com.amilesend.client.connection.Connection.Headers.CONTENT_TYPE;
 import static com.amilesend.onedrive.connection.OneDriveConnection.JSON_MEDIA_TYPE;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PAGE_PARSER;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PARSER;
@@ -78,7 +79,6 @@ import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPermission
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPermissionParser;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPreviewParser;
 import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals;
-import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 
 /**
  * Describes a resource stored in a drive.
@@ -731,7 +731,9 @@ public class DriveItem extends BaseItem {
         final boolean isSameDestinationId = Optional.ofNullable(getParentReference())
                 .map(r -> r.getId().equals(destinationParentId))
                 .orElse(false);
-        final boolean isSameName = StringUtils.equals(getName(), newName);
+        final boolean isSameName = Optional.ofNullable(getName())
+                .map(n -> n.equals(newName))
+                .orElse(false);
         Validate.isTrue(!(isSameDestinationId && isSameName),
                 "Both destinationParentId and newName must not be the same as the original drive item");
 

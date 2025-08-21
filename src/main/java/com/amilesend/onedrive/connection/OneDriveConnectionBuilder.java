@@ -17,15 +17,15 @@
  */
 package com.amilesend.onedrive.connection;
 
+import com.amilesend.client.util.Validate;
+import com.amilesend.client.util.VisibleForTesting;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthManager;
 import com.amilesend.onedrive.connection.auth.PersonalAccountAuthManager;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import com.amilesend.onedrive.parse.GsonFactory;
-import com.google.common.annotations.VisibleForTesting;
 import lombok.NonNull;
 import okhttp3.OkHttpClient;
-import org.apache.commons.lang3.Validate;
 
 /** Builder to configure and return a new {@link OneDriveConnection} instance. */
 public class OneDriveConnectionBuilder {

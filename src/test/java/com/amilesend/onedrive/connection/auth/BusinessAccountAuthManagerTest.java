@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.connection.auth;
 
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.amilesend.onedrive.resource.discovery.DiscoverServiceResponse;
 import com.amilesend.onedrive.resource.discovery.Service;
@@ -24,7 +25,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

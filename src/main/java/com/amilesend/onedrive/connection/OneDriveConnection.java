@@ -24,9 +24,10 @@ import com.amilesend.client.connection.ResponseException;
 import com.amilesend.client.connection.file.TransferFileWriter;
 import com.amilesend.client.connection.file.TransferProgressCallback;
 import com.amilesend.client.parse.parser.GsonParser;
+import com.amilesend.client.util.Validate;
+import com.amilesend.client.util.VisibleForTesting;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthManager;
 import com.amilesend.onedrive.parse.GsonFactory;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
@@ -36,8 +37,6 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,8 +45,8 @@ import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPInputStream;
 
-import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
-import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static com.amilesend.client.connection.Connection.Headers.CONTENT_ENCODING;
+import static com.amilesend.client.connection.Connection.Headers.CONTENT_TYPE;
 
 /**
  * Wraps a {@link OkHttpClient} that manages authentication refresh and parsing responses to corresponding POJO types.
@@ -119,7 +118,7 @@ public class OneDriveConnection extends Connection<GsonFactory> {
                 try {
                     validateResponseCode(response);
                     final InputStream responseBodyInputStream =
-                            StringUtils.equalsIgnoreCase("gzip", response.header(CONTENT_ENCODING))
+                            "gzip".equals(response.header(CONTENT_ENCODING))
                                     ? new GZIPInputStream(response.body().byteStream())
                                     : response.body().byteStream();
                     future.complete(parser.parse(getGsonFactory().getInstance(connectionRef), responseBodyInputStream));

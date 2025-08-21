@@ -19,9 +19,7 @@ package com.amilesend.onedrive;
 
 import com.amilesend.client.connection.RequestException;
 import com.amilesend.client.connection.ResponseException;
-import com.amilesend.client.connection.auth.AuthManager;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.connection.OneDriveConnectionBuilder;
 import com.amilesend.onedrive.connection.auth.BusinessAccountAuthManager;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
 import com.amilesend.onedrive.data.SerializedResource;
@@ -41,7 +39,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.amilesend.onedrive.connection.auth.BusinessAccountAuthManagerFunctionalTest.DISCOVERY_URL_PATH;
+import static com.amilesend.client.connection.Connection.Headers.CONTENT_ENCODING;
 import static com.amilesend.onedrive.connection.auth.BusinessAccountAuthManagerFunctionalTest.TOKEN_JSON_RESPONSE;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.AUTH_CODE;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.CLIENT_ID;
@@ -50,7 +48,6 @@ import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerF
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.TOKEN_URL_PATH;
 import static com.amilesend.onedrive.data.DriveTestDataHelper.newDrive;
 import static com.amilesend.onedrive.data.SiteTestDataHelper.newSite;
-import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

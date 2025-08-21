@@ -19,7 +19,6 @@ package com.amilesend.onedrive;
 
 import com.amilesend.client.connection.file.TransferProgressCallback;
 import com.amilesend.onedrive.connection.OneDriveConnection;
-import com.amilesend.onedrive.connection.OneDriveConnectionBuilder;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthManager;
 import com.amilesend.onedrive.connection.auth.PersonalAccountAuthManager;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
@@ -39,13 +38,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.amilesend.client.connection.Connection.Headers.CONTENT_ENCODING;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.TOKEN_JSON_RESPONSE;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.TOKEN_URL_PATH;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerTest.AUTH_CODE;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerTest.CLIENT_ID;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerTest.CLIENT_SECRET;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerTest.REDIRECT_URL;
-import static com.google.common.net.HttpHeaders.CONTENT_ENCODING;
 
 public class FunctionalTestBase {
     public static final int SUCCESS_STATUS_CODE = 200;

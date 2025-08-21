@@ -19,6 +19,7 @@ package com.amilesend.onedrive.resource;
 
 import com.amilesend.client.connection.file.LogProgressCallback;
 import com.amilesend.client.connection.file.TransferProgressCallback;
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
@@ -37,7 +38,6 @@ import com.amilesend.onedrive.resource.item.type.ThumbnailSet;
 import com.amilesend.onedrive.resource.request.AddPermissionRequest;
 import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -45,13 +45,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static com.amilesend.onedrive.resource.DriveFileTest.newMockFile;
 import static com.amilesend.onedrive.resource.DriveFileTest.newMockFilePath;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;

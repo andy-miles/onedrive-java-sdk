@@ -18,6 +18,7 @@
 package com.amilesend.onedrive.resource.drive;
 
 import com.amilesend.client.parse.strategy.GsonExclude;
+import com.amilesend.client.util.Validate;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.activities.ItemActivity;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
@@ -31,7 +32,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.Validate;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

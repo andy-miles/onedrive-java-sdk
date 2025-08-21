@@ -18,15 +18,15 @@
 package com.amilesend.onedrive.resource.site;
 
 import com.amilesend.client.parse.strategy.GsonExclude;
+import com.amilesend.client.util.StringUtils;
+import com.amilesend.client.util.VisibleForTesting;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import com.amilesend.onedrive.resource.item.type.PublicationFacet;
-import com.google.common.annotations.VisibleForTesting;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import okhttp3.RequestBody;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 

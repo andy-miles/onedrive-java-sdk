@@ -19,11 +19,11 @@ package com.amilesend.onedrive.resource;
 
 import com.amilesend.client.connection.file.LogProgressCallback;
 import com.amilesend.client.connection.file.TransferProgressCallback;
+import com.amilesend.client.util.StringUtils;
+import com.amilesend.client.util.Validate;
 import com.amilesend.onedrive.resource.item.DriveItem;
 import com.amilesend.onedrive.resource.item.type.Folder;
 import lombok.NonNull;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 
 import java.io.File;
 import java.io.IOException;

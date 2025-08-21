@@ -17,11 +17,11 @@
  */
 package com.amilesend.onedrive.connection;
 
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import com.amilesend.onedrive.connection.auth.PersonalAccountAuthManager;
 import com.amilesend.onedrive.parse.GsonFactory;
 import okhttp3.OkHttpClient;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

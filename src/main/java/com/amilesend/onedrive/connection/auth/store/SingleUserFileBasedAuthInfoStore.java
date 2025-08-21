@@ -17,10 +17,10 @@
  */
 package com.amilesend.onedrive.connection.auth.store;
 
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

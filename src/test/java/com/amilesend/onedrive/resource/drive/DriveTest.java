@@ -19,6 +19,7 @@ package com.amilesend.onedrive.resource.drive;
 
 import com.amilesend.client.parse.parser.BasicParser;
 import com.amilesend.client.parse.parser.GsonParser;
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
 import com.amilesend.onedrive.parse.resource.parser.SpecialDriveItemParser;
@@ -30,7 +31,6 @@ import com.amilesend.onedrive.resource.item.SpecialDriveItem;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import lombok.SneakyThrows;
 import okhttp3.Request;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

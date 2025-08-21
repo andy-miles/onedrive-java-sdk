@@ -18,13 +18,13 @@
 package com.amilesend.onedrive.resource.item;
 
 import com.amilesend.client.parse.strategy.GsonExclude;
+import com.amilesend.client.util.Validate;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.item.type.SpecialFolder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.Validate;
 
 import java.util.List;
 import java.util.Objects;

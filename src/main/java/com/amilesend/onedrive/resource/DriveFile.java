@@ -19,6 +19,7 @@ package com.amilesend.onedrive.resource;
 
 import com.amilesend.client.connection.file.LogProgressCallback;
 import com.amilesend.client.connection.file.TransferProgressCallback;
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.resource.item.DriveItem;
 import com.amilesend.onedrive.resource.item.type.Audio;
 import com.amilesend.onedrive.resource.item.type.GeoCoordinates;
@@ -29,7 +30,6 @@ import com.amilesend.onedrive.resource.item.type.Video;
 import com.amilesend.onedrive.resource.request.CreateSharingLinkRequest;
 import com.amilesend.onedrive.resource.request.PreviewRequest;
 import lombok.NonNull;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;

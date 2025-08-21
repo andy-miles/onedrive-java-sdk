@@ -20,6 +20,7 @@ package com.amilesend.onedrive;
 import com.amilesend.client.connection.auth.AuthManager;
 import com.amilesend.client.parse.parser.BasicParser;
 import com.amilesend.client.parse.parser.GsonParser;
+import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
 import com.amilesend.onedrive.parse.resource.parser.ListResponseBodyParser;
@@ -27,8 +28,6 @@ import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.identity.Identity;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import okhttp3.Request;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +39,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static com.amilesend.onedrive.data.DriveTestDataHelper.newRandomString;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -121,7 +121,7 @@ public class OneDriveTest {
                 () -> assertThrows(NullPointerException.class, () -> oneDriveUnderTest.getDrive(null)),
                 () -> assertThrows(IllegalArgumentException.class, () -> oneDriveUnderTest.getDrive(StringUtils.EMPTY)),
                 () -> assertThrows(IllegalArgumentException.class,
-                        () -> oneDriveUnderTest.getDrive(RandomStringUtils.secure().next(1000))));
+                        () -> oneDriveUnderTest.getDrive(newRandomString(1000))));
     }
 
     @Test

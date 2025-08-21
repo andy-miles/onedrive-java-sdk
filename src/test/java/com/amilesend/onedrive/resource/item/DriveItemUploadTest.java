@@ -32,8 +32,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
+import static com.amilesend.client.connection.Connection.Headers.CONTENT_TYPE;
 import static com.amilesend.onedrive.resource.DriveFileTest.newMockFilePath;
-import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
