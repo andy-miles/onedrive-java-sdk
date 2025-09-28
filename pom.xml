@@ -338,7 +338,7 @@
                 <configuration>
                     <basedir>.</basedir>
                     <includes>
-                        <include>target/**/com/amilesend/onedrive/**/*.html</include>
+                        <include>target/**/com/amilesend/**/*.html</include>
                     </includes>
                     <tokenValueMap>src/main/javadoc-format-fix.conf</tokenValueMap>
                     <regexFlags>
