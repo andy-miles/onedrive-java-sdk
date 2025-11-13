@@ -489,7 +489,6 @@ DriveFileDownloadExecution downloadExec =
 ## Roadmap
 - [ ] [Remote uploads from URL](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_upload_url) (in preview)
 - [ ] [Obtaining content for a Thumbnail](https://learn.microsoft.com/en-us/onedrive/developer/rest-api/resources/thumbnail)
-- [ ] Add configuration of a retry policy + strategy to support automatic retries for retriable errors
 
 See the [open issues](https://github.com/andy-miles/onedrive-java-sdk/issues) for a full list of proposed features and known issues.
 
