@@ -106,7 +106,7 @@ needs to be registered via the [Azure Apps Registration Page](https://aka.ms/App
    <dependency>
        <groupId>com.amilesend</groupId>
        <artifactId>onedrive-java-sdk</artifactId>
-       <version>2.1.5</version>
+       <version>2.2</version>
    </dependency>
    ```
 4. Instantiate your client instance per the options described below:
@@ -249,6 +249,50 @@ OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.bu
         .userAgent("MyUserAgent/1.0")
         .authInfoStore(authInfoStore)
         .build();
+```
+
+</details>
+
+### Configuring a RetryStrategy
+
+<details>
+You can optionally define a retry strategy for service errors via the <code>OneDriveConnectionBuilder</code>
+or via the <code>OneDriveFactoryStateManager</code>.
+
+OneDriveConnectionBuilder:
+```java
+OneDrive oneDrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
+       .userAgent("MyUserAgent/1.0")
+       .clientId(MY_CLIENT_ID)
+       .clientSecret(MY_CLIENT_SECRET)
+       .redirectUrl(redirectUrl)
+        // Options are ExponentialDelayRetryStrategy, FixedDelayRetryStrategy
+        // or NoRetryStrategy (default).
+        .retryStrategy(ExponentialDelayRetryStrategy.builder()
+                .baseDelayMs(500L)
+                .maxJitterMs(100L)
+                .maxAttempts(3)
+                .maxTotalDelayMs(2000L)
+                .build())
+       .build(authCode));
+```
+
+OneDriveFactoryStateManager:
+```java
+OneDriveFactoryStateManager factoryStateManager = OneDriveFactoryStateManager.builder()
+        .userAgent("MyUserAgent/1.0")
+        .credentialConfig(config)
+        .stateFile(Paths.get("./MyOneDriveUserState.json"))
+        // Options are ExponentialDelayRetryStrategy, FixedDelayRetryStrategy
+        // or NoRetryStrategy (default).
+        .retryStrategy(ExponentialDelayRetryStrategy.builder()
+                .baseDelayMs(500L)
+                .maxJitterMs(100L)
+                .maxAttempts(3)
+                .maxTotalDelayMs(2000L)
+                .build())
+        .build();
+OneDrive oneDrive = factoryStateManager.getInstance();
 ```
 
 </details>
