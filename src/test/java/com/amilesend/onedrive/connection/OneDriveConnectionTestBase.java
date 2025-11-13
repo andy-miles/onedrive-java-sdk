@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.connection;
 
+import com.amilesend.client.connection.retry.NoRetryStrategy;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthManager;
 import com.amilesend.onedrive.parse.GsonFactory;
 import com.google.gson.Gson;
@@ -35,6 +36,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.InputStream;
+import java.util.concurrent.Executors;
 
 import static com.amilesend.client.connection.Connection.Headers.AUTHORIZATION;
 import static com.amilesend.client.connection.Connection.Headers.CONTENT_ENCODING;
@@ -56,7 +58,7 @@ public abstract class OneDriveConnectionTestBase {
     protected static final int THROTTLED_ERROR_CODE = 429;
     protected static final int SERVER_ERROR_RESPONSE_CODE = 503;
     protected static final long BYTES_TRANSFERRED = 1024L;
-    protected static final Long DEFAULT_RETRY = Long.valueOf(10L);
+    protected static final Long DEFAULT_RETRY = Long.valueOf(1L);
 
     @Mock
     protected OkHttpClient mockHttpClient;
@@ -85,8 +87,11 @@ public abstract class OneDriveConnectionTestBase {
                 .httpClient(mockHttpClient)
                 .userAgent("TestUserAgent/1.0")
                 .isGzipContentEncodingEnabled(true)
+                .retryStrategy(new NoRetryStrategy())
+                .threadPool(Executors.newSingleThreadExecutor())
                 .build());
     }
+
     protected Callback getCallbackFromCallMock(final Call mockCall) {
         final ArgumentCaptor<Callback> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
         verify(mockCall).enqueue(callbackCaptor.capture());

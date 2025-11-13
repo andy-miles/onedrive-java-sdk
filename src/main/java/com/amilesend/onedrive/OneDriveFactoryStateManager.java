@@ -17,6 +17,8 @@
  */
 package com.amilesend.onedrive;
 
+import com.amilesend.client.connection.retry.NoRetryStrategy;
+import com.amilesend.client.connection.retry.RetryStrategy;
 import com.amilesend.client.util.StringUtils;
 import com.amilesend.client.util.Validate;
 import com.amilesend.client.util.VisibleForTesting;
@@ -44,7 +46,10 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import static com.amilesend.onedrive.connection.OneDriveConnectionBuilder.DEFAULT_NUM_THREADS;
 import static com.amilesend.onedrive.connection.auth.oauth.OAuthReceiver.browse;
 
 /**
@@ -105,6 +110,11 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
     private String redirectUrl;
     /** The callback path for the OAUTH redirect receiver. */
     private String callbackPath;
+    /** The retry strategy. */
+    private RetryStrategy retryStrategy;
+    /** The thread pool. */
+    private ExecutorService threadPool;
+    /** The onedrive class type. */
     private final Class<? extends OneDrive> onedriveType;
     @Setter(AccessLevel.PACKAGE)
     @VisibleForTesting
@@ -152,6 +162,10 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
                 "Either stateFile or authInfoStore must be defined");
         this.authInfoStore = Optional.ofNullable(builder.authInfoStore)
                 .orElseGet(() -> new SingleUserFileBasedAuthInfoStore(builder.stateFile));
+        this.retryStrategy = Optional.ofNullable(builder.retryStrategy)
+                .orElseGet(() -> new NoRetryStrategy());
+        this.threadPool = Optional.ofNullable(builder.threadPool)
+                .orElseGet(() -> Executors.newFixedThreadPool(DEFAULT_NUM_THREADS));
     }
 
     @Override
@@ -315,6 +329,10 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
         private Path stateFile;
         /** The store used to persist and retrieve the auth state. */
         private AuthInfoStore authInfoStore;
+        /** The retry strategy. */
+        private RetryStrategy retryStrategy;
+        /** The thread pool for async operations. */
+        private ExecutorService threadPool;
 
         /**
          * Creates a new {@code Builder} for the give OneDrive type.
@@ -434,6 +452,28 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
          */
         public Builder userAgent(final String userAgent) {
             this.userAgent = userAgent;
+            return this;
+        }
+
+        /**
+         * Sets the retry strategy for the underlying client connection.
+         *
+         * @param retryStrategy the retry strategy
+         * @return this builder
+         */
+        public Builder retryStrategy(final RetryStrategy retryStrategy) {
+            this.retryStrategy = retryStrategy;
+            return this;
+        }
+
+        /**
+         * Sets the executor service to manage threads for async operations.
+         *
+         * @param threadPool the thread pool
+         * @return this builder
+         */
+        public Builder threadPool(final ExecutorService threadPool) {
+            this.threadPool = threadPool;
             return this;
         }
 

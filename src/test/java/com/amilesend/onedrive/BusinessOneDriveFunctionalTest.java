@@ -19,6 +19,7 @@ package com.amilesend.onedrive;
 
 import com.amilesend.client.connection.RequestException;
 import com.amilesend.client.connection.ResponseException;
+import com.amilesend.client.connection.retry.NoRetryStrategy;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.auth.BusinessAccountAuthManager;
 import com.amilesend.onedrive.connection.http.OkHttpClientBuilder;
@@ -38,6 +39,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import static com.amilesend.client.connection.Connection.Headers.CONTENT_ENCODING;
 import static com.amilesend.onedrive.connection.auth.BusinessAccountAuthManagerFunctionalTest.TOKEN_JSON_RESPONSE;
@@ -380,6 +382,8 @@ public class BusinessOneDriveFunctionalTest {
                 .baseUrl(getMockWebServerUrl())
                 .userAgent("OneDriveTestJavaClient/1.0")
                 .isGzipContentEncodingEnabled(true)
+                .retryStrategy(new NoRetryStrategy())
+                .threadPool(Executors.newSingleThreadExecutor())
                 .build();
 
         oneDriveUnderTest = new BusinessOneDrive(oneDriveConnection);

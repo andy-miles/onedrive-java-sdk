@@ -32,20 +32,16 @@ import com.google.gson.Gson;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
-import java.util.zip.GZIPInputStream;
+import java.util.concurrent.ExecutorService;
 
-import static com.amilesend.client.connection.Connection.Headers.CONTENT_ENCODING;
 import static com.amilesend.client.connection.Connection.Headers.CONTENT_TYPE;
 
 /**
@@ -60,6 +56,10 @@ import static com.amilesend.client.connection.Connection.Headers.CONTENT_TYPE;
 @SuperBuilder
 @Slf4j
 public class OneDriveConnection extends Connection<GsonFactory> {
+    /** Thread pool for async requests. */
+    @NonNull
+    private final ExecutorService threadPool;
+
     /**
      * Creates a new {@link Request.Builder} with pre-configured headers for a request that contains both a
      * JSON-formatted request and response body.
@@ -78,19 +78,15 @@ public class OneDriveConnection extends Connection<GsonFactory> {
      * @throws ConnectionException if an error occurred during the transaction
      */
     public String executeRemoteAsync(@NonNull final Request request) throws ConnectionException {
-        try {
-            try (final Response response = getHttpClient().newCall(request).execute()) {
-                validateResponseCode(response);
-                final int code = response.code();
-                // Specific to remote async operations
-                if (code != 202) {
-                    throw new ResponseException("Expected a 202 response code. Got " + code);
-                }
-
-                return response.header("Location");
+        try (final Response response = execute(request)) {
+            validateResponseCode(response);
+            final int code = response.code();
+            // Specific to remote async operations
+            if (code != 202) {
+                throw new ResponseException("Expected a 202 response code. Got " + code);
             }
-        } catch (final IOException ex) {
-            throw new RequestException("Unable to execute request: " + ex.getMessage(), ex);
+
+            return response.header("Location");
         }
     }
 
@@ -105,32 +101,7 @@ public class OneDriveConnection extends Connection<GsonFactory> {
     public <T> CompletableFuture<T> executeAsync(
             @NonNull final Request request,
             @NonNull final GsonParser<T> parser) {
-        final OneDriveConnection connectionRef = this;
-        final CompletableFuture<T> future = new CompletableFuture<>();
-        getHttpClient().newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull final Call call, @NonNull final IOException ex) {
-                future.completeExceptionally(ex);
-            }
-
-            @Override
-            public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                try {
-                    validateResponseCode(response);
-                    final InputStream responseBodyInputStream =
-                            "gzip".equals(response.header(CONTENT_ENCODING))
-                                    ? new GZIPInputStream(response.body().byteStream())
-                                    : response.body().byteStream();
-                    future.complete(parser.parse(getGsonFactory().getInstance(connectionRef), responseBodyInputStream));
-                } catch (final Exception ex) {
-                    future.completeExceptionally(ex);
-                } finally {
-                    response.close();
-                }
-            }
-        });
-
-        return future;
+        return CompletableFuture.supplyAsync(() -> execute(request, parser), threadPool);
     }
 
     /**
@@ -160,8 +131,8 @@ public class OneDriveConnection extends Connection<GsonFactory> {
             throw new RequestException("Unable to determine download path:" + ex.getMessage(), ex);
         }
 
-        try (final Response response = getHttpClient().newCall(request).execute()) {
-                return processDownloadResponse(response, downloadPath, sizeBytes, callback);
+        try (final Response response = execute(request)) {
+            return processDownloadResponse(response, downloadPath, sizeBytes, callback);
         } catch (final ConnectionException ex) {
             // Response failed validation, notify the callback
             callback.onFailure(ex);
@@ -190,45 +161,9 @@ public class OneDriveConnection extends Connection<GsonFactory> {
             final long sizeBytes,
             @NonNull final TransferProgressCallback callback) {
         Validate.notBlank(name, "name must not be blank");
-        final CompletableFuture<Long> future = new CompletableFuture<>();
-
-        getHttpClient().newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull final Call call, @NonNull final IOException ex) {
-                callback.onFailure(ex);
-                future.completeExceptionally(ex);
-            }
-
-            @Override
-            public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                final Path downloadPath;
-                try {
-                    downloadPath = checkFolderAndGetDestinationPath(folderPath, name);
-                } catch (final Exception ex) {
-                    callback.onFailure(ex);
-                    future.completeExceptionally(ex);
-                    throw new RequestException("Unable to determine download path:" + ex.getMessage(), ex);
-                }
-
-                try {
-                    final long totalBytes = processDownloadResponse(response, downloadPath, sizeBytes, callback);
-                    future.complete(Long.valueOf(totalBytes));
-                } catch (final ConnectionException ex) {
-                    // Response failed validation, notify the callback
-                    callback.onFailure(ex);
-                    future.completeExceptionally(ex);
-                    throw ex;
-                } catch (final Exception ex) {
-                    // The underlying TransferFileWriter will record an onFailure to the callback.
-                    future.completeExceptionally(ex);
-                    throw ex;
-                } finally {
-                    response.close();
-                }
-            }
-        });
-
-        return future;
+        return CompletableFuture.supplyAsync(
+                () -> download(request, folderPath, name, sizeBytes, callback),
+                threadPool);
     }
 
     @VisibleForTesting
@@ -237,8 +172,6 @@ public class OneDriveConnection extends Connection<GsonFactory> {
             final Path downloadPath,
             final long sizeBytes,
             final TransferProgressCallback callback) throws IOException {
-        validateResponseCode(response);
-
         final long totalBytes = TransferFileWriter.builder()
                 .output(downloadPath)
                 .callback(callback)

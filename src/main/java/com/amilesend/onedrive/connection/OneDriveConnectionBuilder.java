@@ -17,6 +17,8 @@
  */
 package com.amilesend.onedrive.connection;
 
+import com.amilesend.client.connection.retry.NoRetryStrategy;
+import com.amilesend.client.connection.retry.RetryStrategy;
 import com.amilesend.client.util.Validate;
 import com.amilesend.client.util.VisibleForTesting;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthInfo;
@@ -27,15 +29,23 @@ import com.amilesend.onedrive.parse.GsonFactory;
 import lombok.NonNull;
 import okhttp3.OkHttpClient;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /** Builder to configure and return a new {@link OneDriveConnection} instance. */
 public class OneDriveConnectionBuilder {
+    public static final int DEFAULT_NUM_THREADS = Math.max(Runtime.getRuntime().availableProcessors() - 1, 1);
+
+    private final GsonFactory gsonFactory;
+
     private String clientId;
     private String clientSecret;
     private String redirectUrl;
     private String userAgent;
     private OkHttpClient httpClient = new OkHttpClientBuilder().build();
     private OneDriveAuthManager authManager;
-    private final GsonFactory gsonFactory;
+    private RetryStrategy retryStrategy = new NoRetryStrategy();
+    private ExecutorService threadPool = Executors.newFixedThreadPool(DEFAULT_NUM_THREADS);
 
     /**
      * Creates a new {@code OneDriveConnectionBuilder} instance.
@@ -118,6 +128,29 @@ public class OneDriveConnectionBuilder {
     }
 
     /**
+     * The {@link RetryStrategy} used for the underyling client connection.
+     *
+     * @param retryStrategy the retry strategy
+     * @return this builder
+     * @see RetryStrategy
+     */
+    public OneDriveConnectionBuilder retryStrategy (final RetryStrategy retryStrategy) {
+        this.retryStrategy = retryStrategy;
+        return this;
+    }
+
+    /**
+     * The executor service to manage async operations for the client.
+     *
+     * @param threadPool the thread pool
+     * @return this builder
+     */
+    public OneDriveConnectionBuilder threadPool(final ExecutorService threadPool) {
+        this.threadPool = threadPool;
+        return this;
+    }
+
+    /**
      * Builds a new {@link OneDriveConnection} instance with the given {@code authCode}.
      *
      * @param authCode the authorization code obtained from the OAuth handshake.
@@ -132,6 +165,8 @@ public class OneDriveConnectionBuilder {
                 .baseUrl(authManager.getAuthenticatedEndpoint())
                 .userAgent(userAgent)
                 .isGzipContentEncodingEnabled(true)
+                .retryStrategy(retryStrategy)
+                .threadPool(threadPool)
                 .build();
     }
 
@@ -150,6 +185,8 @@ public class OneDriveConnectionBuilder {
                 .baseUrl(authManager.getAuthenticatedEndpoint())
                 .userAgent(userAgent)
                 .isGzipContentEncodingEnabled(true)
+                .retryStrategy(retryStrategy)
+                .threadPool(threadPool)
                 .build();
     }
 

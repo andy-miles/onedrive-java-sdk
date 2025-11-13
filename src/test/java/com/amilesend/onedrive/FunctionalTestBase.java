@@ -18,6 +18,7 @@
 package com.amilesend.onedrive;
 
 import com.amilesend.client.connection.file.TransferProgressCallback;
+import com.amilesend.client.connection.retry.NoRetryStrategy;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.auth.OneDriveAuthManager;
 import com.amilesend.onedrive.connection.auth.PersonalAccountAuthManager;
@@ -37,6 +38,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.Executors;
 
 import static com.amilesend.client.connection.Connection.Headers.CONTENT_ENCODING;
 import static com.amilesend.onedrive.connection.auth.PersonalAccountAuthManagerFunctionalTest.TOKEN_JSON_RESPONSE;
@@ -152,6 +154,8 @@ public class FunctionalTestBase {
                 .baseUrl(getMockWebServerUrl())
                 .userAgent("OneDriveTestJavaClient/1.0")
                 .isGzipContentEncodingEnabled(true)
+                .retryStrategy(new NoRetryStrategy())
+                .threadPool(Executors.newSingleThreadExecutor())
                 .build();
 
         oneDriveUnderTest = new OneDrive(oneDriveConnection);

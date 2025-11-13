@@ -19,13 +19,10 @@ package com.amilesend.onedrive.connection;
 
 import com.amilesend.client.connection.ConnectionException;
 import com.amilesend.client.connection.RequestException;
-import com.amilesend.client.connection.ResponseException;
 import com.amilesend.client.connection.file.TransferFileWriter;
 import com.amilesend.client.connection.file.TransferProgressCallback;
 import com.amilesend.client.util.StringUtils;
 import lombok.SneakyThrows;
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 import okio.BufferedSource;
@@ -35,7 +32,6 @@ import org.mockito.MockedStatic;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -238,21 +234,18 @@ public class OneDriveConnectionDownloadTest extends OneDriveConnectionTestBase {
         doReturn(mockDownloadPath)
                 .when(connectionUnderTest)
                 .checkFolderAndGetDestinationPath(any(Path.class), anyString());
-        final Call mockCall = setUpHttpClientMockAsync();
-        // Obtain future and get the callback reference
-        final CompletableFuture<Long> future = connectionUnderTest.downloadAsync(
+        final Response mockResponse = newMockedResponse(SUCCESS_RESPONSE_CODE);
+        setUpHttpClientMock(mockResponse);
+
+        final long bytesDownloaded = connectionUnderTest.downloadAsync(
                 mock(Request.class),
                 mock(Path.class),
-                "Filename",
+                "filename",
                 BYTES_TRANSFERRED,
-                mock(TransferProgressCallback.class));
-        final Callback callback = getCallbackFromCallMock(mockCall);
-        final Response mockResponse = newMockedResponse(SUCCESS_RESPONSE_CODE);
-
-        callback.onResponse(mockCall, mockResponse);
+                mock(TransferProgressCallback.class)).get();
 
         assertAll(
-                () -> assertEquals(BYTES_TRANSFERRED, future.get()),
+                () -> assertEquals(BYTES_TRANSFERRED, bytesDownloaded),
                 () -> verify(connectionUnderTest).processDownloadResponse(
                         eq(mockResponse),
                         eq(mockDownloadPath),
@@ -261,23 +254,34 @@ public class OneDriveConnectionDownloadTest extends OneDriveConnectionTestBase {
     }
 
     @Test
-    public void downloadSync_withFailure_shouldThrowException() {
-        final Call mockCall = setUpHttpClientMockAsync();
-        final TransferProgressCallback mockTransferProgressCallback = mock(TransferProgressCallback.class);
-        // Obtain future and get the callback reference
-        final CompletableFuture<Long> future = connectionUnderTest.downloadAsync(
-                mock(Request.class),
-                mock(Path.class),
-                "Filename",
-                BYTES_TRANSFERRED,
-                mockTransferProgressCallback);
-        final Callback callback = getCallbackFromCallMock(mockCall);
+    @SneakyThrows
+    public void downloadAsync_withFailure_shouldThrowException() {
+        doThrow(new IOException("Exception"))
+                .when(connectionUnderTest)
+                .processDownloadResponse(
+                        any(Response.class),
+                        any(Path.class),
+                        anyLong(),
+                        any(TransferProgressCallback.class));
+        final Path mockDownloadPath = mock(Path.class);
+        doReturn(mockDownloadPath)
+                .when(connectionUnderTest)
+                .checkFolderAndGetDestinationPath(any(Path.class), anyString());
+        final Response mockResponse = newMockedResponse(SUCCESS_RESPONSE_CODE);
+        setUpHttpClientMock(mockResponse);
+        final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
 
-        callback.onFailure(mockCall, new IOException("Exception"));
-        verify(mockTransferProgressCallback).onFailure(isA(IOException.class));
+        final Throwable thrown = assertThrows(ExecutionException.class,
+                () -> connectionUnderTest.downloadAsync(
+                        mock(Request.class),
+                        mock(Path.class),
+                        "filename",
+                        BYTES_TRANSFERRED,
+                        mockCallback).get());
 
-        final Throwable thrown = assertThrows(ExecutionException.class, () -> future.get());
-        assertInstanceOf(IOException.class, thrown.getCause());
+        assertAll(
+                () -> assertInstanceOf(RequestException.class, thrown.getCause()),
+                () -> verify(mockCallback, never()).onFailure(any(Throwable.class)));
     }
 
     @SneakyThrows
@@ -286,26 +290,19 @@ public class OneDriveConnectionDownloadTest extends OneDriveConnectionTestBase {
         doThrow(new IOException("Exception"))
                 .when(connectionUnderTest)
                 .checkFolderAndGetDestinationPath(any(Path.class), anyString());
-        final Call mockCall = setUpHttpClientMockAsync();
-        final TransferProgressCallback mockTransferProgressCallback = mock(TransferProgressCallback.class);
-        // Obtain future and get the callback reference
-        final CompletableFuture<Long> future = connectionUnderTest.downloadAsync(
-                mock(Request.class),
-                mock(Path.class),
-                "Filename",
-                BYTES_TRANSFERRED,
-                mockTransferProgressCallback);
-        final Callback callback = getCallbackFromCallMock(mockCall);
+        final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
 
-        final Throwable thrownFromCallback =
-                assertThrows(RequestException.class, () -> callback.onResponse(mockCall, mock(Response.class)));
+        final Throwable thrown = assertThrows(ExecutionException.class,
+                () -> connectionUnderTest.downloadAsync(
+                        mock(Request.class),
+                        mock(Path.class),
+                        "filename",
+                        BYTES_TRANSFERRED,
+                        mockCallback).get());
 
         assertAll(
-                () -> assertInstanceOf(IOException.class, thrownFromCallback.getCause()),
-                () -> verify(mockTransferProgressCallback).onFailure(eq(thrownFromCallback.getCause())));
-
-        final Throwable thrownFromFuture = assertThrows(ExecutionException.class, () -> future.get());
-        assertInstanceOf(IOException.class, thrownFromFuture.getCause());
+                () -> assertInstanceOf(RequestException.class, thrown.getCause()),
+                () -> verify(mockCallback).onFailure(eq(thrown.getCause().getCause())));
     }
 
     @SneakyThrows
@@ -322,55 +319,45 @@ public class OneDriveConnectionDownloadTest extends OneDriveConnectionTestBase {
         doReturn(mockDownloadPath)
                 .when(connectionUnderTest)
                 .checkFolderAndGetDestinationPath(any(Path.class), anyString());
-        final Call mockCall = setUpHttpClientMockAsync();
-        final TransferProgressCallback mockTransferProgressCallback = mock(TransferProgressCallback.class);
-        // Obtain future and get the callback reference
-        final CompletableFuture<Long> future = connectionUnderTest.downloadAsync(
+        final Response mockResponse = newMockedResponse(SUCCESS_RESPONSE_CODE);
+        setUpHttpClientMock(mockResponse);
+        final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
+
+        final Throwable thrown = assertThrows(ExecutionException.class, () -> connectionUnderTest.downloadAsync(
                 mock(Request.class),
                 mock(Path.class),
-                "Filename",
+                "filename",
                 BYTES_TRANSFERRED,
-                mockTransferProgressCallback);
-        final Callback callback = getCallbackFromCallMock(mockCall);
+                mockCallback).get());
 
-        assertThrows(ConnectionException.class, () -> callback.onResponse(mockCall, mock(Response.class)));
-
-        verify(mockTransferProgressCallback).onFailure(isA(ConnectionException.class));
-
-        final Throwable thrownFromFuture = assertThrows(ExecutionException.class, () -> future.get());
-        assertInstanceOf(ConnectionException.class, thrownFromFuture.getCause());
+        assertAll(
+                () -> assertInstanceOf(ConnectionException.class, thrown.getCause()),
+                () -> verify(mockCallback).onFailure(eq(thrown.getCause())));
     }
 
     @SneakyThrows
     @Test
-    public void downloadAsync_withIOExceptionDuringProcess_shouldThrowException() {
-        doThrow(new IOException("Exception"))
-                .when(connectionUnderTest)
-                .processDownloadResponse(
-                        any(Response.class),
+    public void downloadAsync_withExceptionDuringProcess_shouldThrowException() {
+        final TransferProgressCallback mockCallback = mock(TransferProgressCallback.class);
+        doThrow(new RequestException("Exception"))
+                .when(connectionUnderTest).download(
+                        any(Request.class),
                         any(Path.class),
+                        anyString(),
                         anyLong(),
                         any(TransferProgressCallback.class));
-        final Path mockDownloadPath = mock(Path.class);
-        doReturn(mockDownloadPath)
-                .when(connectionUnderTest)
-                .checkFolderAndGetDestinationPath(any(Path.class), anyString());
-        final Call mockCall = setUpHttpClientMockAsync();
-        final TransferProgressCallback mockTransferProgressCallback = mock(TransferProgressCallback.class);
-        // Obtain future and get the callback reference
-        final CompletableFuture<Long> future = connectionUnderTest.downloadAsync(
-                mock(Request.class),
-                mock(Path.class),
-                "Filename",
-                BYTES_TRANSFERRED,
-                mockTransferProgressCallback);
-        final Callback callback = getCallbackFromCallMock(mockCall);
 
-        assertThrows(IOException.class, () -> callback.onResponse(mockCall, mock(Response.class)));
-        verify(mockTransferProgressCallback, never()).onFailure(any(Throwable.class));
+        final Throwable thrown = assertThrows(ExecutionException.class,
+                () -> connectionUnderTest.downloadAsync(
+                        mock(Request.class),
+                        mock(Path.class),
+                        "filename",
+                        BYTES_TRANSFERRED,
+                        mockCallback).get());
 
-        final Throwable thrown = assertThrows(ExecutionException.class, () -> future.get());
-        assertInstanceOf(IOException.class, thrown.getCause());
+        assertAll(
+                () -> assertInstanceOf(RequestException.class, thrown.getCause()),
+                () -> verify(mockCallback, never()).onFailure(any(Throwable.class)));
     }
 
     @SneakyThrows
@@ -462,28 +449,6 @@ public class OneDriveConnectionDownloadTest extends OneDriveConnectionTestBase {
                     BYTES_TRANSFERRED,
                     mock(TransferProgressCallback.class)));
         }
-    }
-
-    @SneakyThrows
-    @Test
-    public void processDownloadResponse_withServerErrorResponse_shouldThrowException() {
-        final Response mockResponse = newMockedResponse(SERVER_ERROR_RESPONSE_CODE);
-        assertThrows(ResponseException.class, () -> connectionUnderTest.processDownloadResponse(
-                mockResponse,
-                mock(Path.class),
-                BYTES_TRANSFERRED,
-                mock(TransferProgressCallback.class)));
-    }
-
-    @SneakyThrows
-    @Test
-    public void processDownloadResponse_withRequestErrorResponse_shouldThrowException() {
-        final Response mockResponse = newMockedResponse(REQUEST_ERROR_CODE);
-        assertThrows(RequestException.class, () -> connectionUnderTest.processDownloadResponse(
-                mockResponse,
-                mock(Path.class),
-                BYTES_TRANSFERRED,
-                mock(TransferProgressCallback.class)));
     }
 
     ////////////////////////////////////

@@ -27,7 +27,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import lombok.SneakyThrows;
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,6 @@ import org.mockito.MockedConstruction;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.zip.GZIPInputStream;
 
@@ -45,6 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
@@ -267,110 +267,49 @@ public class OneDriveConnectionExecuteTest extends OneDriveConnectionTestBase {
     @SneakyThrows
     @Test
     public void executeAsync_withValidRequest_shouldReturnFuture() {
-        final Response mockResponse = newMockedResponse(SUCCESS_RESPONSE_CODE);
-        final Call mockCall = setUpHttpClientMockAsync();
         final DriveItem mockDriveItem = mock(DriveItem.class);
         final GsonParser<DriveItem> mockParser = mock(GsonParser.class);
-        when(mockParser.parse(any(Gson.class), any(InputStream.class))).thenReturn(mockDriveItem);
-
-        // Obtain future and get the callback reference
-        final CompletableFuture<DriveItem> future =
-                connectionUnderTest.executeAsync(mock(Request.class), mockParser);
-        final Callback callback = getCallbackFromCallMock(mockCall);
+        doReturn(mockDriveItem).when(connectionUnderTest).execute(any(Request.class), any(GsonParser.class));
 
         try (final MockedConstruction<GZIPInputStream> streamCons = mockConstruction(GZIPInputStream.class)) {
-            // Simulate callback onResponse invocation
-            callback.onResponse(mockCall, mockResponse);
+            final DriveItem actual = connectionUnderTest.executeAsync(mock(Request.class), mockParser).get();
 
-            final DriveItem actual = future.get();
-
-            assertAll(
-                    () -> assertEquals(mockDriveItem, actual),
-                    () -> verify(mockParser).parse(isA(Gson.class), isA(InputStream.class)));
+            assertEquals(mockDriveItem, actual);
         }
     }
 
     @SneakyThrows
     @Test
     public void executeAsync_withServerErrorResponseCode_shouldThrowException() {
-        executeAsync_withErrorCode_shouldThrowException(SERVER_ERROR_RESPONSE_CODE, ResponseException.class);
+        final GsonParser<DriveItem> mockParser = mock(GsonParser.class);
+        doThrow(new ResponseException("Exception"))
+                .when(connectionUnderTest)
+                .execute(any(Request.class), any(GsonParser.class));
+
+        try (final MockedConstruction<GZIPInputStream> streamCons = mockConstruction(GZIPInputStream.class)) {
+            final Throwable thrown = assertThrows(
+                    ExecutionException.class,
+                    () -> connectionUnderTest.executeAsync(mock(Request.class), mockParser).get());
+            assertInstanceOf(ResponseException.class, thrown.getCause());
+        }
+
+        //executeAsync_withErrorCode_shouldThrowException(SERVER_ERROR_RESPONSE_CODE, ResponseException.class);
     }
 
     @SneakyThrows
     @Test
     public void executeAsync_withRequestErrorResponseCode_shouldThrowException() {
-        executeAsync_withErrorCode_shouldThrowException(REQUEST_ERROR_CODE, RequestException.class);
-    }
-
-    @SneakyThrows
-    @Test
-    public void executeAsync_withThrottledResponse_shouldThrowException() {
-        final Long expected = 1000L;
-        final Response mockResponse = newMockedResponse(THROTTLED_ERROR_CODE, expected);
-        final Call mockCall = setUpHttpClientMockAsync();
         final GsonParser<DriveItem> mockParser = mock(GsonParser.class);
-
-        // Obtain future and get the callback reference
-        final CompletableFuture<DriveItem> future = connectionUnderTest.executeAsync(mock(Request.class), mockParser);
-        // Simulate callback onResponse invocation
-        getCallbackFromCallMock(mockCall).onResponse(mockCall, mockResponse);
-
-        final Throwable thrown = assertThrows(ExecutionException.class, () -> future.get());
-        assertAll(
-                () -> assertInstanceOf(ThrottledException.class, thrown.getCause()),
-                () -> assertEquals(expected, ((ThrottledException) thrown.getCause()).getRetryAfterSeconds()));
-    }
-
-    @SneakyThrows
-    @Test
-    public void executeAsync_withThrottledResponseAndNullRetryAfterHeader_shouldThrowException() {
-        final Response mockResponse = newMockedResponse(THROTTLED_ERROR_CODE, (Long) null);
-        final Call mockCall = setUpHttpClientMockAsync();
-        final GsonParser<DriveItem> mockParser = mock(GsonParser.class);
-
-        // Obtain future and get the callback reference
-        final CompletableFuture<DriveItem> future = connectionUnderTest.executeAsync(mock(Request.class), mockParser);
-        // Simulate callback onResponse invocation
-        getCallbackFromCallMock(mockCall).onResponse(mockCall, mockResponse);
-
-        final Throwable thrown = assertThrows(ExecutionException.class, () -> future.get());
-        assertAll(
-                () -> assertInstanceOf(ThrottledException.class, thrown.getCause()),
-                () -> assertEquals(DEFAULT_RETRY, ((ThrottledException) thrown.getCause()).getRetryAfterSeconds()));
-    }
-
-    @SneakyThrows
-    private <T extends Throwable> void executeAsync_withErrorCode_shouldThrowException(
-            final int code, final Class<T> expectedExceptionType) {
-        final Response mockResponse = newMockedResponse(code);
-        final Call mockCall = setUpHttpClientMockAsync();
-        final GsonParser<DriveItem> mockParser = mock(GsonParser.class);
-
-        // Obtain future and get the callback reference
-        final CompletableFuture<DriveItem> future = connectionUnderTest.executeAsync(mock(Request.class), mockParser);
-        // Simulate callback onResponse invocation
-        getCallbackFromCallMock(mockCall).onResponse(mockCall, mockResponse);
+        doThrow(new RequestException("Exception"))
+                .when(connectionUnderTest)
+                .execute(any(Request.class), any(GsonParser.class));
 
         try (final MockedConstruction<GZIPInputStream> streamCons = mockConstruction(GZIPInputStream.class)) {
-            final Throwable thrown = assertThrows(ExecutionException.class, () -> future.get());
-            assertInstanceOf(expectedExceptionType, thrown.getCause());
+            final Throwable thrown = assertThrows(
+                    ExecutionException.class,
+                    () -> connectionUnderTest.executeAsync(mock(Request.class), mockParser).get());
+            assertInstanceOf(RequestException.class, thrown.getCause());
         }
-    }
-
-    @Test
-    public void executeAsync_withFailure_shouldThrowException() {
-        final Call mockCall = setUpHttpClientMockAsync();
-        final GsonParser<DriveItem> mockParser = mock(GsonParser.class);
-
-        // Obtain future and get the callback reference
-        final CompletableFuture<DriveItem> future =
-                connectionUnderTest.executeAsync(mock(Request.class), mockParser);
-        final Callback callback = getCallbackFromCallMock(mockCall);
-
-        callback.onFailure(mockCall, new IOException("Exception"));
-
-        final Throwable thrown = assertThrows(ExecutionException.class, () -> future.get());
-        assertInstanceOf(IOException.class, thrown.getCause());
     }
 
     @Test
