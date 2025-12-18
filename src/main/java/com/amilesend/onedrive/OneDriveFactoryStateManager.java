@@ -220,6 +220,8 @@ public class OneDriveFactoryStateManager<T extends OneDrive> implements AutoClos
                     .userAgent(userAgent)
                     .clientId(config.getClientId())
                     .clientSecret(config.getClientSecret())
+                    .retryStrategy(retryStrategy)
+                    .threadPool(threadPool)
                     .redirectUrl(redirectUrl);
             OneDriveConnection connection;
             // If persisted state exists, use it to leverage the refresh token; otherwise, obtain the auth code

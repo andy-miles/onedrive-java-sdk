@@ -262,10 +262,10 @@ or via the <code>OneDriveFactoryStateManager</code>.
 OneDriveConnectionBuilder:
 ```java
 OneDrive oneDrive = new OneDrive(OneDriveConnectionBuilder.newInstance()
-       .userAgent("MyUserAgent/1.0")
-       .clientId(MY_CLIENT_ID)
-       .clientSecret(MY_CLIENT_SECRET)
-       .redirectUrl(redirectUrl)
+        .userAgent("MyUserAgent/1.0")
+        .clientId(MY_CLIENT_ID)
+        .clientSecret(MY_CLIENT_SECRET)
+        .redirectUrl(redirectUrl)
         // Options are ExponentialDelayRetryStrategy, FixedDelayRetryStrategy
         // or NoRetryStrategy (default).
         .retryStrategy(ExponentialDelayRetryStrategy.builder()

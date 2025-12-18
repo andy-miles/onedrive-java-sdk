@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive;
 
+import com.amilesend.client.connection.retry.RetryStrategy;
 import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.connection.OneDriveConnectionBuilder;
 import com.amilesend.onedrive.connection.auth.BusinessAccountAuthManager;
@@ -43,6 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -632,6 +634,8 @@ public class OneDriveFactoryStateManagerTest {
         when(builder.clientSecret(anyString())).thenReturn(builder);
         when(builder.redirectUrl(anyString())).thenReturn(builder);
         when(builder.userAgent(anyString())).thenReturn(builder);
+        when(builder.retryStrategy(any(RetryStrategy.class))).thenReturn(builder);
+        when(builder.threadPool(any(ExecutorService.class))).thenReturn(builder);
         final OneDriveConnection mockConnection = mock(OneDriveConnection.class);
         lenient().when(builder.build(anyString())).thenReturn(mockConnection);
         lenient().when(builder.build(any(OneDriveAuthInfo.class))).thenReturn(mockConnection);
