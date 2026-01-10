@@ -1,6 +1,6 @@
 /*
  * onedrive-java-sdk - A Java SDK to access OneDrive drives and files.
- * Copyright © 2023-2025 Andy Miles (andy.miles@amilesend.com)
+ * Copyright © 2023-2026 Andy Miles (andy.miles@amilesend.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
