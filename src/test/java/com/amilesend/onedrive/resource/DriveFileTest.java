@@ -331,7 +331,7 @@ public class DriveFileTest {
         when(mockDelegate.getId()).thenReturn("FileId");
 
         assertEquals("DriveFile(name=FileName, id=FileId, isDeleted=false, " +
-                        "isRemote=false, isAudio=false, isImage=false, isVideo=false)",
+                        "isRemote=false, isAudio=false, isImage=false, isVideo=false, parentId=null)",
                 driveFileUnderTest.toString());
     }
 

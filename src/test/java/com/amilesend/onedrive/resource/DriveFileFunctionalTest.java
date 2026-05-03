@@ -52,6 +52,7 @@ import static com.amilesend.onedrive.data.TypeTestDataHelper.newThumbnailSet;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -260,7 +261,10 @@ public class DriveFileFunctionalTest extends FunctionalTestBase {
 
         final DriveFile actual = fileUnderTest.move("ParentIdValue", "NewName");
 
-        assertEquals(fileUnderTest, actual);
+        assertAll(
+                () -> assertEquals(fileUnderTest.getId(), actual.getId()),
+                () -> assertEquals(fileUnderTest.getName(), actual.getName()),
+                () -> assertNotEquals(fileUnderTest.getParentReference(), actual.getParentReference()));
     }
 
     @Test

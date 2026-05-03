@@ -67,7 +67,7 @@ public class DriveItemCrudTest extends DriveItemTestBase {
 
     @Test
     public void update_shouldReturnDriveItem() {
-        doReturn("JsonDriveItemChanges").when(driveItemUnderTest).toJson();
+        doReturn("{\"name\": \"Updated\"").when(driveItemUnderTest).getUpdatedDriveItemAttributes();
         final DriveItem expected = mock(DriveItem.class);
         when(mockConnection.execute(any(Request.class), any(GsonParser.class))).thenReturn(expected);
 
@@ -81,6 +81,11 @@ public class DriveItemCrudTest extends DriveItemTestBase {
                         requestCaptor.getValue().url().toString()),
                 () -> assertEquals("PATCH", requestCaptor.getValue().method()),
                 () -> assertEquals(JSON_MEDIA_TYPE, requestCaptor.getValue().body().contentType()));
+    }
+
+    @Test
+    public void update_withInvalidUpdatedFilename_shouldThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> driveItemUnderTest.setName("Invalid|Name.txt"));
     }
 
     @Test

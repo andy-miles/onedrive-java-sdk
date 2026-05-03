@@ -20,8 +20,10 @@ package com.amilesend.onedrive.resource;
 import org.junit.jupiter.api.Test;
 
 import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals;
+import static com.amilesend.onedrive.resource.ResourceHelper.validateFilename;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ResourceHelperTest {
@@ -40,5 +42,28 @@ public class ResourceHelperTest {
         assertAll(
                 () -> assertFalse(objectDefinedEquals(new Object(), null)),
                 () -> assertFalse(objectDefinedEquals(null, new Object())));
+    }
+
+    @Test
+    public void validateFilename_withInvalidFilenames_shouldThrowException() {
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> validateFilename("filename\".txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> validateFilename("filenam*e.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> validateFilename("filen:ame.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> validateFilename("filenam<e.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> validateFilename("filen>ame.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> validateFilename("file?name.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> validateFilename("file/name.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> validateFilename("file\\name.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> validateFilename("file|name.txt")));
     }
 }

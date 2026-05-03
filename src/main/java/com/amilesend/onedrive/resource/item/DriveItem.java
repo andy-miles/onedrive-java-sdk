@@ -61,7 +61,9 @@ import okhttp3.RequestBody;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -78,6 +80,7 @@ import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPermission
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPreviewParser;
 import static com.amilesend.onedrive.resource.ResourceHelper.escapeValueForUrlPath;
 import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals;
+import static com.amilesend.onedrive.resource.ResourceHelper.validateFilename;
 
 /**
  * Describes a resource stored in a drive.
@@ -370,15 +373,36 @@ public class DriveItem extends BaseItem {
      * @return the updated drive item
      */
     public DriveItem update() {
+        final String updatedAttributes = getUpdatedDriveItemAttributes();
+        if (StringUtils.isBlank(updatedAttributes)) {
+            return this;
+        }
+
         return connection.execute(
                 connection.newWithBodyRequestBuilder()
                         .url(new StringBuilder(connection.getBaseUrl())
                                 .append(DRIVE_ITEM_BASE_URL_PATH)
                                 .append(validateAndGetUrlEncodedId())
                                 .toString())
-                        .patch(RequestBody.create(toJson(), JSON_MEDIA_TYPE))
+                        .patch(RequestBody.create(updatedAttributes, JSON_MEDIA_TYPE))
                         .build(),
                 DRIVE_ITEM_PARSER);
+    }
+
+    @VisibleForTesting
+    String getUpdatedDriveItemAttributes() {
+        final Map<String, Object> attributesToUpdate = new HashMap<>();
+        if (isDescriptionUpdated()) {
+            attributesToUpdate.put("description", getDescription());
+        }
+        if (isParentReferenceUpdated()) {
+            attributesToUpdate.put("parentReference", getParentReference());
+        }
+        if (isNameUpdated()) {
+            attributesToUpdate.put("name", getName());
+        }
+
+        return connection.getGsonFactory().getInstance(connection).toJson(attributesToUpdate);
     }
 
     /**
@@ -737,9 +761,9 @@ public class DriveItem extends BaseItem {
                 "Both destinationParentId and newName must not be the same as the original drive item");
 
         if (StringUtils.isNotBlank(destinationParentId)) {
-            final ItemReference parentReference = getParentReference() != null
-                    ? getParentReference()
-                    : ItemReference.builder().id(destinationParentId).build();
+            final ItemReference parentReference = StringUtils.isNotBlank(destinationParentId)
+                    ? ItemReference.builder().id(destinationParentId).build()
+                    : getParentReference();
             setParentReference(parentReference);
         }
 
@@ -758,18 +782,7 @@ public class DriveItem extends BaseItem {
 
     @VisibleForTesting
     String getContentUrl(final String urlEncodedDriveItemId, final String filename) {
-        // Explicit limitations defined by
-        // https://support.microsoft.com/en-us/office/restrictions-and-limitations-in-onedrive-and-sharepoint-64883a5d-228e-48f5-b3d2-eb39e07630fa
-        Validate.isTrue(!filename.contains("\""), "filename must not contain [\"]");
-        Validate.isTrue(!filename.contains("*"), "filename must not contain [*]");
-        Validate.isTrue(!filename.contains(":"), "filename must not contain [:]");
-        Validate.isTrue(!filename.contains("<"), "filename must not contain [<]");
-        Validate.isTrue(!filename.contains(">"), "filename must not contain [>]");
-        Validate.isTrue(!filename.contains("?"), "filename must not contain [?]");
-        Validate.isTrue(!filename.contains("/"), "filename must not contain [/]");
-        Validate.isTrue(!filename.contains("\\"), "filename must not contain [\\]");
-        Validate.isTrue(!filename.contains("|"), "filename must not contain [|]");
-
+        validateFilename(filename);
         return new StringBuilder(connection.getBaseUrl())
                 .append(DRIVE_ITEM_BASE_URL_PATH)
                 .append(urlEncodedDriveItemId)

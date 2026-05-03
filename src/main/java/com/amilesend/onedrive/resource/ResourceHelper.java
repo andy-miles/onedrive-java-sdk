@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource;
 
+import com.amilesend.client.util.Validate;
 import com.google.common.net.UrlEscapers;
 import lombok.experimental.UtilityClass;
 
@@ -49,5 +50,25 @@ public class ResourceHelper {
      */
     public static String escapeValueForUrlPath(final String value) {
         return UrlEscapers.urlPathSegmentEscaper().escape(value);
+    }
+
+    /**
+     * Helper to validate filenames for specific characters.
+     * <p>
+     * <a href="https://support.microsoft.com/en-us/office/restrictions-and-limitations-in-onedrive-and-sharepoint-64883a5d-228e-48f5-b3d2-eb39e07630fa">
+     * API Documentation</a>.
+     *
+     * @param filename
+     */
+    public static void validateFilename(final String filename) {
+        Validate.isTrue(!filename.contains("\""), "filename must not contain [\"]");
+        Validate.isTrue(!filename.contains("*"), "filename must not contain [*]");
+        Validate.isTrue(!filename.contains(":"), "filename must not contain [:]");
+        Validate.isTrue(!filename.contains("<"), "filename must not contain [<]");
+        Validate.isTrue(!filename.contains(">"), "filename must not contain [>]");
+        Validate.isTrue(!filename.contains("?"), "filename must not contain [?]");
+        Validate.isTrue(!filename.contains("/"), "filename must not contain [/]");
+        Validate.isTrue(!filename.contains("\\"), "filename must not contain [\\]");
+        Validate.isTrue(!filename.contains("|"), "filename must not contain [|]");
     }
 }

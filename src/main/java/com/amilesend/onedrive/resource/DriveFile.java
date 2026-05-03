@@ -24,6 +24,7 @@ import com.amilesend.onedrive.resource.item.DriveItem;
 import com.amilesend.onedrive.resource.item.type.Audio;
 import com.amilesend.onedrive.resource.item.type.GeoCoordinates;
 import com.amilesend.onedrive.resource.item.type.Image;
+import com.amilesend.onedrive.resource.item.type.ItemReference;
 import com.amilesend.onedrive.resource.item.type.Photo;
 import com.amilesend.onedrive.resource.item.type.Preview;
 import com.amilesend.onedrive.resource.item.type.Video;
@@ -34,6 +35,7 @@ import lombok.NonNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static com.amilesend.client.connection.file.LogProgressCallback.formatPrefix;
 
@@ -164,6 +166,8 @@ public class DriveFile extends DriveItemType {
                 .append(isImage())
                 .append(", isVideo=")
                 .append(isVideo())
+                .append(", parentId=")
+                .append(Optional.ofNullable(getParentReference()).map(ItemReference::getDriveId).orElse(null))
                 .append(")")
                 .toString();
     }

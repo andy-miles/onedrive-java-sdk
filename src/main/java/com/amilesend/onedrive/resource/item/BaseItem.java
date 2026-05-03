@@ -17,11 +17,19 @@
  */
 package com.amilesend.onedrive.resource.item;
 
+import com.amilesend.client.parse.strategy.GsonExclude;
 import com.amilesend.client.util.StringUtils;
 import com.amilesend.onedrive.resource.identity.IdentitySet;
 import com.amilesend.onedrive.resource.item.type.ItemReference;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import static com.amilesend.onedrive.resource.ResourceHelper.validateFilename;
 
 /**
  * Defines common attributes for drive items.
@@ -52,6 +60,72 @@ public class BaseItem {
     private String name;
     /** Describes the parent information. */
     private ItemReference parentReference;
+
+    @GsonExclude
+    @EqualsAndHashCode.Exclude
+    private final Map<String, Boolean> updatedAttributesMap = new HashMap<>();
+
+    /**
+     * Sets the description for updating the drive item.
+     *
+     * @param description the description
+     */
+    public void setDescription(final String description) {
+        if (Objects.equals(this.description, description)) {
+            updatedAttributesMap.put("description", Boolean.FALSE);
+            return;
+        }
+
+        this.description = description;
+        updatedAttributesMap.put("description", Boolean.TRUE);
+    }
+
+    protected boolean isDescriptionUpdated() {
+        return updatedAttributesMap.containsKey("description")
+                && Boolean.TRUE.equals(updatedAttributesMap.get("description"));
+    }
+
+    /**
+     * Sets the updated drive item name.
+     *
+     * @param name the name
+     */
+    public void setName(final String name) {
+        if (Objects.equals(this.name, name)) {
+            updatedAttributesMap.put("name", Boolean.FALSE);
+            return;
+        }
+
+        validateFilename(name);
+
+        this.name = name;
+        updatedAttributesMap.put("name", Boolean.TRUE);
+    }
+
+    protected boolean isNameUpdated() {
+        return updatedAttributesMap.containsKey("name")
+                && Boolean.TRUE.equals(updatedAttributesMap.get("name"));
+    }
+
+    /**
+     * Sets the updated parent {@link ItemReference} used for moving a file to another folder.
+     *
+     * @param parentReference the parent item reference
+     */
+    public void setParentReference(final ItemReference parentReference) {
+        if (Objects.equals(this.parentReference, parentReference)) {
+            updatedAttributesMap.put("parentReference", Boolean.FALSE);
+            return;
+        }
+
+        this.parentReference = parentReference;
+        updatedAttributesMap.put("parentReference", Boolean.TRUE);
+    }
+
+    protected boolean isParentReferenceUpdated() {
+        return updatedAttributesMap.containsKey("parentReference")
+                && Boolean.TRUE.equals(updatedAttributesMap.get("parentReference"));
+    }
 
     /**
      * Utility method for child method operations that determines if a given {@link DriveItemPage} contains a
