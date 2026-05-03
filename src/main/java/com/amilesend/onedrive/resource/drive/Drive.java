@@ -33,8 +33,6 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,6 +41,7 @@ import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PA
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_ITEM_PARSER;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.ITEM_ACTIVITY_LIST_PARSER;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.newSpecialDriveItemParser;
+import static com.amilesend.onedrive.resource.ResourceHelper.escapeValueForUrlPath;
 import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals;
 
 /**
@@ -155,7 +154,7 @@ public class Drive extends BaseItem {
         Validate.isTrue(query.length() < MAX_QUERY_LENGTH,
                 "query length must be less than " + MAX_QUERY_LENGTH);
 
-        final String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
+        final String encodedQuery = escapeValueForUrlPath(query);
         final List<DriveItem> results = new ArrayList<>();
 
         DriveItemPage currentPage = null;
@@ -222,7 +221,7 @@ public class Drive extends BaseItem {
     private String getActivitiesUrl(final String driveId) {
         return new StringBuilder(connection.getBaseUrl())
                 .append(DRIVE_BASE_URL_PATH)
-                .append(URLEncoder.encode(driveId, StandardCharsets.UTF_8))
+                .append(escapeValueForUrlPath(driveId))
                 .append(ACTIVITIES_URL_SUFFIX)
                 .toString();
     }
@@ -236,7 +235,7 @@ public class Drive extends BaseItem {
                 ? new StringBuilder(connection.getBaseUrl())
                         .append(SEARCH_URL_PATH)
                         .append("(q='")
-                        .append(URLEncoder.encode(searchQuery, StandardCharsets.UTF_8))
+                        .append(escapeValueForUrlPath(searchQuery))
                         .append("')")
                         .toString()
                 : page.getNextLink();

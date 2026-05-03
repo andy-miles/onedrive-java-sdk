@@ -22,8 +22,6 @@ import com.amilesend.onedrive.connection.OneDriveConnection;
 import com.amilesend.onedrive.resource.Drive;
 import com.amilesend.onedrive.resource.Site;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +29,7 @@ import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_LIST_PA
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_PARSER;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.SITE_LIST_PARSER;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.SITE_PARSER;
+import static com.amilesend.onedrive.resource.ResourceHelper.escapeValueForUrlPath;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVES_URL_PATH_SUFFIX;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVE_URL_PATH_SUFFIX;
 import static com.amilesend.onedrive.resource.site.Site.SITE_BASE_URL_PATH;
@@ -171,7 +170,7 @@ public class BusinessOneDrive extends OneDrive {
         Validate.isTrue(query.length() < MAX_QUERY_LENGTH,
                 "query length must be less than " + MAX_QUERY_LENGTH);
 
-        final String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
+        final String encodedQuery = escapeValueForUrlPath(query);
         final OneDriveConnection connection = getConnection();
         return connection.execute(
                 connection.newRequestBuilder()

@@ -17,6 +17,7 @@
  */
 package com.amilesend.onedrive.resource;
 
+import com.google.common.net.UrlEscapers;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -38,5 +39,15 @@ public class ResourceHelper {
         }
 
         return false;
+    }
+
+    /**
+     * Helper method to leverage guava's {@link UrlEscapers} to escape values used for URL path elements.
+     *
+     * @param value the value to escape
+     * @return the encoded value
+     */
+    public static String escapeValueForUrlPath(final String value) {
+        return UrlEscapers.urlPathSegmentEscaper().escape(value);
     }
 }

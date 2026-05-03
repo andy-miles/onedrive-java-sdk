@@ -33,8 +33,6 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import okhttp3.RequestBody;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -44,6 +42,7 @@ import static com.amilesend.onedrive.parse.resource.parser.Parsers.GET_COLUMN_VA
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListItemParser;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListItemVersionListParser;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.newListItemVersionParser;
+import static com.amilesend.onedrive.resource.ResourceHelper.escapeValueForUrlPath;
 import static com.amilesend.onedrive.resource.site.List.LIST_BASE_URL_PATH;
 import static com.amilesend.onedrive.resource.site.ListItemVersion.LIST_ITEM_VERSIONS_URL_SUFFIX;
 import static com.amilesend.onedrive.resource.site.ListItemVersion.LIST_ITEM_VERSION_BASE_URL_PATH;
@@ -271,7 +270,7 @@ public class ListItem extends BaseItem {
             Validate.isTrue(
                     column.length() < MAX_COLUMN_LENGTH,
                     "column length must be < " + MAX_COLUMN_LENGTH);
-            encodedColumns.add(URLEncoder.encode(column, StandardCharsets.UTF_8));
+            encodedColumns.add(escapeValueForUrlPath(column));
         }
 
         return String.join(",", encodedColumns);

@@ -59,8 +59,6 @@ import lombok.experimental.SuperBuilder;
 import okhttp3.RequestBody;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +76,7 @@ import static com.amilesend.onedrive.parse.resource.parser.Parsers.newDriveItemV
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPermissionListParser;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPermissionParser;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.newPreviewParser;
+import static com.amilesend.onedrive.resource.ResourceHelper.escapeValueForUrlPath;
 import static com.amilesend.onedrive.resource.ResourceHelper.objectDefinedEquals;
 
 /**
@@ -720,7 +719,7 @@ public class DriveItem extends BaseItem {
     private String validateAndGetUrlEncodedId() {
         final String driveItemId = getId();
         Validate.notBlank(driveItemId, "id must not be blank");
-        return URLEncoder.encode(driveItemId, StandardCharsets.UTF_8);
+        return escapeValueForUrlPath(driveItemId);
     }
 
     private void validateDestinationParentIdAndNewName(final String destinationParentId, final String newName) {
@@ -762,7 +761,7 @@ public class DriveItem extends BaseItem {
                 .append(DRIVE_ITEM_BASE_URL_PATH)
                 .append(urlEncodedDriveItemId)
                 .append(":/")
-                .append(URLEncoder.encode(filename, StandardCharsets.UTF_8))
+                .append(escapeValueForUrlPath(filename))
                 .append(":")
                 .append(CONTENT_URL_SUFFIX)
                 .toString();
@@ -789,7 +788,7 @@ public class DriveItem extends BaseItem {
                         .append(DRIVE_ITEM_BASE_URL_PATH)
                         .append(urlEncodedDriveItemId)
                         .append("/search(q='")
-                        .append(URLEncoder.encode(searchQuery, StandardCharsets.UTF_8))
+                        .append(escapeValueForUrlPath(searchQuery))
                         .append("')")
                         .toString()
                 : page.getNextLink();

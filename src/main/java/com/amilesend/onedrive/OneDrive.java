@@ -29,14 +29,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_LIST_PARSER;
 import static com.amilesend.onedrive.parse.resource.parser.Parsers.DRIVE_PARSER;
+import static com.amilesend.onedrive.resource.ResourceHelper.escapeValueForUrlPath;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVES_BASE_URL_PATH;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVES_URL_PATH_SUFFIX;
 import static com.amilesend.onedrive.resource.drive.Drive.DRIVE_URL_PATH_SUFFIX;
@@ -138,6 +137,6 @@ public class OneDrive {
     protected String validateIdAndUrlEncode(final String id, final String name) {
         Validate.notBlank(id, name + " must not be blank");
         Validate.isTrue(id.length() < MAX_ID_LENGTH, name + " must be less than " + MAX_ID_LENGTH);
-        return URLEncoder.encode(id, StandardCharsets.UTF_8);
+        return escapeValueForUrlPath(id);
     }
 }
