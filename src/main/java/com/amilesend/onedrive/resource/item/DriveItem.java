@@ -756,7 +756,20 @@ public class DriveItem extends BaseItem {
                 .toString();
     }
 
-    private String getContentUrl(final String urlEncodedDriveItemId, final String filename) {
+    @VisibleForTesting
+    String getContentUrl(final String urlEncodedDriveItemId, final String filename) {
+        // Explicit limitations defined by
+        // https://support.microsoft.com/en-us/office/restrictions-and-limitations-in-onedrive-and-sharepoint-64883a5d-228e-48f5-b3d2-eb39e07630fa
+        Validate.isTrue(!filename.contains("\""), "filename must not contain [\"]");
+        Validate.isTrue(!filename.contains("*"), "filename must not contain [*]");
+        Validate.isTrue(!filename.contains(":"), "filename must not contain [:]");
+        Validate.isTrue(!filename.contains("<"), "filename must not contain [<]");
+        Validate.isTrue(!filename.contains(">"), "filename must not contain [>]");
+        Validate.isTrue(!filename.contains("?"), "filename must not contain [?]");
+        Validate.isTrue(!filename.contains("/"), "filename must not contain [/]");
+        Validate.isTrue(!filename.contains("\\"), "filename must not contain [\\]");
+        Validate.isTrue(!filename.contains("|"), "filename must not contain [|]");
+
         return new StringBuilder(connection.getBaseUrl())
                 .append(DRIVE_ITEM_BASE_URL_PATH)
                 .append(urlEncodedDriveItemId)

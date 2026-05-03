@@ -270,6 +270,31 @@ public class DriveItemUploadTest extends DriveItemTestBase {
                         () -> driveItemUnderTest.uploadNewAsync(mock(Path.class), null)));
     }
 
+    // getContentUrl
+
+    @Test
+    public void getContentUrl_withInvalidFilename_shouldThrowException() {
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> driveItemUnderTest.getContentUrl("id", "filename\".txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> driveItemUnderTest.getContentUrl("id", "filenam*e.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> driveItemUnderTest.getContentUrl("id", "filen:ame.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> driveItemUnderTest.getContentUrl("id", "filenam<e.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> driveItemUnderTest.getContentUrl("id", "filen>ame.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> driveItemUnderTest.getContentUrl("id", "file?name.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> driveItemUnderTest.getContentUrl("id", "file/name.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> driveItemUnderTest.getContentUrl("id", "file\\name.txt")),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> driveItemUnderTest.getContentUrl("id", "file|name.txt")));
+    }
+
     private ProgressReportingRequestBody newMockRequestBody() {
         final ProgressReportingRequestBody mockRequestBody = mock(ProgressReportingRequestBody.class);
         when(mockRequestBody.contentType()).thenReturn(MediaType.parse(FILE_CONTENT_TYPE));
