@@ -120,7 +120,7 @@
         <spotbugs.version>4.10.3</spotbugs.version>
         <spotbugs.maven.plugin.version>4.10.3.0</spotbugs.maven.plugin.version>
         <jacoco.plugin.version>0.8.15</jacoco.plugin.version>
-        <okhttp.version>5.4.0</okhttp.version>
+        <okhttp.version>5.5.0</okhttp.version>
     </properties>
 
     <dependencies>
@@ -158,13 +158,13 @@
         <dependency>
             <groupId>com.amilesend</groupId>
             <artifactId>okhttp-client-extensions</artifactId>
-            <version>1.1.12</version>
+            <version>1.1.13</version>
         </dependency>
         <!-- For URL and path escaping -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.6.0-jre</version>
+            <version>33.7.1-jre</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
