@@ -115,7 +115,7 @@
         <maven.resolver.transport>wagon</maven.resolver.transport>
         <lombok.version>1.18.48</lombok.version>
         <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
-        <mockito.version>5.23.0</mockito.version>
+        <mockito.version>5.24.0</mockito.version>
         <slf4j.version>2.0.18</slf4j.version>
         <spotbugs.version>4.10.4</spotbugs.version>
         <spotbugs.maven.plugin.version>4.10.4.1</spotbugs.maven.plugin.version>
